@@ -16,6 +16,9 @@
     <Filter Include="_Include">
       <UniqueIdentifier>{d2034ab5-5847-4873-b728-fc04d479a72d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="_Share">
+      <UniqueIdentifier>{8ca89e95-5423-4ee5-a5dd-63fee56d6153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyServer.h">
@@ -47,6 +50,39 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Include\GlobalStructDef.h">
       <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\Cn_DDRes.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\constdef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\define.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\DefineActionID.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\En_DDRes.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\EnumDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\I_Shell.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\MyDDString.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\networkdef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\protocol.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\StructDef.h">
+      <Filter>_Share</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
