@@ -16,7 +16,6 @@
 #include "./StructDef.h"
 #include "./String/MyDDString.h"
 
-#include "./../Common/common.h"
 #include "./../Common/BaseFunc.h"
 #include "./../Common/Myheap.h"
 #include "./../Common/TMemoryData.h"
@@ -74,23 +73,5 @@ typedef MAP_INT::iterator			ITER_MAP_INT;
 typedef MAP_INT::const_iterator		CITER_MAP_INT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-// 常量表define begin
-// 活动配置表
-typedef CMyArray<int, ACTIVITY_CONFIG_DATA_END - ACTIVITY_CONFIG_DATA_BEGIN>	ARR_ACTIVITY_CONFIG_INFO;
-typedef map<OBJID, ARR_ACTIVITY_CONFIG_INFO>									MAP_ACTIVITY_CONFIG_INFO;
-typedef MAP_ACTIVITY_CONFIG_INFO::iterator										ITER_MAP_ACTIVITY_CONFIG_INFO;
-typedef MAP_ACTIVITY_CONFIG_INFO::const_iterator								CON_ITER_MAP_ACTIVITY_CONFIG_INFO;
-typedef std::vector<int>														VEC_ACTIVITY_INFO;
-// 常量表define end
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-// 装备属性容器
-typedef std::map<EQUIP_ATTR_TYPE, I64>	MAP_EQUIP_ATTR;
-
-// 卡牌属性容器
-typedef std::map<POKER_ATTR, I64>		MAP_POKER_ATTR;	
-
-// 竞技场战斗卡牌ID容器
-typedef std::map<int, I64>				MAP_AREA_FIGHTPOKER_ID;
 
 #endif // ALL_GLOBAL_DEFINE_H

@@ -15,7 +15,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../../common/common.h"
+#include "../common/common.h"
 #include "./EnumDef.h"
 
 static const char* GAMESERVER_TITLE = "[%u] GameServer Name[%s] Line[%d] Group[%d] SVN:[%d]";	// 服务器标题
