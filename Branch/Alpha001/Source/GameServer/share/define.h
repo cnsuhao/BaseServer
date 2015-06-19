@@ -1,21 +1,26 @@
-// define.h 全局类型和常量定义
-// 仙剑修，2002.10.29
-//////////////////////////////////////////////////////////////////////
-#ifndef	ALL_GLOBAL_DEFINE_H
-#define	ALL_GLOBAL_DEFINE_H
+////////////////////////////////////////////////////////////////////////
+// Import : 共享文件。头文件包含。
+// Moudle : define.h 
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
+////////////////////////////////////////////////////////////////////////
+#ifndef	_SHARE_DEFINE_H_
+#define	_SHARE_DEFINE_H_
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif	// _MSC_VER > 1000
 
 #pragma warning(disable:4786)
 
+// 共享文件
 #include "./DefineActionID.h"
 #include "./EnumDef.h"
 #include "./ConstDef.h"
 #include "./StructDef.h"
 #include "./String/MyDDString.h"
 
+// Common库文件
 #include "./../Common/BaseFunc.h"
 #include "./../Common/Myheap.h"
 #include "./../Common/TMemoryData.h"
@@ -24,10 +29,15 @@
 #include "./../Common/PerformanceStatistics.h"
 #include "./../Common/AutoPtr.h"
 #include "./../Common/MxyString.h"
+
+// DataBase库文件
 #include "./../DataBase/Temple/TConstSingleTable.h"
 #include "./../DataBase/Temple/TConstDoubleTable.h"
+
+// 全局文件
 #include "./../../../Include/Global.h"
 
+// 系统文件
 #include <deque>
 #include <stack>
 #include <list>
@@ -37,41 +47,4 @@
 #include <hash_map>
 #include <limits>
 #include <algorithm>
-
-//////////////////////////////////////////////////////////////////////
-// 通用接口
-//////////////////////////////////////////////////////////////////////
-inline void EmptyFunction(...) {}
-#ifdef MULTI_KERNEL_LOG
-	#define LOGDEBUG	LOGMSG
-#else
-	#define LOGDEBUG	EmptyFunction
-#endif
-
-typedef std::vector<OBJID>			ID_VEC;
-typedef ID_VEC::iterator			ID_VEC_ITER;
-typedef ID_VEC::const_iterator		ID_VEC_CITER;
-typedef std::vector<int>			INT_VEC;
-typedef INT_VEC::iterator			INT_VEC_ITER;
-typedef INT_VEC::const_iterator		INT_VEC_CITER;
-
-typedef std::set<OBJID>				ID_SET;
-typedef ID_SET::iterator			ID_SET_ITER;
-typedef ID_SET::const_iterator		ID_SET_CITER;
-typedef std::set<UINT>				UINT_SET;
-typedef UINT_SET::iterator			UINT_SET_ITER;
-typedef UINT_SET::const_iterator	UINT_SET_CITER;
-
-
-typedef std::vector<int>			VEC_CONFIGINFO;
-
-
-typedef std::set<OBJID>				SET_OBJ;
-
-typedef std::map<int, int>			MAP_INT;
-typedef MAP_INT::iterator			ITER_MAP_INT;
-typedef MAP_INT::const_iterator		CITER_MAP_INT;
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-#endif // ALL_GLOBAL_DEFINE_H
+#endif	// _DEFINE_H_

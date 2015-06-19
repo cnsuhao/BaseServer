@@ -1,13 +1,11 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: ConstDef.h
-// Author: 彭文奇(Peng Wenqi)
-// Created: 2012-10-30
-// 
-// !!! 注意 !!!
-//	1. 本文件用于定义游戏服务器全局常量
-//  2. 字符串常量统一使用static const char*定义, 只有需要给字符串数组赋初值的才用宏
-//////////////////////////////////////////////////////////////////////////
+// Import : 共享文件。常量定义。
+// Moudle : define.h 
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
+// Warning：*字符串常量统一使用static const char*定义, 只有需要给字符串数组赋初值的才用宏
+////////////////////////////////////////////////////////////////////////
+
 #ifndef _MAPGROUP_SHARE_CONST_DEF_H_
 #define _MAPGROUP_SHARE_CONST_DEF_H_
 
