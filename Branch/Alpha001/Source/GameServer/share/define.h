@@ -10,25 +10,24 @@
 
 #pragma warning(disable:4786)
 
-#include "myDDstring.h"
-
-#include "./../../../Include/Global.h"
-#include "./../common/common.h"
-#include "./../common/BaseFunc.h"
-#include "./../common/Myheap.h"
-#include "./../Common/TMemoryData.h"
-#include "./../Common/MyArray.h"
-#include "./../Common/Timeout.h"
-#include "./../Common/PerformanceStatistics.h"
-#include "./../COMMON/AutoPtr.h"
-#include "./../COMMON/MxyString.h"
-#include "./../DataBase/Temple/TConstSingleTable.h"
-#include "./../DataBase/Temple/TConstDoubleTable.h"
-
 #include "./DefineActionID.h"
 #include "./EnumDef.h"
 #include "./ConstDef.h"
 #include "./StructDef.h"
+#include "./String/MyDDString.h"
+
+#include "./../Common/common.h"
+#include "./../Common/BaseFunc.h"
+#include "./../Common/Myheap.h"
+#include "./../Common/TMemoryData.h"
+#include "./../Common/MyArray.h"
+#include "./../Common/Timeout.h"
+#include "./../Common/PerformanceStatistics.h"
+#include "./../Common/AutoPtr.h"
+#include "./../Common/MxyString.h"
+#include "./../DataBase/Temple/TConstSingleTable.h"
+#include "./../DataBase/Temple/TConstDoubleTable.h"
+#include "./../../../Include/Global.h"
 
 #include <deque>
 #include <stack>
