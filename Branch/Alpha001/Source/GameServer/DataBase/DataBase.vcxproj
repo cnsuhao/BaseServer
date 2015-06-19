@@ -58,7 +58,7 @@
       <PreprocessorDefinitions>MULTITHREAD_SAFE;NO_MUTEX;WIN32;NDEBUG;_LIB;MYDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>4Bytes</StructMemberAlignment>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderOutputFile>.\Debug/GameBaseCodeMT.pch</PrecompiledHeaderOutputFile>
@@ -119,12 +119,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\mydatabase.cpp" />
-    <ClCompile Include="source\MyField.cpp" />
-    <ClCompile Include="source\MyRecord.cpp" />
-    <ClCompile Include="source\myrecordset.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ConstGameData.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="I_mydb.h" />
@@ -132,13 +126,19 @@
     <ClInclude Include="source\MyField.h" />
     <ClInclude Include="source\myrecord.h" />
     <ClInclude Include="source\myrecordset.h" />
-    <ClInclude Include="source\TConstDoubleTable.h" />
-    <ClInclude Include="source\TConstSingleTable.h" />
     <ClInclude Include="..\Common\common.h" />
     <ClInclude Include="source\Mydb.h" />
+    <ClInclude Include="Temple\TConstDoubleTable.h" />
+    <ClInclude Include="Temple\TConstSingleTable.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="source\常量表模板使用示例.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mydatabase.cpp" />
+    <ClCompile Include="MyField.cpp" />
+    <ClCompile Include="MyRecord.cpp" />
+    <ClCompile Include="myrecordset.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

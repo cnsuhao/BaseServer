@@ -6,8 +6,9 @@
 #ifndef	I_MYDB_H
 #define	I_MYDB_H
 
-#include "./../COMMON/common.h"
 #include "./../COMMON/AutoPtr.h"
+#include "./../../../Include/Global.h"
+
 #include <vector>
 #include <map>
 #include <set>
