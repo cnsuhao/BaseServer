@@ -53,14 +53,15 @@
 #pragma warning(pop) 
 
 #include "SymEngine.h"
+#include "BaseFunc.h"
+#include "../../../Include/Psapi.h"
+
 #include <crtdbg.h>
 #include <malloc.h> 
 #include <tlhelp32.h>
 #include <stdio.h>
 #include <string>
 #include <time.h>
-#include "./../../Include/Psapi.h"
-#include "BaseFunc.h"
 
 #ifdef VERIFY
 #undef VERIFY

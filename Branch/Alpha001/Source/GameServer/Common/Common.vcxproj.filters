@@ -53,13 +53,13 @@
     <ClCompile Include="VarType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="messageport.cpp">
+    <ClCompile Include="MessagePort\MessagePort.cpp">
       <Filter>MessagePort</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Include\MyPubilcKey\md5.cpp">
+    <ClCompile Include="MyPubilcKey\md5.cpp">
       <Filter>MyPublicKey</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Include\MyPubilcKey\MyPublicKey.cpp">
+    <ClCompile Include="MyPubilcKey\MyPublicKey.cpp">
       <Filter>MyPublicKey</Filter>
     </ClCompile>
   </ItemGroup>
@@ -142,22 +142,19 @@
     <ClInclude Include="TMemoryData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TypeDef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VarType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="I_MessagePort.h">
+    <ClInclude Include="MessagePort\I_MessagePort.h">
       <Filter>MessagePort</Filter>
     </ClInclude>
-    <ClInclude Include="MessagePort.h">
+    <ClInclude Include="MessagePort\MessagePort.h">
       <Filter>MessagePort</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\MyPubilcKey\md5.h">
+    <ClInclude Include="MyPubilcKey\md5.h">
       <Filter>MyPublicKey</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\MyPubilcKey\MyPublicKey.h">
+    <ClInclude Include="MyPubilcKey\MyPublicKey.h">
       <Filter>MyPublicKey</Filter>
     </ClInclude>
   </ItemGroup>

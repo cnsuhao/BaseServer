@@ -58,7 +58,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;MYDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>4Bytes</StructMemberAlignment>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderOutputFile>.\Debug/Common.pch</PrecompiledHeaderOutputFile>
@@ -123,17 +123,17 @@
     <ClCompile Include="IniFile.cpp" />
     <ClCompile Include="logfile.cpp" />
     <ClCompile Include="MemMonitor.cpp" />
+    <ClCompile Include="MessagePort\MessagePort.cpp" />
     <ClCompile Include="MxyString.cpp" />
     <ClCompile Include="MyHeap.cpp" />
+    <ClCompile Include="MyPubilcKey\md5.cpp" />
+    <ClCompile Include="MyPubilcKey\MyPublicKey.cpp" />
     <ClCompile Include="NetStringPacker.cpp" />
     <ClCompile Include="PerformanceStatistics.cpp" />
     <ClCompile Include="SymEngine.cpp" />
     <ClCompile Include="ThreadBase.cpp" />
     <ClCompile Include="TimeOut.cpp" />
     <ClCompile Include="VarType.cpp" />
-    <ClCompile Include="messageport.cpp" />
-    <ClCompile Include="..\..\Include\MyPubilcKey\md5.cpp" />
-    <ClCompile Include="..\..\Include\MyPubilcKey\MyPublicKey.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.h" />
@@ -148,10 +148,14 @@
     <ClInclude Include="IniFile.h" />
     <ClInclude Include="logfile.h" />
     <ClInclude Include="MemMonitor.h" />
+    <ClInclude Include="MessagePort\I_MessagePort.h" />
+    <ClInclude Include="MessagePort\MessagePort.h" />
     <ClInclude Include="MxyString.h" />
     <ClInclude Include="MyArray.h" />
     <ClInclude Include="mycom.h" />
     <ClInclude Include="MyHeap.h" />
+    <ClInclude Include="MyPubilcKey\md5.h" />
+    <ClInclude Include="MyPubilcKey\MyPublicKey.h" />
     <ClInclude Include="MyStack.h" />
     <ClInclude Include="NetStringPacker.h" />
     <ClInclude Include="PerformanceStatistics.h" />
@@ -162,12 +166,7 @@
     <ClInclude Include="ThreadBase.h" />
     <ClInclude Include="TimeOut.h" />
     <ClInclude Include="TMemoryData.h" />
-    <ClInclude Include="TypeDef.h" />
     <ClInclude Include="VarType.h" />
-    <ClInclude Include="I_MessagePort.h" />
-    <ClInclude Include="MessagePort.h" />
-    <ClInclude Include="..\..\Include\MyPubilcKey\md5.h" />
-    <ClInclude Include="..\..\Include\MyPubilcKey\MyPublicKey.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

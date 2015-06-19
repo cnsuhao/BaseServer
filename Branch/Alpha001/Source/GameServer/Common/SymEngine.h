@@ -18,9 +18,9 @@
 #endif
 
 #include <windows.h>
-#include "./../../Include/DbgHelp.h"
 #include <string>
 #include "./ThreadBase.h"
+#include "../../../Include/DbgHelp.h"
 
 void InitSymEngine();
 void ReleaseSymEngine();
