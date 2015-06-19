@@ -36,8 +36,6 @@ public:
 	afx_msg void OnBnClickedChkLua();
 	afx_msg void OnBnClickedChkGm();
 	afx_msg void OnBnClickedChkGmtool();
-	afx_msg void OnBnClickedBtnUpdate();
-
-private:
-	CListBox*	m_listBox;
+	afx_msg void OnBnClickedBtnUpdateLua();
+	afx_msg void OnBnClickedBtnUpdateTable();
 };
