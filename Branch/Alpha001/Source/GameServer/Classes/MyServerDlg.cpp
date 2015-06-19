@@ -6,7 +6,7 @@
 #include "MyServer.h"
 #include "MyServerDlg.h"
 #include "afxdialogex.h"
-#include "../../Public/Include/GlobalDefine.h"
+#include "../../../Include/GlobalDefine.h"
 //#include "SocketServer.h"
 
 #ifdef _DEBUG
@@ -70,7 +70,8 @@ BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
 	ON_BN_CLICKED(IDC_CHK_LUA, &CMyServerDlg::OnBnClickedChkLua)
 	ON_BN_CLICKED(IDC_CHK_GM, &CMyServerDlg::OnBnClickedChkGm)
 	ON_BN_CLICKED(IDC_CHK_GMTOOL, &CMyServerDlg::OnBnClickedChkGmtool)
-	ON_BN_CLICKED(IDC_BTN_UPDATE, &CMyServerDlg::OnBnClickedBtnUpdate)
+	ON_BN_CLICKED(IDC_BTN_UPDATE_LUA, &CMyServerDlg::OnBnClickedBtnUpdateLua)
+	ON_BN_CLICKED(IDC_BTN_UPDATE_TABLE, &CMyServerDlg::OnBnClickedBtnUpdateTable)
 END_MESSAGE_MAP()
 
 
@@ -128,16 +129,17 @@ BOOL CMyServerDlg::OnInitDialog()
 	// 初始化日志系统
 
 
-
-
-	m_listBox = (CListBox*)GetDlgItem(IDC_LIST_UPDATE);
-	CHECKF(m_listBox);
-	m_listBox->AddString(_T("Table: config"));
-	m_listBox->AddString(_T("Table: server_list"));
-	m_listBox->AddString(_T("Table: config_txt"));
-	m_listBox->AddString(_T("Lua: login"));
-	m_listBox->AddString(_T("Lua: liveness"));
-	m_listBox->AddString(_T("Lua: box"));
+	auto plistBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
+	CHECKF(plistBoxLua);
+	plistBoxLua->AddString(_T("Lua: login"));
+	plistBoxLua->AddString(_T("Lua: liveness"));
+	plistBoxLua->AddString(_T("Lua: box"));
+	
+	auto plistBoxTable = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_TABLE);
+	CHECKF(plistBoxTable);
+	plistBoxTable->AddString(_T("Table: config"));
+	plistBoxTable->AddString(_T("Table: server_list"));
+	plistBoxTable->AddString(_T("Table: config_txt"));
 
 	// TODO: 在此添加额外的初始化代码
 
@@ -252,11 +254,11 @@ void CMyServerDlg::OnBnClickedChkGmtool()
 	// TODO: 在此添加控件通知处理程序代码
 }
 
-
-void CMyServerDlg::OnBnClickedBtnUpdate()
+void CMyServerDlg::OnBnClickedBtnUpdateLua()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	if (m_listBox->GetSelCount() > 0)
+	auto pListBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
+	if (pListBoxLua->GetSelCount() > 0)
 	{
 		// 通知更新
 
@@ -264,9 +266,28 @@ void CMyServerDlg::OnBnClickedBtnUpdate()
 	else
 	{
 		// 全部选中
-		for (int i = 0; i < m_listBox->GetCount(); i++)
+		for (int i = 0; i < pListBoxLua->GetCount(); i++)
 		{
-			m_listBox->SetSel(i);
+			pListBoxLua->SetSel(i);
+		}
+	}
+}
+
+void CMyServerDlg::OnBnClickedBtnUpdateTable()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	auto pListBoxTable = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_TABLE);
+	if (pListBoxTable->GetSelCount() > 0)
+	{
+		// 通知更新
+
+	}
+	else
+	{
+		// 全部选中
+		for (int i = 0; i < pListBoxTable->GetCount(); i++)
+		{
+			pListBoxTable->SetSel(i);
 		}
 	}
 }
