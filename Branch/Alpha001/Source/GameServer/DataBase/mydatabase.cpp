@@ -6,8 +6,8 @@
 #include "myrecordset.h"
 #include "myrecord.h"
 #include "IniFile.h"
-#include "../MsgServer/share/define.h"
-#include "./../../COMMON/PerformanceStatistics.h"
+#include "./../share/define.h"
+#include "./../Common//PerformanceStatistics.h"
 
 MYHEAP_IMPLEMENTATION(CMyDatabase, s_heap)
 //////////////////////////////////////////////////////////////////////

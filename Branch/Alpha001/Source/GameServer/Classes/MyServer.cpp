@@ -29,7 +29,7 @@
 //#pragma comment(lib, "../../../Lib/GameServer/AIKernel.lib")
 //#pragma comment(lib, "../../../Lib/GameServer/GameBaseCodeMT.lib")
 //#pragma comment(lib, "../../../Lib/GameServer/GameKernel.lib")
-//#pragma comment(lib, "../../../Lib/GameServer/LoginKernel.lib")
+//#pragma comment(lib, "../../../Lib/GameS-erver/LoginKernel.lib")
 //#pragma comment(lib, "../../../Lib/GameServer/LuaPlus.lib")
 //#pragma comment(lib, "../../../Lib/GameServer/RelationKernel.lib")
 #endif
