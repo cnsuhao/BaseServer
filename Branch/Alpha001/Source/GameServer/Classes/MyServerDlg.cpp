@@ -6,13 +6,11 @@
 #include "MyServer.h"
 #include "MyServerDlg.h"
 #include "afxdialogex.h"
-#include "../../../Include/GlobalDefine.h"
-//#include "SocketServer.h"
+#include "../../../Include/Global.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 

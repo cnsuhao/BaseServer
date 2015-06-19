@@ -14,8 +14,8 @@
 #include "logfile.h"
 #include "AutoPtr.h"
 #include <vector>
-#include "../../Include/Global.h"
 #include "MxyString.h"
+#include "../../../Include/Global.h"
 using namespace std;
 
 extern char g_szServerName[64];				// ·þÎñÆ÷Ãû

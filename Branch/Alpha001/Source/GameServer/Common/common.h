@@ -24,7 +24,6 @@
 #include <time.h>
 #include "logfile.h"
 #include "iostream"
-#include "./TypeDef.h"
 #include "SymEngine.h"
 using namespace std;
 

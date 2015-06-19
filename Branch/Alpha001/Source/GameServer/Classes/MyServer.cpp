@@ -6,7 +6,33 @@
 #include "MyServer.h"
 #include "MyServerDlg.h"
 
-//#pragma comment(lib, "../../lib/Common.lib")
+// ∏Ωº”œµÕ≥ø‚
+#pragma comment(lib, "winmm.lib ")
+
+#pragma comment(lib, "../../../Lib/DbgHelp.lib")
+#pragma comment(lib, "../../../Lib/Psapi.lib")
+#pragma comment(lib, "../../../Lib/mysqlclient.lib")
+#pragma comment(lib, "../../../Lib/CrashRpt.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "../../../Lib/GameServer/Common_d.lib")
+//#pragma comment(lib, "../../../Lib/ServerSocket/ServerSocket_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/AIKernel_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/GameBaseCodeMT_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/GameKernel_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/LoginKernel_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/LuaPlus_d.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/RelationKernel_d.lib")
+#else
+#pragma comment(lib, "../../../Lib/GameServer/Common.lib")
+//#pragma comment(lib, "../../../Lib/ServerSocket/ServerSocket.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/AIKernel.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/GameBaseCodeMT.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/GameKernel.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/LoginKernel.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/LuaPlus.lib")
+//#pragma comment(lib, "../../../Lib/GameServer/RelationKernel.lib")
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

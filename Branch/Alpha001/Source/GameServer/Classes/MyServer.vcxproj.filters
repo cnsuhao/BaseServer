@@ -13,7 +13,7 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Public">
+    <Filter Include="_Include">
       <UniqueIdentifier>{d2034ab5-5847-4873-b728-fc04d479a72d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -33,20 +33,20 @@
     <ClInclude Include="Resource.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Public\Include\Common.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="..\..\..\Include\Global.h">
+      <Filter>_Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Public\Include\GlobalBaseFuc.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="..\..\..\Include\GlobalConstDef.h">
+      <Filter>_Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Public\Include\GlobalConstDef.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="..\..\..\Include\GlobalEnumDef.h">
+      <Filter>_Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Public\Include\GlobalDefine.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="..\..\..\Include\GlobalFuction.h">
+      <Filter>_Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Public\Include\GlobalStruct.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="..\..\..\Include\GlobalStructDef.h">
+      <Filter>_Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

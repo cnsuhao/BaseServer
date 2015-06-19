@@ -15,6 +15,12 @@
 #pragma warning(disable:4996)
 #endif
 
+#include "AFXDISP.H"//2007114:COleDateTime
+#include "common.h"
+#include "BaseFunc.h"
+#include "./../../../Include/DbgHelp.h"
+#include "PerformanceStatistics.h"
+
 #include <afxmt.h>
 #include <windows.h>
 #include <mmsystem.h>
@@ -25,14 +31,9 @@
 #include <math.h>
 #include <time.h>
 #include <io.h>
-#include "common.h"
-#include "BaseFunc.h"
-#include "AFXDISP.H"//2007114:COleDateTime
 #include <fstream>
 #include <sstream>
 #include <set>
-#include "./../../Include/DbgHelp.h"
-#include "PerformanceStatistics.h"
 
 //20070627:日志开关标志位
 BOOL g_bLogSave						= TRUE;		// 是否写日志
