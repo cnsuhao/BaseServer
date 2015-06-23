@@ -1,9 +1,17 @@
 
 // MyServerDlg.h : 头文件
-//
+#include "../Common/MessagePort/MessagePort.h"
 
 #pragma once
 
+enum {
+	SHELLSTATE_FAILD,
+	SHELLSTATE_INIT, 
+	SHELLSTATE_RUNNING, 
+	SHELLSTATE_CLOSING_KICK,
+	SHELLSTATE_CLOSING, 
+	SHELLSTATE_END,
+};
 
 // CMyServerDlg 对话框
 class CMyServerDlg : public CDialog
@@ -38,4 +46,9 @@ public:
 	afx_msg void OnBnClickedChkGmtool();
 	afx_msg void OnBnClickedBtnUpdateLua();
 	afx_msg void OnBnClickedBtnUpdateTable();
+
+protected:
+	IMessagePort*	m_pMsgPort;
+	char			m_szStartServer[20];
+	int				m_nState;
 };

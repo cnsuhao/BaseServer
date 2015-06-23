@@ -424,7 +424,7 @@ bool CMyDatabase::ErrorRecon()
 	char	szUser[DBSTR_SIZE] = "";
 	char	szPassword[DBSTR_SIZE] = "";
 	int		nPort = 0;
-	CIniFile	ini(CONFIG_FILENAME, "Database" );
+	CIniFile	ini(GAMESERVER_FILENAME, "Database" );
 	ini.GetString(szIP,			"DatabaseIP",		DBSTR_SIZE);
 	ini.GetString(szUser,		"DatabaseUser",		DBSTR_SIZE);
 	ini.GetString(szPassword,	"DatabasePassword",	DBSTR_SIZE);
@@ -578,7 +578,7 @@ bool CMyDatabase::InitAyscThread		(void)
 	char	szUser[DBSTR_SIZE] = "";
 	char	szPassword[DBSTR_SIZE] = "";
 	int		nPort = 0;
-	CIniFile	ini(CONFIG_FILENAME, "Database" );
+	CIniFile	ini(GAMESERVER_FILENAME, "Database" );
 	ini.GetString(szIP,			"DatabaseIP",		DBSTR_SIZE);
 	ini.GetString(szUser,		"DatabaseUser",		DBSTR_SIZE);
 	ini.GetString(szPassword,	"DatabasePassword",	DBSTR_SIZE);
@@ -634,7 +634,7 @@ bool CMyDatabase::ReconnectAsycThread	(void)
 	char	szUser[DBSTR_SIZE] = "";
 	char	szPassword[DBSTR_SIZE] = "";
 	int		nPort = 0;
-	CIniFile	ini(CONFIG_FILENAME, "Database" );
+	CIniFile	ini(GAMESERVER_FILENAME, "Database" );
 	ini.GetString(szIP,			"DatabaseIP",		DBSTR_SIZE);
 	ini.GetString(szUser,		"DatabaseUser",		DBSTR_SIZE);
 	ini.GetString(szPassword,	"DatabasePassword",	DBSTR_SIZE);
@@ -850,7 +850,7 @@ void CMyDatabase::SetCharset(MYSQL* hdbc)
 {
 	CHECK(hdbc);
 	char	DB_CHARSET[DBSTR_SIZE] = "";
-	CIniFile	ini(CONFIG_FILENAME, "Database");
+	CIniFile	ini(GAMESERVER_FILENAME, "Database");
 	ini.GetString(DB_CHARSET,	"DatabaseCharset",	DBSTR_SIZE);
 	if (!stricmp(DB_CHARSET,"CHT"))
 	{

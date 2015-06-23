@@ -22,6 +22,9 @@ static const char* GAMESERVER_TITLE = "GameServer:[%s] Group:[%d] Line:[%d] PID:
 static const char* GAMESERVER_TITLE = "GameServer:[%s] Group:[%d] Line:[%d] PID:[%u] SVN:[%d] Release";
 #endif
 
+// ·þÎñÆ÷ÅäÖÃÎÄ¼þ
+static const char* GAMESERVER_FILENAME = "GameServer.ini";	
+
 //////////////////////////////////////////////////////////////////////
 // ½çÃæ³£Á¿
 const int	TEXTWINDOW_SIZE		= 15;			// ÏûÏ¢´°ÐÐÊý
@@ -50,7 +53,6 @@ const int	PER_ONTIMER_LOGIN_ENTER_COUNT			= 8;		// µÇÂ½Ïß³Ì Ã¿¸öÐÄÌø¼ä¸ô8¸öµÇÂ½Ã
 const int	TIMEOUT_LOGIN_THREAD_KICK_DEAD			= 600;		// µÇÂ½Ïß³Ì Íæ¼Ò³¬Ê±Ãë
 
 static const char* SYSTEM_NAME 			= "SYSTEM";			// ¹ã²¥ÏûÏ¢Ê±´ú±í¡°ÏµÍ³¡±µÄÃû×Ö´®
-static const char* CONFIG_FILENAME		= "GameServer.ini";	
 const int	DBSTR_SIZE				= 256;				// Êý¾Ý¿âINI´®³¤¶È
 
 const int	REBUILDLISTENDELAYSEC = 60;

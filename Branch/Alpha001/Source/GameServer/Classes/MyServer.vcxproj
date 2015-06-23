@@ -64,6 +64,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -104,11 +107,15 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Include\CrashRpt.h" />
+    <ClInclude Include="..\..\..\Include\DbgHelp.h" />
     <ClInclude Include="..\..\..\Include\Global.h" />
     <ClInclude Include="..\..\..\Include\GlobalConstDef.h" />
     <ClInclude Include="..\..\..\Include\GlobalEnumDef.h" />
     <ClInclude Include="..\..\..\Include\GlobalFuction.h" />
     <ClInclude Include="..\..\..\Include\GlobalStructDef.h" />
+    <ClInclude Include="..\..\..\Include\IMySocket.h" />
+    <ClInclude Include="..\..\..\Include\Psapi.h" />
     <ClInclude Include="..\share\ActionDef.h" />
     <ClInclude Include="..\share\ConstDef.h" />
     <ClInclude Include="..\share\Define.h" />

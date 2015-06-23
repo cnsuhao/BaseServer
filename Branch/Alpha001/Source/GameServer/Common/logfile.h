@@ -28,6 +28,7 @@ const char SZ_UTF8_FILE_HEADER[3] = {(char)0xEF, (char)0xBB, (char)0xBF};	// utf
 #define		LOGFILE_DIR				"syslog"
 #define		GMLOG_DIR				"gmlog"
 #define		DBLOGFILE_DIR			"dblog"
+
 #define		DBLOGFILE_FILENAME		"dblog/db_execute_sql"
 #define		LOGFILE_FILENAME		"syslog/sys"
 #define		VALUABLESLOG_FILENAME	"gmlog/valueables"
