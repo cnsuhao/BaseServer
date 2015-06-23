@@ -6,7 +6,9 @@
 #include "MyServer.h"
 #include "MyServerDlg.h"
 #include "afxdialogex.h"
+#include "../share/define.h"
 #include "../../../Include/Global.h"
+#include "version.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -115,9 +117,10 @@ BOOL CMyServerDlg::OnInitDialog()
 #endif
 
 	// 设置服务器程序标题
-	//CString strTitle;
-	//strTitle.Format();
-	//SetWindowText();
+	const DWORD dwPID = ::GetCurrentProcessId();
+	CString strTitle;
+	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, dwPID, VER_SERVER_SVN_VISION);
+	SetWindowText(strTitle);
 
 	// 初始化网络服务
 	//CHECKF(PScoketServer->Create(9998));

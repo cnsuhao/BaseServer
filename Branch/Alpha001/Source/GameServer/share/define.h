@@ -41,9 +41,6 @@
 #include <deque>
 #include <stack>
 #include <list>
-#include <set>
-#include <map>
-#include <vector>
 #include <hash_map>
 #include <limits>
 #include <algorithm>

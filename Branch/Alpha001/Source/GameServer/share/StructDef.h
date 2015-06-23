@@ -14,6 +14,10 @@
 #include "./ConstDef.h"
 #include "./EnumDef.h"
 
+#include <set>
+#include <map>
+#include <vector>
+
 ////////////////////////////////////////////////////////////////////////
 // 通用接口
 inline void EmptyFunction(...) {}
