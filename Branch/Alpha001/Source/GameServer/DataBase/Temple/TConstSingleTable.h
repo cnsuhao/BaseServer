@@ -12,7 +12,7 @@
 #endif // _MSC_VER > 1000
 
 #pragma warning(disable:4786)
-#include "./I_mydb.h"
+#include "./../I_mydb.h"
 
 template<class DataEnum>
 class TConstSingleTable

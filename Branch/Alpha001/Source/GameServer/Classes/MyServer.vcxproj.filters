@@ -22,6 +22,9 @@
     <Filter Include="_Share\String">
       <UniqueIdentifier>{2710a237-334f-4984-86a9-f4cbbbbfacb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Version">
+      <UniqueIdentifier>{8c1c8935-483c-41c3-b415-a3e0b41ef98c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyServer.h">
@@ -83,6 +86,12 @@
     </ClInclude>
     <ClInclude Include="..\share\ActionDef.h">
       <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Version</Filter>
+    </ClInclude>
+    <ClInclude Include="version_template.h">
+      <Filter>Version</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -25,6 +25,7 @@
 #include "logfile.h"
 #include "iostream"
 #include "SymEngine.h"
+#include "../../../Include/Global.h"
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////
