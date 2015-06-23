@@ -93,6 +93,18 @@
     <ClInclude Include="version_template.h">
       <Filter>Version</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Include\CrashRpt.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\DbgHelp.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\IMySocket.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Psapi.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">

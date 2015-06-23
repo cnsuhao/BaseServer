@@ -8,33 +8,34 @@
 #include "afxdialogex.h"
 #include "../share/define.h"
 #include "../../../Include/Global.h"
+#include "../Common/IniFile.h"
 #include "version.h"
+#include "../../../Include/CrashRpt.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// 用于应用程序“关于”菜单项的 CAboutDlg 对话框
+// 全局变量保存服务器名和线路
+char g_szServerName[64] = "";
+int  g_nServerGroup		= 0;
+int  g_nServerLine		= 0;
 
+////////////////////////////////////////////////////////////////////////
+// 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 class CAboutDlg : public CDialog
 {
 public:
-	CAboutDlg();
+	CAboutDlg() : CDialog(CAboutDlg::IDD) {}
 
-// 对话框数据
 	enum { IDD = IDD_ABOUTBOX };
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
-// 实现
 protected:
 	DECLARE_MESSAGE_MAP()
 };
-
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
-{
-}
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -44,11 +45,8 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
-
+////////////////////////////////////////////////////////////////////////
 // CMyServerDlg 对话框
-
-
-
 CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMyServerDlg::IDD, pParent)
 {
@@ -74,9 +72,7 @@ BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_UPDATE_TABLE, &CMyServerDlg::OnBnClickedBtnUpdateTable)
 END_MESSAGE_MAP()
 
-
 // CMyServerDlg 消息处理程序
-
 BOOL CMyServerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -117,18 +113,28 @@ BOOL CMyServerDlg::OnInitDialog()
 #endif
 
 	// 设置服务器程序标题
-	const DWORD dwPID = ::GetCurrentProcessId();
 	CString strTitle;
-	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, dwPID, VER_SERVER_SVN_VISION);
+	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
 	SetWindowText(strTitle);
 
+	//srand( (unsigned)time( NULL ) );
+	//RandGet(100, true);
+	//DateTime(m_szStartServer, time(NULL));
+
 	// 初始化网络服务
-	//CHECKF(PScoketServer->Create(9998));
+	if(!CMessagePort::InitPortSet(MSGPORT_SIZE))
+	{
+		MessageBox("Init Message Port Failed!");
+	}
+	else
+	{
+		m_pMsgPort = CMessagePort::GetInterface(MSGPORT_SHELL);
+		m_pMsgPort->Open();
+		m_nState   = SHELLSTATE_INIT;
+	}
 
-	// 读取ini配置文件设定
-
-	// 初始化日志系统
-
+	// 设置定时器。句柄为1，刷新间隔为500MS
+	SetTimer(1, 500, NULL);
 
 	auto plistBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
 	CHECKF(plistBoxLua);
