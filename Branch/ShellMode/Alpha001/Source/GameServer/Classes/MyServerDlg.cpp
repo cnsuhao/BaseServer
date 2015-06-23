@@ -554,10 +554,10 @@ DWORD CMyServerDlg::StartSeiya()
 	}
 	 
 	// 进程信息
-	PROCESS_INFORMATION pi;
 	STARTUPINFO si; 
 	ZeroMemory(&si, sizeof(si));  
 	si.cb = sizeof(si);
+	PROCESS_INFORMATION pi;
 	ZeroMemory(&pi, sizeof(pi)); 
 
 	// 创建守护进程
