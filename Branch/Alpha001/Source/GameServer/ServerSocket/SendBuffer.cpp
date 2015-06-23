@@ -1,8 +1,0 @@
-////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: SendBuffer.cpp
-// Author: ÅíÎÄÆæ(Peng Wenqi)
-// Created: 2012-10-31
-////////////////////////////////////////////////////////////////////////
-#include "SendBuffer.h"
-MYHEAP_IMPLEMENTATION(SendBuffer, s_heap);
