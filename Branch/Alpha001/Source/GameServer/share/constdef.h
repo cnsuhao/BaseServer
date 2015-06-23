@@ -25,9 +25,10 @@ static const char* GAMESERVER_TITLE = "GameServer:[%s] Group:[%d] Line:[%d] PID:
 // 服务器配置文件
 static const char* GAMESERVER_FILENAME = "GameServer.ini";	
 
+// 对话框消息行数
+const int	WINDOW_TEXT_SIZE = 9;
 //////////////////////////////////////////////////////////////////////
-// 界面常量
-const int	TEXTWINDOW_SIZE		= 15;			// 消息窗行数
+
 
 //////////////////////////////////////////////////////////////////////
 // 控制变量

@@ -56,10 +56,13 @@ public:
 protected:
 	IMessagePort*	m_pMsgPort;
 	SHELL_STATUS	m_eState;
+	DWORD			m_dwSeiyaPID;
 
 	void	ProcessMsg();
 	void	PrintText(const char* pszText);
 
+	DWORD	StartSeiya();
+	void	CloseSeiya(DWORD dwPID);
 	void	CloseServer();
 
 	void	InitCtrlLuaView();

@@ -2,10 +2,8 @@
 #include "stdafx.h"
 #include "MyServer.h"
 #include "MyServerDlg.h"
-#include "version.h"
+
 #include "../share/define.h"
-#include "../Common/IniFile.h"
-#include "../../../Include/CrashRpt.h"
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
@@ -60,30 +58,10 @@ CMyServerApp::CMyServerApp()
 // 唯一的一个 CMyServerApp 对象
 CMyServerApp theApp;
 
-BOOL WINAPI MyCrashProc(PEXCEPTION_POINTERS Exception)
-{
-	COleDateTime dt=COleDateTime::GetCurrentTime();
-	CString strCrashFileName;
-	CString temp=dt.Format("GameServer_%Y年%m月%d日%H时%M分%S秒");
-	strCrashFileName.Format("./dump/%s_%lu", temp, ::GetTickCount());
-
-	CString strDumpFile		= strCrashFileName + ".dmp";
-	CString strReportFile	= strCrashFileName + ".xml";
-
-	// 生成错误时系统快照
-	//	GenerateCrashRpt(Exception, strReportFile, CRASHRPT_ERROR|CRASHRPT_SYSTEM|CRASHRPT_PROCESS);
-	GenerateCrashRpt(Exception, strReportFile, CRASHRPT_ALL);
-
-	// 生成minidump.dmp，这个可以用vc或者windbg打开分析
-	GenerateMiniDump(Exception, strDumpFile);
-
-	return EXCEPTION_EXECUTE_HANDLER;
-}
-
 // CMyServerApp 初始化
 BOOL CMyServerApp::InitInstance()
 {
-	// 初始化服务器配置文件
+	// 检测服务器配置文件
 	if (!::IsExistFile(GAMESERVER_FILENAME))
 	{
 #ifdef _DEBUG
@@ -93,45 +71,6 @@ BOOL CMyServerApp::InitInstance()
 #endif
 		return FALSE;
 	}
-
-	// 初始化服务器名和线路号
-	CIniFile ini(GAMESERVER_FILENAME, "System" ); 
-	ini.GetString(g_szServerName, "ServerName", sizeof(g_szServerName));
-	g_nServerGroup = ini.GetInt("ServerGroup");
-	g_nServerLine  = ini.GetInt("ServerLine");
-
-	// 初始化日志系统
-	CreateDirectory(LOGFILE_DIR, NULL);
-	//CreateDirectory(DBLOGFILE_DIR, NULL);
-	//CreateDirectory(GMLOG_DIR, NULL);
-
-	CString strTitle;
-	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
-	InitLog(strTitle, time(NULL));
-
-	wchar_t szUnicodeTitle[1024];
-	char szUtf8Title[1024] = "";
-	CHECKB(::MyANSIToUnicode(strTitle.GetBuffer(0), szUnicodeTitle, sizeof(szUnicodeTitle) / sizeof(szUnicodeTitle[0])));
-	CHECKB(::MyUnicodeToUTF8(szUnicodeTitle, szUtf8Title, sizeof(szUtf8Title) / sizeof(szUtf8Title[0])));
-
-	::LogSave(	"\n\n===================================================================================================\n"
-				"=== %s \n"
-				"===================================================================================================\t\t\t"
-				, szUtf8Title);
-
-	// 初始化打印堆栈系统
-	::InitSymEngine();
-
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	//  of your final executable, you should remove from the following
-	//  the specific initialization routines you do not need.
-
-	// --------------------------------------------------------------------
-	//	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
-
-	// 初始化CrashRpt.dll异常捕获库
-	InitializeCrashRptEx(MyCrashProc);
 
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
