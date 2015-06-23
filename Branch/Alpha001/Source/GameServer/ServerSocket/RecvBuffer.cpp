@@ -1,8 +1,0 @@
-////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: RecvBuffer.cpp
-// Author: ÅíÎÄÆæ(Peng Wenqi)
-// Created: 2012-10-31
-////////////////////////////////////////////////////////////////////////
-#include "RecvBuffer.h"
-MYHEAP_IMPLEMENTATION(RecvBuffer, s_heap);
