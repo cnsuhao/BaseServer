@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: Global.h
-// Author: 彭文奇(Peng Wenqi)
-// Created: 2012-11-19
+// Import : 全局文件。包含文件。
+// Moudle : Global.h
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
 ////////////////////////////////////////////////////////////////////////
-#ifndef _GLOBAL_HEADER_
-#define _GLOBAL_HEADER_
+#ifndef _GLOBAL_H_
+#define _GLOBAL_H_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -33,4 +33,4 @@
 // 编译提示宏使用方法
 // #pragma message(PRAGMAMSG(编译提示宏示例))
 
-#endif // end of _GLOBAL_HEADER_
+#endif // end of _GLOBAL_H_

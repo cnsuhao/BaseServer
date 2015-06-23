@@ -1,16 +1,17 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2014, WuHan ChuangYou, All Rights Reserved
-// Moudle: protocol.h
-// Author: 彭文奇(Peng Wenqi)
-// Created: 2014-12-20
+// Import : 共享文件。消息协议协定文件。
+// Moudle : protocol.h
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
 ////////////////////////////////////////////////////////////////////////
-#ifndef	PROTOCOL_H
-#define	PROTOCOL_H
+#ifndef	_SHARE_PROTOCOL_H_
+#define	_SHARE_PROTOCOL_H_
 
 #include <string.h>
 #include "define.h"
 #include <vector>
 
+// 各线程处理的消息类型
 enum THREAD_PACKET_TYPE
 {
 		//////////////////////////////////////////////////////////////////////
@@ -80,6 +81,57 @@ enum THREAD_PACKET_TYPE
 		SHELL_AUTO_UPDATE_TABLE			= SHELLTHREAD_BASE + 3,				// 自动更新表
 };
 
+//////////////////////////////////////////////////////////////////////
+// C/S 协议的客户端部分	
+
+// 该部分常量、定义仅由以下两个函数使用
+const int	PROTOCOL_MSG_HEADSIZE		= 4;
+struct CProtocolMsgStruct{
+	unsigned short	nMsgSize;
+	unsigned short	idPacket;
+	char			pMsg[1];
+};
+
+
+// 分解消息包
+// return: netpacket size
+inline int	SplitPacket(char* pBuf, int nBufLen, OBJID* pidPacket, char** ppMsg, int* pMsgSize)
+{
+	if(nBufLen > PROTOCOL_MSG_HEADSIZE)
+	{
+		CProtocolMsgStruct*	pMsgPtr = (CProtocolMsgStruct*)pBuf;
+		if(pMsgPtr->nMsgSize <= nBufLen)
+		{
+			if(pMsgPtr->nMsgSize < 4 || pMsgPtr->nMsgSize > MAX_PACKETSIZE)
+				return 0;
+
+			*pidPacket	= pMsgPtr->idPacket;
+			*pMsgSize	= pMsgPtr->nMsgSize - PROTOCOL_MSG_HEADSIZE;
+			*ppMsg		= pMsgPtr->pMsg;
+			return pMsgPtr->nMsgSize;
+		}
+	}
+	return 0;
+}
+
+// 合成消息包
+// return: netpacket size
+inline int	UnitePacket(char* pBuf, int nBufLen, OBJID idPacket, const char* pMsg, int nMsgSize, unsigned int& nMsgType)
+{
+	if(nBufLen >= nMsgSize + PROTOCOL_MSG_HEADSIZE)
+	{
+		CProtocolMsgStruct*	pMsgPtr = (CProtocolMsgStruct*)pBuf;
+		pMsgPtr->idPacket		= (unsigned short)idPacket;
+		nMsgType = pMsgPtr->idPacket;
+		pMsgPtr->nMsgSize		= nMsgSize + PROTOCOL_MSG_HEADSIZE;
+		memcpy(pMsgPtr->pMsg,	pMsg, (size_t)nMsgSize);
+
+		return pMsgPtr->nMsgSize;
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
 // 收发client消息
 struct CLIENTMSG_PACKET			
 {
@@ -132,55 +184,5 @@ struct ST_PAYLOG
 	I64 i64PaylogID;
 };
 
-//////////////////////////////////////////////////////////////////////
-// C/S 协议的客户端部分	
 
-// 该部分常量、定义仅由以下两个函数使用
-const int	PROTOCOL_MSG_HEADSIZE		= 4;
-struct CProtocolMsgStruct{
-	unsigned short	nMsgSize;
-	unsigned short	idPacket;
-	char			pMsg[1];
-};
-
-
-// 分解消息包
-// return: netpacket size
-inline int	SplitPacket(char* pBuf, int nBufLen, OBJID* pidPacket, char** ppMsg, int* pMsgSize)
-{
-	if(nBufLen > PROTOCOL_MSG_HEADSIZE)
-	{
-		CProtocolMsgStruct*	pMsgPtr = (CProtocolMsgStruct*)pBuf;
-		if(pMsgPtr->nMsgSize <= nBufLen)
-		{
-			if(pMsgPtr->nMsgSize < 4 || pMsgPtr->nMsgSize > MAX_PACKETSIZE)
-				return 0;
-
-			*pidPacket	= pMsgPtr->idPacket;
-			*pMsgSize	= pMsgPtr->nMsgSize - PROTOCOL_MSG_HEADSIZE;
-			*ppMsg		= pMsgPtr->pMsg;
-			return pMsgPtr->nMsgSize;
-		}
-	}
-	return 0;
-}
-
-// 合成消息包
-// return: netpacket size
-inline int	UnitePacket(char* pBuf, int nBufLen, OBJID idPacket, const char* pMsg, int nMsgSize, unsigned int& nMsgType)
-{
-	if(nBufLen >= nMsgSize + PROTOCOL_MSG_HEADSIZE)
-	{
-		CProtocolMsgStruct*	pMsgPtr = (CProtocolMsgStruct*)pBuf;
-		pMsgPtr->idPacket		= (unsigned short)idPacket;
-		nMsgType = pMsgPtr->idPacket;
-		pMsgPtr->nMsgSize		= nMsgSize + PROTOCOL_MSG_HEADSIZE;
-		memcpy(pMsgPtr->pMsg,	pMsg, (size_t)nMsgSize);
-
-		return pMsgPtr->nMsgSize;
-	}
-	return 0;
-}
-
-
-#endif // PROTOCOL_H
+#endif // _SHARE_PROTOCOL_H_

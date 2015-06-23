@@ -109,12 +109,12 @@
     <ClInclude Include="..\..\..\Include\GlobalEnumDef.h" />
     <ClInclude Include="..\..\..\Include\GlobalFuction.h" />
     <ClInclude Include="..\..\..\Include\GlobalStructDef.h" />
-    <ClInclude Include="..\share\constdef.h" />
-    <ClInclude Include="..\share\define.h" />
-    <ClInclude Include="..\share\DefineActionID.h" />
+    <ClInclude Include="..\share\ActionDef.h" />
+    <ClInclude Include="..\share\ConstDef.h" />
+    <ClInclude Include="..\share\Define.h" />
     <ClInclude Include="..\share\EnumDef.h" />
     <ClInclude Include="..\share\I_Shell.h" />
-    <ClInclude Include="..\share\protocol.h" />
+    <ClInclude Include="..\share\Protocol.h" />
     <ClInclude Include="..\share\String\Cn_DDRes.h" />
     <ClInclude Include="..\share\String\En_DDRes.h" />
     <ClInclude Include="..\share\String\MyDDString.h" />

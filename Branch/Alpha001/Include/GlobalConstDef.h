@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: GlobalConstDef.h
-// Author: 彭文奇(Peng Wenqi)
-// Created: 2012-11-19
+// Import : 全局文件。常量定义。
+// Moudle : GlobalConstDef.h
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
 ////////////////////////////////////////////////////////////////////////
-#ifndef _GLOBAL_CONSTDEF_HEADER_
-#define _GLOBAL_CONSTDEF_HEADER_
+#ifndef _GLOBAL_CONSTDEF_H_
+#define _GLOBAL_CONSTDEF_H_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -107,17 +107,6 @@ static const char* TALK_SYSTEM_NAME = "System";
 
 const int MAX_USER_LEV = 100;							// 玩家最高等级
 
-const int SYNDICATE_MEMBER_VAILD_SECOND = 8 * 60 * 60;	// 帮派成员列表有效时间
-
-const int MAIL_EXIST_TIME		= 20 * 24 * 60 * 60;	// 邮件保存时间	20天
-const int MAX_FIGHT_POKER_NUM	= 5;					// 最大出战卡牌数量
-
-const int GOOSE_TOWER_MAX_FLOOR = 15;					// 大雁塔最多层数
-const int GOOSE_TOWER_MAX_PAGE_SIXE = 6;				// 大雁塔每页最多层数
-const int GOOSE_TOWER_LEVEL_LIMIT = 20;					// 进入大雁塔的等级限制
-
-const int MINE_MAX_MEMBER_COUNT = 3;					// 矿洞最大成员数量
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // 活动常量 start
 const int TIME_OF_DAY_LENGTH	= 1000000;				// 每天时间长度
@@ -136,79 +125,4 @@ const int		ALL_SERVER_GROUP_TYPE	= 99999;				//  不区分服务器组
 const int DESIGN_VAS_LIMIT = 5000;	// 策划单笔元宝操作限额
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// 排行榜使用的常数定义 start
-const int		MAX_RANK_COUNT				= 50;				//  上榜名次
-const int		MAX_RECORD_RANK_COUNT		= 10000;			//  数据库有记录的名次
-const int		MAX_ARENA_RECORD_RANK_COUNT	= 10000;			//  竞技场数据库有记录的名次
-const int		OUT_OF_TOPLIST_RANK			= 999999;			//  未上榜
-const int		MASK_TOPLIST_DAILY			= 9999;				// 每日榜更新时间记录掩码
-
-//////////////////////////////////////////////////////////////////////////
-// 帮派
-const int MAX_SYNDICATE_MEMBER_AMOUNT	= 50;				// 每个帮派50人
-const int MAX_SYNDICATE_ELDER_AMOUNT	= 5;				// 每个帮派5个长老
-const int MAX_APPLY_SYNDICATE_AMOUNT	= 3;				// 最多向3个帮派发出加入申请
-const int APPLY_SYNDICATE_VAILD_SECOND	= 8 * 60 * 60;		// 申请加入帮派有效时间
-const int QUIT_SYNDICATE_CD_SECOND		= 1 * 60 * 60;		// 退出帮派后CD时间
-const int REJOIN_SYNIDCATE_CD_SECOND	= 2 * 24 * 60 * 60;	// 重新进入原帮派CD时间
-const int JOIN_SYNDICATE_3TIMES_SECOND	= 7 * 24 * 60 * 60;	// 多长时间内可以加入3次帮派
-const int LEADER_LOGOUT_TIME_BE_CHANGE	= 3 * 24 * 60 * 60;	// 3天不上线就被换掉
-const int LOG_IN_OUT_SYNDICATE_TIME		= 7 * 24 * 60 * 60;	// 记录进出帮派时间有效时间
-const int MAX_SYNDICATE_ANNOUNCE_LEN	= 76;				// 最大帮派公告长度
-const int QUERY_SYNDICATE_LIST_COUNT	= 20;				// 查询帮派时返回列表中帮派数量上限
-const int SYN_WORSHIP_TOTAL_LIMIT		= 1000000;			// 帮派膜拜奖励累计和上限
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// 竞技场使用的常数定义 start
-const int		VIDEO_PATH_SIZE			= 64;				// 战斗录像保存路径长度
-const int		ARENA_VIDEO_SAVE_COUNT	= 10;				// 竞技场录像最多保留条数 
-const int		ARENA_NO_CD				= 88888888;			// 竞技场无CD
-const int		ARENA_BATTLE_TYPE		= 11111;			// 单人竞技场战斗type
-const int		MULTI_ARENA_BATTLE_TYPE	= 22222;			// 多人竞技场战斗type
-const int		ARENA_DEFAULT_MAX_RANK	= 5000;				// 竞技场默认最高排名
-const int		ARENA_AWARD_BASE		= 140;				// 竞技场排名更新奖励系数
-const int		ARENA_AWARD_PER_SECOND	= 10;				// 每秒种发放竞技场排名奖励的个数
-const int		ARENA_AWARD_LAST_RANK	= 999999;			// 竞技场最后一名默认设置
-const int		ARENA_AI_COUNT			= 1000;				// 竞技场AI数量 
-const int		ARENA_MULTI_OPEN_COUNT	= 15;				// 多队竞技场开启需要卡牌数
-
-// 竞技场使用的常数定义 end
-/////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// 成就常量 
-const int ACHIEVEMENT_BASE_VALUE		= 10000;			// 成就id的基础值
-const int ACHIEVEMENT_BRANCH_FINISHED	= 99999999;			// 分支成就全部完成
-const int ACHIEVEMENT_NOT_OPENED		= 99999998;			// 成就未开启
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// 好友系统的常数定义 start
-const int SIGNATURE_MAX_SIZE			= 192;				// 个性签名长度(字节) 
-const int MAX_FRIEND_REQUEST_LOAD		= 50;				// 玩家登陆加载的申请好友最大个数
-const int MAX_FRIEND_PUSH_COUNT			= 20;				// 好友最多推送个数
-const int MAX_FRIEND_REQUEST_COUNT		= 20;				// 好友请求保存个数上限
-const int FRIEND_MATCHING_RANGE_LEV1	= 1;				// 好友匹配第一次筛选等级范围
-const int FRIEND_MATCHING_RANGE_LEV2	= 5;				// 好友匹配第二次筛选等级范围
-const int FRIEND_ONLINE					= 1;				// 好友在线
-const int FRIEND_GIFT_GIVEN				= 2;				// 有礼物
-const int FRIEND_GIFT_GOT				= 1;				// 礼物已领取
-const int FRIEND_GIFT_NONE				= 0;				// 没有礼物
-const int FRIEND_REQUESTED				= -1;				// 已经申请好友
-const int FRIEND_STRANGER				= 0;				// 陌生人
-const int FRIEND_REQUESTER				= 1;				// 申请加好友者
-//const int FRIEND_FRIEND				= 2;				// 好友
-const int FRIEND_MAX_COUNT				= 50;				// 好友上限
-const int FRIEND_PUSH_COUNT				= 10;				// 好友推送数量
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// 南天门斗法系统常量
-const int CONST_NTM_FIGHT_BATTER_TYPE				= 33333;	// 战斗类型
-const int CONST_NTM_FIGHT_FIGHT_PRE_TIME			= 15;		// 战斗准备时间
-const int CONST_NTM_FIGHT_PK_DEFEND_TIME			= 10;		// PK保护时间
-const int CONST_NTM_FIGHT_CONNECT_SEFEND_TIME		= 30;		// 重连保护时间
-const int CONST_NTM_FIGHT_ROOM_MIN_USERNUM			= 5;		// 房间最少人数
-const int CONST_NTM_FIGHT_RANK_FIRST_AWARD_RULE_ID	= 11;		// 第一名奖励规则ID
-const int CONST_NTM_FIGHT_RANK_SECOND_AWARD_RULE_ID	= 12;		// 第二名奖励规则ID
-const int CONST_NTM_FIGHT_RANK_THREE_AWARD_RULE_ID	= 13;		// 第三名奖励规则ID
-/////////////////////////////////////////////////////////////////////////////////////////
-#endif // end of _GLOBAL_CONSTDEF_HEADER_
+#endif // end of _GLOBAL_CONSTDEF_H_

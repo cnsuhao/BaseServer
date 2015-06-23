@@ -54,19 +54,7 @@
     <ClInclude Include="..\..\..\Include\GlobalStructDef.h">
       <Filter>_Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\share\constdef.h">
-      <Filter>_Share</Filter>
-    </ClInclude>
-    <ClInclude Include="..\share\define.h">
-      <Filter>_Share</Filter>
-    </ClInclude>
-    <ClInclude Include="..\share\DefineActionID.h">
-      <Filter>_Share</Filter>
-    </ClInclude>
     <ClInclude Include="..\share\I_Shell.h">
-      <Filter>_Share</Filter>
-    </ClInclude>
-    <ClInclude Include="..\share\protocol.h">
       <Filter>_Share</Filter>
     </ClInclude>
     <ClInclude Include="..\share\StructDef.h">
@@ -83,6 +71,18 @@
     </ClInclude>
     <ClInclude Include="..\share\String\MyDDString.h">
       <Filter>_Share\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\Define.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\Protocol.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\ConstDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\ActionDef.h">
+      <Filter>_Share</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

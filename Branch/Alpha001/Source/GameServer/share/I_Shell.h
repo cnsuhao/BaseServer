@@ -1,13 +1,12 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2014, WuHan ChuangYou, All Rights Reserved
-// Moudle: I_Shell.h 对话框接口文件
-// Author: 彭文奇(Peng Wenqi)
-// Created: 2014-10-30
+// Import : 共享文件。对话框接口文件。
+// Moudle : I_Shell.h
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
 ////////////////////////////////////////////////////////////////////////
-#ifndef	INTERFACE_SHELL_HEAD_FILE
-#define	INTERFACE_SHELL_HEAD_FILE
+#ifndef	_SHARE_I_SHELL_H_
+#define	_SHARE_I_SHELL_H_
 
-/////////////////////////////////////////////////////////////////////////////
 class IMessagePort;
 
 // 网络核心
@@ -88,4 +87,4 @@ public:
 	virtual void	PrintText		(const char* pszText)								PURE_VIRTUAL_FUNCTION;
 	virtual void	ProcessAIMsg	(void)												PURE_VIRTUAL_FUNCTION;
 };
-#endif // INTERFACE_SHELL_HEAD_FILE
+#endif // _SHARE_I_SHELL_H_

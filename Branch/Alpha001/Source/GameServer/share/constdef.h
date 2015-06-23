@@ -81,46 +81,4 @@ const int MONEY_STORE_THRESHOLD = 999999;	// 货币默认入库阀值
 const int SYN_LOG_MAX_COUNT		= 300;		// 帮派日志最大条数
 const int SYN_LOG_MAX_PAGE_SIZE = 15;		// 帮派日志一页的最大条数
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// 掩码ID段定义，10000以前表示按位掩码，10000以后表示计数掩码
-const int CONST_BIT_MASKID_INTERVAL			= 5000;			// 按位掩码ID区间	服务器使用段(1 - 5000)		策划使用段(5000 - 10000)
-const int CONST_COMPUTATION_MASKID_BEGIN	= 10000;		// 计数掩码ID开始
-const int CONST_COMPUTATION_MASKID_INTERVAL	= 20000;		// 计数掩码ID区间	服务器使用段(10000 - 20000）策划使用段(20000以后)
-const int CONST_DEFULT_MASK_ENDTIME			= 2000000000;	// 掩码默认结束时间(2033年5月18日 11:33:20)
-
-//////////////////////////////////////////////////////////////////////////
-const int MAX_PAY_CONFIG_ID = 30;		// 配置充值最大id
-const int SERVER_PAY_CONFIG_ID = 999;	// 内部充值配置id
-
-const int CONST_MAX_WARROAD_RECORD_NUM	= 5;				// 战役记录最大数量
-const int CONST_MAX_WARROAD_STAR		= 3;				// 战役最大星级
-const int CONST_MAX_WARROAD_AWARD_APPLY_NUM		= 1;		// 团队战役战利品最大申请数
-const int CONST_MAX_WARROAD_AWARD_HISTORY_NUM	= 40;		// 团队战役战利品历史记录数目
-const int CONST_MAX_WARROAD_SERVER_DPS_NUM		= 10;		// 团队战役章节全服排名返回数
-
-const int CONST_WARROAD_ERROR			= 99999;			// 战役错误码
-
-// 好友邀请
-const int INVITE_CODE_MAX_LEN			= 12;				// 邀请码的最大长度
-const int INVITE_VAS_BASE				= 100;				// 可领取的最小元宝返利
-const int LOGIN_AWARD_MAX_POWER			= 100;				// 最大可领取的体力值
-
-//////////////////////////////////////////////////////////////////////////
-// 竞技场常量
-const int ARENA_MAX_TARGET_COUNT		= 3;				// 竞技场最大对手个数
-
-//////////////////////////////////////////////////////////////////////////
-// 公会领地战
-const int TERRITORY_MAX_MONSTER_TROOPS_ID			= 1000;				// 默认防守部队最大部队番号
-const int TERRITORY_BATTLE_TYPE						= 55555;			// 公会战战斗type
-
-const int VIP_VALUE_UP_LIMIT						= 9999;				// VIP值上限
-
-//////////////////////////////////////////////////////////////////////////
-const int MAX_ITEM_HINT_TEXT						= 256;				// 物品提示内容字符数
-const int MAX_ITEM_HINT_COUNT						= 50;				// 物品提示信息最大数量
-
-const int CONST_BUFF_DEFAULT_KEEP_TIME				= 999999;			// buff默认持续时间(永久)
-const int CONST_SYN_BUFF_VALID_TIME					= 24 * 60 * 60;		// 帮派buff 提供和享受最小入会时间
-
 #endif // end of _MAPGROUP_SHARE_CONST_DEF_H_
