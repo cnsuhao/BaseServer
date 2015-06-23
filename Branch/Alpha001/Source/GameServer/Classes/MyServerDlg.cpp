@@ -48,11 +48,32 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 ////////////////////////////////////////////////////////////////////////
+BOOL WINAPI MyCrashProc(PEXCEPTION_POINTERS Exception)
+{
+	COleDateTime dt=COleDateTime::GetCurrentTime();
+	CString strCrashFileName;
+	CString temp=dt.Format("GameServer_%Y年%m月%d日%H时%M分%S秒");
+	strCrashFileName.Format("./dump/%s_%lu", temp, ::GetTickCount());
+
+	CString strDumpFile		= strCrashFileName + ".dmp";
+	CString strReportFile	= strCrashFileName + ".xml";
+
+	// 生成错误时系统快照
+	//	GenerateCrashRpt(Exception, strReportFile, CRASHRPT_ERROR|CRASHRPT_SYSTEM|CRASHRPT_PROCESS);
+	GenerateCrashRpt(Exception, strReportFile, CRASHRPT_ALL);
+
+	// 生成minidump.dmp，这个可以用vc或者windbg打开分析
+	GenerateMiniDump(Exception, strDumpFile);
+
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
 // CMyServerDlg 对话框
 CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMyServerDlg::IDD, pParent)
 	, m_pMsgPort(NULL)
 	, m_eState(SHELL_STATUS_FAILD)
+	, m_nTextLines(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -122,13 +143,49 @@ BOOL CMyServerDlg::OnInitDialog()
 	//_CrtSetBreakAlloc(3753);
 #endif
 
+	// 初始化服务器名和线路号
+	CIniFile ini(GAMESERVER_FILENAME, "System" ); 
+	ini.GetString(g_szServerName, "ServerName", sizeof(g_szServerName));
+	g_nServerGroup = ini.GetInt("ServerGroup");
+	g_nServerLine  = ini.GetInt("ServerLine");
+
 	// 设置服务器程序标题
 	CString strTitle;
 	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
 	SetWindowText(strTitle);
 
+	// 初始化日志系统
+	CreateDirectory(LOGFILE_DIR, NULL);
+	//CreateDirectory(DBLOGFILE_DIR, NULL);
+	//CreateDirectory(GMLOG_DIR, NULL);
+	InitLog(strTitle, time(NULL));
+
+	wchar_t szUnicodeTitle[1024];
+	char szUtf8Title[1024] = "";
+	CHECKB(::MyANSIToUnicode(strTitle.GetBuffer(0), szUnicodeTitle, sizeof(szUnicodeTitle) / sizeof(szUnicodeTitle[0])));
+	CHECKB(::MyUnicodeToUTF8(szUnicodeTitle, szUtf8Title, sizeof(szUtf8Title) / sizeof(szUtf8Title[0])));
+
+	::LogSave(	"\n\n===================================================================================================\n"
+		"=== %s \n"
+		"===================================================================================================\t\t\t"
+		, szUtf8Title);
+
+	// 初始化打印堆栈系统
+	::InitSymEngine();
+
+	// Standard initialization
+	// If you are not using these features and wish to reduce the size
+	//  of your final executable, you should remove from the following
+	//  the specific initialization routines you do not need.
+
+	// --------------------------------------------------------------------
+	//	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
+
+	// 初始化CrashRpt.dll异常捕获库
+	InitializeCrashRptEx(MyCrashProc);
+
 	// 设置服务器权限和SVN版本信息
-	CIniFile ini(GAMESERVER_FILENAME, "Service" ); 
+	ini.SetSection("Service" ); 
 	char szManagerName[32] = "";
 	ini.GetString(szManagerName, "Manager", sizeof(szManagerName));
 	char szManagerCall[16] = "";
@@ -142,7 +199,7 @@ BOOL CMyServerDlg::OnInitDialog()
 	//RandGet(100, true);
 	//DateTime(m_szStartServer, time(NULL));
 
-	// 初始化网络服务
+	// 初始化对话框线程管道
 	if(!CMessagePort::InitPortSet(MSGPORT_SIZE))
 	{
 		MessageBox("Init Message Port Failed!");
@@ -156,7 +213,6 @@ BOOL CMyServerDlg::OnInitDialog()
 
 	// 设置定时器。句柄为1，刷新间隔为500MS
 	SetTimer(1, 500, NULL);
-
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -235,6 +291,40 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 			}
 			break;
 		case SHELL_STATUS_INIT:
+			{
+				// 若初始化失败直接退出
+				m_eState = SHELL_STATUS_CLOSING;
+
+				// 1.启动日志线程
+				this->PrintText("1. Start Log thread...");
+				CLogThread::GetInstance()->StartLogServe();	
+
+				// 2.启动堆栈引擎
+				this->PrintText("2. Start SymEngine");
+				STACK_TRACE_START;
+
+				// 3.启动网络线程
+				this->PrintText("3. Start Socket Thread...");
+
+				// 4.初始化数据库
+				this->PrintText("4. Init DataBase...");
+
+				// 5.启动登陆线程
+				this->PrintText("5. Start Login Thread...");
+
+				// 6.启动游戏线程
+				this->PrintText("6. Start Game Thread...");
+
+				// 7.启动关系线程
+				this->PrintText("7. Start Relation Thread...");
+
+				// 8.启动守护进程
+				this->PrintText("8. Start Seiya...");
+				m_dwSeiyaPID = StartSeiya();
+
+				PrintText("All thread start OK !");
+				m_eState = SHELL_STATUS_RUNNING;
+			}
 			break;
 		case SHELL_STATUS_RUNNING:
 			break;
@@ -242,11 +332,37 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 			break;
 		case SHELL_STATUS_CLOSING:
 			{
+				// 服务器开始关闭
+				this->PrintText("Server closing...");
 
-				PrintText("ShutdownSeiya...");
-				//ShutdownSeiya(m_dwPID);
+				// 关闭日志线程
+				if (CLogThread::GetInstance()->CloseLogServe())
+				{
+					this->PrintText("Close Log Thread OK!");
+				}
+				else
+				{
+					this->PrintText("Close Log Thread failed!");
+				}
 
-				PrintText("Server is over, close all  after 3 second!");
+				// 关闭守护进程
+				this->PrintText("Close Seiya...");
+				this->CloseSeiya(m_dwSeiyaPID);
+
+				// 关闭网络线程
+				this->PrintText("Close Socket Thread OK!");
+
+				// 关闭关系线程
+				this->PrintText("Close Relation Thread OK!");
+
+				// 关闭游戏线程
+				this->PrintText("Close Game Thread OK!");
+
+				// 关闭登陆线程
+				this->PrintText("Close Login Thread OK!");
+
+
+				this->PrintText("Server is over, close all after 3 second!");
 				this->ProcessMsg();
 
 				m_pMsgPort->Close();
@@ -258,11 +374,20 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 			break;
 		case SHELL_STATUS_END:
 			{
-				KillTimer(1);			// 关闭ONTIMER
-				//CloseDatabaseServer();// 关闭数据库
-				Sleep(3000);			// 延迟3秒
-				::ReleaseSymEngine();	// 析构打印堆栈系统
-				CDialog::OnOK();		// 退出程序
+				// 关闭ONTIMER
+				KillTimer(1);
+
+				// 关闭数据库
+				//CloseDatabaseServer();
+
+				// 延迟3秒
+				Sleep(3000);
+
+				// 析构打印堆栈系统
+				::ReleaseSymEngine();
+				
+				// 退出程序
+				CDialog::OnOK();
 			}
 			break;
 		default:
@@ -287,18 +412,18 @@ void CMyServerDlg::ProcessMsg()
 		{
 		case SHELL_PRINTTEXT:
 			{
-				PrintText((char*)buf);
+				this->PrintText((char*)buf);
 			}
 			break;
 		case SHELL_REMOTE_CLOSE:
 			{
-				PrintText("Remote Close");
+				this->PrintText("Remote Close");
 				this->CloseServer();
 			}
 			break;
 		default:
 			tolog2("CMsgServerDlg::ProcessMsg unkonw idPacket[%u]", cStatus.m_nPacket);
-			PrintText("ERROR: CMsgServerDlg::Process() ProcessMsg()");
+			this->PrintText("ERROR: CMsgServerDlg::Process() ProcessMsg()");
 			break;
 		}
 	}
@@ -309,7 +434,7 @@ void CMyServerDlg::PrintText(const char* pszText)
 {
 	DEBUG_TRY;
 	CHECK(pszText);
-	if(m_nTextLines >= TEXTWINDOW_SIZE)
+	if(m_nTextLines >= WINDOW_TEXT_SIZE)
 	{
 		int nPos = m_sText.Find("\n", 0);
 		if(nPos != -1)
@@ -336,6 +461,97 @@ void CMyServerDlg::PrintText(const char* pszText)
 	::LogSave("SHELL: %s", pszText);
 #endif 
 	DEBUG_CATCH("CMsgServerDlg::PrintText");
+}
+
+DWORD CMyServerDlg::StartSeiya()
+{
+#ifndef SEIYA_RUN
+	return 0;
+#endif
+	const DWORD MAX_FILE_PATH_LEN = 1024;
+	const DWORD MAX_FILE_NAME_LEN = 256;
+	const char SEIYA_NAME[] = "Seiya.exe";
+
+	char CreateOrder[MAX_FILE_PATH_LEN]		= {0};
+	char CurFloder[MAX_FILE_PATH_LEN]		= {0};
+	char exePath[MAX_FILE_PATH_LEN]			= {0};
+	char szFile[MAX_FILE_NAME_LEN]			= {0};
+
+	// 获取当本程序的文件名
+	::GetModuleFileName(NULL,exePath,MAX_FILE_PATH_LEN);
+	for(int nIndex = strlen(exePath) - 1; nIndex >= 0; nIndex--)
+	{
+		if (exePath[nIndex] == '\\' || exePath[nIndex] == '/')
+		{
+			if ((strlen(exePath) - nIndex - 1) > MAX_FILE_NAME_LEN)		// 如果文件名超过了最大文件名长度
+			{
+				LOGWARNING("StartupSeiya::the FileName is too Long [%d]", strlen(exePath) - nIndex - 1);
+				return 0;
+			}
+			strcpy(szFile, exePath + nIndex + 1);
+			break;
+		}
+	} 
+
+	// 获取进程启动指令
+	::GetCurrentDirectory(MAX_FILE_PATH_LEN,CurFloder);
+	int nFloderLen = strlen(CurFloder);	
+	if (nFloderLen <= 0)	// 获取当前路径异常
+	{
+		LOGWARNING("StartupSeiya::Get Work Path is Failed");
+		return 0;
+	}
+	if (CurFloder[nFloderLen - 1] == '/' || CurFloder[nFloderLen - 1] == '\\')
+	{
+		sprintf(CreateOrder,"%s%s %s %d",CurFloder, SEIYA_NAME, szFile, ::GetCurrentProcessId()); 	// 盘符根目录
+	}
+	else
+	{
+		sprintf(CreateOrder,"%s\\%s %s %d",CurFloder, SEIYA_NAME, szFile, ::GetCurrentProcessId());
+	}
+
+	STARTUPINFO si; 
+	PROCESS_INFORMATION pi; //进程信息
+	ZeroMemory(&si, sizeof(si));  
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi)); 
+
+	if(CreateProcess( NULL,CreateOrder,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))	// 创建守护进程
+	{  
+		// 脱离父进程成为独立进程
+		DWORD dwPID = pi.dwProcessId;
+		CloseHandle(pi.hThread);	
+		CloseHandle(pi.hProcess);
+		CString szOldTitle;
+		CString szNewTitle;
+		GetWindowText(szOldTitle);
+		szNewTitle.Format("%s Seiya[%d]", szOldTitle.GetBuffer(), dwPID);
+		SetWindowText(szNewTitle);
+		return dwPID;
+	}
+	LOGWARNING("StartupSeiya::Create Seiya Process Failed");
+	return 0;
+}
+
+void CMyServerDlg::CloseSeiya(DWORD dwPID)
+{
+#ifndef SEIYA_RUN
+	return;
+#endif
+	if (dwPID == 0)
+	{
+		LOGWARNING("ShutdownSeiya::the Seiya is not Exist");
+		return;
+	}
+	HANDLE   hProcess; 
+	hProcess=OpenProcess(PROCESS_ALL_ACCESS,FALSE,dwPID); 
+	if (hProcess == NULL)
+	{
+		DWORD dwErrNum = ::GetLastError();
+		LOGWARNING("ShutdownSeiya::the Seiya[%d] OpenProcess is Failed[%d]",dwPID, dwErrNum);
+		return;
+	}
+	::TerminateProcess(hProcess,0); //关闭进程
 }
 
 void CMyServerDlg::CloseServer()
