@@ -74,6 +74,8 @@ CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 	, m_pMsgPort(NULL)
 	, m_eState(SHELL_STATUS_FAILD)
 	, m_nTextLines(0)
+	, m_sShellState(_T(""))
+	, m_sText(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -195,10 +197,6 @@ BOOL CMyServerDlg::OnInitDialog()
 	strCopy.Format("Url:%s !!&Manager:%s - Call:%s", VER_SERVER_SVN_URL, szManagerName, szManagerCall);
 	m_staticSvn.SetWindowText(strCopy);
 
-	//srand( (unsigned)time( NULL ) );
-	//RandGet(100, true);
-	//DateTime(m_szStartServer, time(NULL));
-
 	// 初始化对话框线程管道
 	if(!CMessagePort::InitPortSet(MSGPORT_SIZE))
 	{
@@ -210,6 +208,11 @@ BOOL CMyServerDlg::OnInitDialog()
 		m_pMsgPort->Open();
 		m_eState   = SHELL_STATUS_INIT;
 	}
+
+	// 初始化数据
+	// srand( (unsigned)time( NULL ) );
+	// RandGet(100, true);
+	DateTime(m_szStartServerTime, time(NULL));
 
 	// 设置定时器。句柄为1，刷新间隔为500MS
 	SetTimer(1, 500, NULL);
@@ -327,8 +330,48 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 			}
 			break;
 		case SHELL_STATUS_RUNNING:
+			{
+				// 服务器性能监视
+				if (m_tState.ToNextTime(PERFORMANCE_STATISTICS_ONTIMER_SECOND))
+				{
+					UpdateData(TRUE);
+
+					int nAllPlayers = CPerformanceStatistics::GetInstance()->GetData(PERFORMANCE_STATISTICS_TYPE_NOW_TOTAL_USER_AMOUNT);
+					int nMaxPlayers = CPerformanceStatistics::GetInstance()->GetData(PERFORMANCE_STATISTICS_TYPE_MAX_TOTAL_USER_AMOUNT);
+
+					char szCurrentDateTime[20] = "";
+					::DateTime(szCurrentDateTime, time(NULL));
+
+					//char szPlayersBuff[64] = "";
+					//sprintf(szPlayersBuff, "NowPlayer[%04d], MaxPlayer[%04d]", nAllPlayers, nMaxPlayers);
+					//CMemMonitor::GetInstance()->OnTimerMonitor(szPlayersBuff);
+
+					CPerformanceStatistics::GetInstance()->OnTimer();
+					m_sShellState.Format("Start Time: %s   Current Time: %s\n%s", m_szStartServerTime, szCurrentDateTime, CPerformanceStatistics::GetInstance()->GetLogBuffer());
+
+					UpdateData(FALSE);
+				}
+
+				// dead loop
+				extern long g_nMessagePortErrorCount;
+				if (g_nMessagePortErrorCount > 0 && g_nMessagePortErrorCount % 50000 == 0)
+				{
+					InterlockedExchange(&g_nMessagePortErrorCount, 0);
+					this->PrintText("Message pipe block, Server may be slowly!!!");
+				}
+			}
 			break;
 		case SHELL_STATUS_CLOSING_KICK:
+			{
+				static int nCount = 0;
+				nCount++;
+				
+				// 3次心跳后退出
+				if (nCount > 3)
+				{
+					m_eState = SHELL_STATUS_CLOSING;
+				}
+			}
 			break;
 		case SHELL_STATUS_CLOSING:
 			{
@@ -569,8 +612,7 @@ void CMyServerDlg::CloseServer()
 	//m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_BREAKALLCONNECT, VARTYPE_INT, &idSocket);
 
 	// 实质性处理
-	//m_eState = SHELL_STATUS_CLOSING_KICK;
-	m_eState = SHELL_STATUS_CLOSING;
+	m_eState = SHELL_STATUS_CLOSING_KICK;
 }
 
 void CMyServerDlg::InitCtrlLuaView()
