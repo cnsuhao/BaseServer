@@ -127,9 +127,15 @@ BOOL CMyServerDlg::OnInitDialog()
 	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
 	SetWindowText(strTitle);
 
-	// 设置SVN版本信息
+	// 设置服务器权限和SVN版本信息
+	CIniFile ini(GAMESERVER_FILENAME, "Service" ); 
+	char szManagerName[32] = "";
+	ini.GetString(szManagerName, "Manager", sizeof(szManagerName));
+	char szManagerCall[16] = "";
+	ini.GetString(szManagerCall, "Call", sizeof(szManagerCall));
+
 	CString strCopy;
-	strCopy.Format("Url:%s &Author:CJJ - Call:13627102328", VER_SERVER_SVN_URL);
+	strCopy.Format("Url:%s !!&Manager:%s - Call:%s", VER_SERVER_SVN_URL, szManagerName, szManagerCall);
 	m_staticSvn.SetWindowText(strCopy);
 
 	//srand( (unsigned)time( NULL ) );
