@@ -1,6 +1,7 @@
 
 // MyServerDlg.h : 头文件
 #include "../Common/MessagePort/MessagePort.h"
+#include "../Common/TimeOut.h"
 
 #pragma once
 
@@ -27,10 +28,15 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
 
-	CEdit	m_staticSvn;
-	CString	m_sShellState;
-	CString	m_sText;
-	int		m_nTextLines;
+	CEdit		m_staticSvn;
+	
+	CTimeOut	m_tState;
+	CString		m_sShellState;
+
+	CString		m_sText;
+	int			m_nTextLines;
+
+	char		m_szStartServerTime[20];
 
 // 实现
 protected:
