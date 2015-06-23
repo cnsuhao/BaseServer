@@ -13,18 +13,20 @@
 
 #include "../common/common.h"
 
+// 线程管道类型
 enum ENUM_MSGPORT_TYPE
 {
-	MSGPORT_SHELL		= 0,	// 对话框
-	MSGPORT_SOCKET		= 1,	// 底层通讯
-	MSGPORT_LOGIN		= 2,	// 登陆
-	MSGPORT_GAME		= 3,	// 游戏逻辑
-	MSGPORT_RELATION	= 4,	// 服务器间通信
-	MSGPORT_AI			= 5,	// AI通信
+	MSGPORT_SHELL		= 0,		// 对话框
+	MSGPORT_SOCKET		= 1,		// 底层通讯
+	MSGPORT_LOGIN		= 2,		// 登陆
+	MSGPORT_GAME		= 3,		// 游戏逻辑
+	MSGPORT_RELATION	= 4,		// 服务器间通信
+	MSGPORT_AI			= 5,		// AI通信
 
-	MSGPORT_SIZE,				// 管道数量
-	MSGPORT_DEFAULT		= 999,	// 默认线程ID, 此枚举不可作为线程间通信接口使用
+	MSGPORT_SIZE,					// 管道数量
+	MSGPORT_DEFAULT		= 999,		// 默认线程ID, 此枚举不可作为线程间通信接口使用
 };
+////////////////////////////////////////////////////////////////////////
 
 // 账号踢出标志
 enum ACCOUNT_KICK_FLAG

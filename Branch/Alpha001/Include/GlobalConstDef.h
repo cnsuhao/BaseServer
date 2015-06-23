@@ -20,10 +20,11 @@ extern std::string g_strConstDatabaseName;	// 常量表数据库名
 extern std::string g_strGameDatabaseName;	// 游戏服数据库名
 extern std::string g_strAccountDatabaseName;// 账号服数据库名
 
-const int	NAME_SIZE			= 32;							// 角色名长度
-const int	SYN_ANNOUNCE_SIZE	= 256;							// 帮派公告长度
 const int	MAX_PACKETSIZE		= 1024;							// 网络消息包尺寸
 const int	MAX_MESSAGESIZE		= MAX_PACKETSIZE + 40;			// 内部消息包尺寸
+
+const int	NAME_SIZE			= 32;							// 角色名长度
+const int	SYN_ANNOUNCE_SIZE	= 256;							// 帮派公告长度
 const int	MAX_PARAMSIZE		= 256;							// action param space
 const int	MAX_TENETSIZE		= 256;							
 const int	_MAX_FEELSIZE		= 32;

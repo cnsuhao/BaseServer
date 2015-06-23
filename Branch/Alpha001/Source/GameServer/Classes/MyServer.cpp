@@ -1,14 +1,14 @@
-
 // MyServer.cpp : 定义应用程序的类行为。
-//
-
 #include "stdafx.h"
 #include "MyServer.h"
 #include "MyServerDlg.h"
-#include "../Common/IniFile.h"
 #include "version.h"
-#include "../../../Include/CrashRpt.h"
 #include "../share/define.h"
+#include "../Common/IniFile.h"
+#include "../../../Include/CrashRpt.h"
+
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "winmm.lib")
 
 #pragma comment(lib, "../../../Lib/DbgHelp.lib")
 #pragma comment(lib, "../../../Lib/Psapi.lib")
@@ -102,8 +102,8 @@ BOOL CMyServerApp::InitInstance()
 
 	// 初始化日志系统
 	CreateDirectory(LOGFILE_DIR, NULL);
-	CreateDirectory(DBLOGFILE_DIR, NULL);
-	CreateDirectory(GMLOG_DIR, NULL);
+	//CreateDirectory(DBLOGFILE_DIR, NULL);
+	//CreateDirectory(GMLOG_DIR, NULL);
 
 	CString strTitle;
 	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
@@ -115,9 +115,9 @@ BOOL CMyServerApp::InitInstance()
 	CHECKB(::MyUnicodeToUTF8(szUnicodeTitle, szUtf8Title, sizeof(szUtf8Title) / sizeof(szUtf8Title[0])));
 
 	::LogSave(	"\n\n===================================================================================================\n"
-		"=== %s \n"
-		"===================================================================================================\t\t\t"
-		, szUtf8Title);
+				"=== %s \n"
+				"===================================================================================================\t\t\t"
+				, szUtf8Title);
 
 	// 初始化打印堆栈系统
 	::InitSymEngine();
