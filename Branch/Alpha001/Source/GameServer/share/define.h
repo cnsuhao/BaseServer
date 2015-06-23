@@ -14,9 +14,9 @@
 #pragma warning(disable:4786)
 
 // ¹²ÏíÎÄ¼þ
-#include "./DefineActionID.h"
 #include "./EnumDef.h"
 #include "./ConstDef.h"
+#include "./ActionDef.h"
 #include "./StructDef.h"
 #include "./String/MyDDString.h"
 

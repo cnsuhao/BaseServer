@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////
-// Copyright(c) 2011-2012, WuHan ChuangYou, All Rights Reserved
-// Moudle: GlobalFuction.h
-// Author: 陈建军(Chen Jianjun)
-// Created: 2014-11-13
+// Import : 全局文件。函数定义。
+// Moudle : GlobalFuction.h
+// Author : 陈建军(Chen Jianjun)
+// Create : 2015-6-19
 ////////////////////////////////////////////////////////////////////////
-#ifndef _GLOBAL_FUCTION_HEADER_
-#define _GLOBAL_FUCTION_HEADER_
+#ifndef _GLOBAL_FUCTION_H_
+#define _GLOBAL_FUCTION_H_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -42,4 +42,4 @@ inline bool IsMtCard(const char* pszCard)
 	return true;
 }
 
-#endif // end of _GLOBAL_FUCTION_HEADER_
+#endif // end of _GLOBAL_FUCTION_H_
