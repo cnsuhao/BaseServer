@@ -477,8 +477,8 @@ DWORD CMyServerDlg::StartSeiya()
 	char exePath[MAX_FILE_PATH_LEN]			= {0};
 	char szFile[MAX_FILE_NAME_LEN]			= {0};
 
-	// 获取当本程序的文件名
-	::GetModuleFileName(NULL,exePath,MAX_FILE_PATH_LEN);
+	// 获取本程序的文件名
+	::GetModuleFileName(NULL, exePath, MAX_FILE_PATH_LEN);
 	for(int nIndex = strlen(exePath) - 1; nIndex >= 0; nIndex--)
 	{
 		if (exePath[nIndex] == '\\' || exePath[nIndex] == '/')
@@ -509,14 +509,16 @@ DWORD CMyServerDlg::StartSeiya()
 	{
 		sprintf(CreateOrder,"%s\\%s %s %d",CurFloder, SEIYA_NAME, szFile, ::GetCurrentProcessId());
 	}
-
+	 
+	// 进程信息
+	PROCESS_INFORMATION pi;
 	STARTUPINFO si; 
-	PROCESS_INFORMATION pi; //进程信息
 	ZeroMemory(&si, sizeof(si));  
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); 
 
-	if(CreateProcess( NULL,CreateOrder,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))	// 创建守护进程
+	// 创建守护进程
+	if(CreateProcess(NULL, CreateOrder, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{  
 		// 脱离父进程成为独立进程
 		DWORD dwPID = pi.dwProcessId;
@@ -538,12 +540,13 @@ void CMyServerDlg::CloseSeiya(DWORD dwPID)
 #ifndef SEIYA_RUN
 	return;
 #endif
-	if (dwPID == 0)
+	if (0 == dwPID)
 	{
 		LOGWARNING("ShutdownSeiya::the Seiya is not Exist");
 		return;
 	}
-	HANDLE   hProcess; 
+
+	HANDLE  hProcess; 
 	hProcess=OpenProcess(PROCESS_ALL_ACCESS,FALSE,dwPID); 
 	if (hProcess == NULL)
 	{
@@ -551,7 +554,9 @@ void CMyServerDlg::CloseSeiya(DWORD dwPID)
 		LOGWARNING("ShutdownSeiya::the Seiya[%d] OpenProcess is Failed[%d]",dwPID, dwErrNum);
 		return;
 	}
-	::TerminateProcess(hProcess,0); //关闭进程
+	
+	// 关闭进程
+	::TerminateProcess(hProcess,0);
 }
 
 void CMyServerDlg::CloseServer()
