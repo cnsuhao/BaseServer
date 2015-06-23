@@ -4,13 +4,14 @@
 
 #pragma once
 
-enum {
-	SHELLSTATE_FAILD,
-	SHELLSTATE_INIT, 
-	SHELLSTATE_RUNNING, 
-	SHELLSTATE_CLOSING_KICK,
-	SHELLSTATE_CLOSING, 
-	SHELLSTATE_END,
+enum SHELL_STATUS
+{
+	SHELL_STATUS_FAILD	= 0,		// 失败
+	SHELL_STATUS_INIT,				// 初始化
+	SHELL_STATUS_RUNNING,			// 运行中
+	SHELL_STATUS_CLOSING_KICK,
+	SHELL_STATUS_CLOSING,			// 关闭中
+	SHELL_STATUS_END,				// 结束
 };
 
 // CMyServerDlg 对话框
@@ -26,6 +27,10 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
 
+	CEdit	m_staticSvn;
+	CString	m_sShellState;
+	CString	m_sText;
+	int		m_nTextLines;
 
 // 实现
 protected:
@@ -35,6 +40,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
+	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
@@ -49,6 +55,13 @@ public:
 
 protected:
 	IMessagePort*	m_pMsgPort;
-	char			m_szStartServer[20];
-	int				m_nState;
+	SHELL_STATUS	m_eState;
+
+	void	ProcessMsg();
+	void	PrintText(const char* pszText);
+
+	void	CloseServer();
+
+	void	InitCtrlLuaView();
+	void	InitCtrlTableView();
 };

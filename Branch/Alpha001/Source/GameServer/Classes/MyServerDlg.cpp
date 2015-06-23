@@ -6,10 +6,12 @@
 #include "MyServer.h"
 #include "MyServerDlg.h"
 #include "afxdialogex.h"
-#include "../share/define.h"
-#include "../../../Include/Global.h"
-#include "../Common/IniFile.h"
+
 #include "version.h"
+#include "../share/define.h"
+#include "../share/protocol.h"
+#include "../Common/IniFile.h"
+#include "../Common/logfile.h"
 #include "../../../Include/CrashRpt.h"
 
 #ifdef _DEBUG
@@ -49,6 +51,8 @@ END_MESSAGE_MAP()
 // CMyServerDlg 对话框
 CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMyServerDlg::IDD, pParent)
+	, m_pMsgPort(NULL)
+	, m_eState(SHELL_STATUS_FAILD)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -56,11 +60,15 @@ CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 void CMyServerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_STC_SVN, m_staticSvn);
+	DDX_Text(pDX, IDC_STC_STATUS, m_sShellState);
+	DDX_Text(pDX, IDC_STC_TIPS, m_sText);
 }
 
 BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
+	ON_WM_TIMER()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_NOTIFY, &CMyServerDlg::OnBnClickedBtnnotify)
 	ON_BN_CLICKED(IDC_BTN_RESTART, &CMyServerDlg::OnBnClickedBtnRestart)
@@ -104,6 +112,8 @@ BOOL CMyServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
+	// TODO: 在此添加额外的初始化代码
+
 	// 设置进程优先级类（高于标准）
 	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
@@ -116,6 +126,11 @@ BOOL CMyServerDlg::OnInitDialog()
 	CString strTitle;
 	strTitle.Format(GAMESERVER_TITLE, g_szServerName, g_nServerGroup, g_nServerLine, ::GetCurrentProcessId(), VER_SERVER_SVN_VISION);
 	SetWindowText(strTitle);
+
+	// 设置SVN版本信息
+	CString strCopy;
+	strCopy.Format("Url:%s &Author:CJJ - Call:13627102328", VER_SERVER_SVN_URL);
+	m_staticSvn.SetWindowText(strCopy);
 
 	//srand( (unsigned)time( NULL ) );
 	//RandGet(100, true);
@@ -130,25 +145,11 @@ BOOL CMyServerDlg::OnInitDialog()
 	{
 		m_pMsgPort = CMessagePort::GetInterface(MSGPORT_SHELL);
 		m_pMsgPort->Open();
-		m_nState   = SHELLSTATE_INIT;
+		m_eState   = SHELL_STATUS_INIT;
 	}
 
 	// 设置定时器。句柄为1，刷新间隔为500MS
 	SetTimer(1, 500, NULL);
-
-	auto plistBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
-	CHECKF(plistBoxLua);
-	plistBoxLua->AddString(_T("Lua: login"));
-	plistBoxLua->AddString(_T("Lua: liveness"));
-	plistBoxLua->AddString(_T("Lua: box"));
-	
-	auto plistBoxTable = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_TABLE);
-	CHECKF(plistBoxTable);
-	plistBoxTable->AddString(_T("Table: config"));
-	plistBoxTable->AddString(_T("Table: server_list"));
-	plistBoxTable->AddString(_T("Table: config_txt"));
-
-	// TODO: 在此添加额外的初始化代码
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -202,6 +203,165 @@ HCURSOR CMyServerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CMyServerDlg::OnTimer(UINT nIDEvent) 
+{
+	DEBUG_TRY;
+	//!!! Can't use 'return' in this block
+	// TODO: Add your message handler code here and/or call default
+
+	static bool bOnTimer = true;
+	if(1 == nIDEvent && bOnTimer)
+	{
+		bOnTimer = false;
+
+		// 处理线程管道消息
+		if(m_pMsgPort)
+		{
+			this->ProcessMsg();
+		}
+
+		// 检测服务器状态
+		switch (m_eState)
+		{
+		case SHELL_STATUS_FAILD:
+			{
+				m_eState = SHELL_STATUS_END;
+			}
+			break;
+		case SHELL_STATUS_INIT:
+			break;
+		case SHELL_STATUS_RUNNING:
+			break;
+		case SHELL_STATUS_CLOSING_KICK:
+			break;
+		case SHELL_STATUS_CLOSING:
+			{
+
+				PrintText("ShutdownSeiya...");
+				//ShutdownSeiya(m_dwPID);
+
+				PrintText("Server is over, close all  after 3 second!");
+				this->ProcessMsg();
+
+				m_pMsgPort->Close();
+				CMessagePort::ClearPortSet();
+				m_pMsgPort = NULL;
+
+				m_eState = SHELL_STATUS_END;
+			}
+			break;
+		case SHELL_STATUS_END:
+			{
+				KillTimer(1);			// 关闭ONTIMER
+				//CloseDatabaseServer();// 关闭数据库
+				Sleep(3000);			// 延迟3秒
+				::ReleaseSymEngine();	// 析构打印堆栈系统
+				CDialog::OnOK();		// 退出程序
+			}
+			break;
+		default:
+			ASSERT(!"switch(m_eState)");
+		}
+
+		bOnTimer = true;
+	}
+	CDialog::OnTimer(nIDEvent);
+	DEBUG_CATCH("CMyServerDlg::OnTimer");
+}
+
+void CMyServerDlg::ProcessMsg()
+{
+	char			buf[MAX_MESSAGESIZE];
+	CMessageStatus	cStatus;
+
+	DEBUG_TRY;
+	while(m_pMsgPort->Recv(PORT_ANY, PACKET_ANY, STRUCT_TYPE(buf), buf, &cStatus))
+	{
+		switch (cStatus.m_nPacket)
+		{
+		case SHELL_PRINTTEXT:
+			{
+				PrintText((char*)buf);
+			}
+			break;
+		case SHELL_REMOTE_CLOSE:
+			{
+				PrintText("Remote Close");
+				this->CloseServer();
+			}
+			break;
+		default:
+			tolog2("CMsgServerDlg::ProcessMsg unkonw idPacket[%u]", cStatus.m_nPacket);
+			PrintText("ERROR: CMsgServerDlg::Process() ProcessMsg()");
+			break;
+		}
+	}
+	DEBUG_CATCH("CMsgServerDlg::Process()")
+}
+
+void CMyServerDlg::PrintText(const char* pszText)
+{
+	DEBUG_TRY;
+	CHECK(pszText);
+	if(m_nTextLines >= TEXTWINDOW_SIZE)
+	{
+		int nPos = m_sText.Find("\n", 0);
+		if(nPos != -1)
+			m_sText = m_sText.Mid(nPos + 1);
+	}
+
+	// 字符串截断, 不至于换行
+	char szMsgBuff[96] = "";
+	::SafeCopy(szMsgBuff, pszText, sizeof(szMsgBuff));
+
+	char szBuf[20] = "";
+	DateTime(szBuf);
+	m_sText += szBuf+11;
+	m_sText += "[";
+	m_sText += szMsgBuff;
+	m_sText += "]";
+	m_sText += "\r\n";
+	m_nTextLines++;
+
+	UpdateData(FALSE);
+
+	// debug版本不用记录日志
+#ifndef _DEBUG
+	::LogSave("SHELL: %s", pszText);
+#endif 
+	DEBUG_CATCH("CMsgServerDlg::PrintText");
+}
+
+void CMyServerDlg::CloseServer()
+{
+	this->PrintText("Kick All User...");
+
+	//SOCKET_ID idSocket = SOCKET_NONE;
+	//m_pMsgPort->Send(MSGPORT_LOGIN, LOGINTHREAD_CLOSE_ENTRANCE, VARTYPE_INT, &idSocket);
+	//m_pMsgPort->Send(MSGPORT_GAME, GAMETHREAD_KICK_ALLUSER, VARTYPE_INT, &idSocket);
+	//m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_BREAKALLCONNECT, VARTYPE_INT, &idSocket);
+
+	// 实质性处理
+	//m_eState = SHELL_STATUS_CLOSING_KICK;
+	m_eState = SHELL_STATUS_CLOSING;
+}
+
+void CMyServerDlg::InitCtrlLuaView()
+{
+	auto plistBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
+	plistBoxLua->AddString(_T("Lua: login"));
+	plistBoxLua->AddString(_T("Lua: liveness"));
+	plistBoxLua->AddString(_T("Lua: box"));
+}
+
+void CMyServerDlg::InitCtrlTableView()
+{
+	auto plistBoxTable = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_TABLE);
+	plistBoxTable->AddString(_T("Table: config"));
+	plistBoxTable->AddString(_T("Table: server_list"));
+	plistBoxTable->AddString(_T("Table: config_txt"));
+}
+
 void CMyServerDlg::OnBnClickedBtnnotify()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -220,12 +380,15 @@ void CMyServerDlg::OnBnClickedBtnClose()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	// 服务器退出操作（暂时未处理）
-	// 初始话Scoket服务
-	//ScoketServer::DelInstance();
+	// 提示对话框
+	this->PrintText("Close Button pressed!");
+	if (IDCANCEL == this->MessageBox("确认要关闭服务器吗?\n正确无误请点[确定]", "关闭服务器" , MB_ICONEXCLAMATION | MB_OKCANCEL)) 
+	{
+		return;
+	}
+	this->PrintText("Server closing...");
 
-	// 程序退出
-	CDialog::OnOK();
+	this->CloseServer();
 }
 
 void CMyServerDlg::OnBnClickedChkLua()
