@@ -27,8 +27,7 @@ public:
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV Ö§³Ö
-
-	CEdit		m_staticSvn;
+	virtual HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	
 	CTimeOut	m_tState;
 	CString		m_sShellState;

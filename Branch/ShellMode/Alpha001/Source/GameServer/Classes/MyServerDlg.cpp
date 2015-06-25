@@ -83,9 +83,18 @@ CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 void CMyServerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STC_SVN, m_staticSvn);
 	DDX_Text(pDX, IDC_STC_STATUS, m_sShellState);
 	DDX_Text(pDX, IDC_STC_TIPS, m_sText);
+}
+
+HBRUSH CMyServerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	if (IDC_STC_MANAGER == pWnd->GetDlgCtrlID())
+	{
+		pDC->SetTextColor(RGB(0, 0, 255));
+	} 
+	return hbr;
 }
 
 BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
@@ -93,6 +102,7 @@ BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_TIMER()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_CTLCOLOR(IDC_STC_MANAGER, &CMyServerDlg::OnCtlColor)
 	ON_BN_CLICKED(IDC_BTN_NOTIFY, &CMyServerDlg::OnBnClickedBtnnotify)
 	ON_BN_CLICKED(IDC_BTN_RESTART, &CMyServerDlg::OnBnClickedBtnRestart)
 	ON_BN_CLICKED(IDC_BTN_CLOSE, &CMyServerDlg::OnBnClickedBtnClose)
@@ -187,15 +197,17 @@ BOOL CMyServerDlg::OnInitDialog()
 	InitializeCrashRptEx(MyCrashProc);
 
 	// 设置服务器权限和SVN版本信息
+	SetDlgItemText(IDC_STC_SVN, VER_SERVER_SVN_URL);
+
 	ini.SetSection("Service" ); 
 	char szManagerName[32] = "";
 	ini.GetString(szManagerName, "Manager", sizeof(szManagerName));
 	char szManagerCall[16] = "";
 	ini.GetString(szManagerCall, "Call", sizeof(szManagerCall));
 
-	CString strCopy;
-	strCopy.Format("Url:%s !!&Manager:%s - Call:%s", VER_SERVER_SVN_URL, szManagerName, szManagerCall);
-	m_staticSvn.SetWindowText(strCopy);
+	CString stManager;
+	stManager.Format("Mr:%s - Call:%s", szManagerName, szManagerCall);
+	SetDlgItemText(IDC_STC_MANAGER, stManager);
 
 	// 初始化对话框线程管道
 	if(!CMessagePort::InitPortSet(MSGPORT_SIZE))
@@ -347,7 +359,8 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 					//CMemMonitor::GetInstance()->OnTimerMonitor(szPlayersBuff);
 
 					CPerformanceStatistics::GetInstance()->OnTimer();
-					m_sShellState.Format("Start Time: %s   Current Time: %s\n%s", m_szStartServerTime, szCurrentDateTime, CPerformanceStatistics::GetInstance()->GetLogBuffer());
+					//m_sShellState.Format("Start Time: %s   Current Time: %s\n%s", m_szStartServerTime, szCurrentDateTime, CPerformanceStatistics::GetInstance()->GetLogBuffer());
+					m_sShellState.Format("Start Time: %s   Current Time: %s\n", m_szStartServerTime, szCurrentDateTime);
 
 					UpdateData(FALSE);
 				}
