@@ -472,25 +472,28 @@ VOID IoHandler::ReuseSession( Session *pSession )
 //=============================================================================================================================
 VOID IoHandler::ProcessAcceptedSessionList()
 {
-	SESSION_LIST_ITER		it;
-	Session					*pSession;
-
+	DEBUG_TRY;
 	// 立加俊 己傍茄 技记甸阑 罐酒敌 烙矫 府胶飘肺 颗辫
 	m_pAcceptedSessionList->Lock();
 	m_pTempList->splice( m_pTempList->end(), *m_pAcceptedSessionList );
 	m_pAcceptedSessionList->Unlock();
 
 	// 立加俊 己傍茄 技记俊 措茄 贸府
-	for( it = m_pTempList->begin(); it != m_pTempList->end(); ++it )
+	bool bIncrement = true;
+	Session* pSession = NULL;
+	SESSION_LIST_ITER iter = m_pTempList->begin();
+	for(; iter != m_pTempList->end();)
 	{
-		pSession = *it;
+		bIncrement = true;
+		pSession   = *iter;
 
 		// 弥绊悼立荐甫 檬苞窍绰 版快 角菩
 		if( m_numActiveSessions >= m_dwMaxAcceptSession )
 		{
 			LOGWARNING("connection full! m_numActiveSessions = %u,m_dwMaxAcceptSession = %u",m_numActiveSessions,m_dwMaxAcceptSession);
 			//printf( "connection full! no available accept socket!\n" );
-			m_pTempList->erase( it-- );
+			bIncrement = false;
+			iter = m_pTempList->erase(iter);
 			ReuseSession( pSession );
 			//pSession->CloseSocket();
 			m_pReuseSessionList->push_back(pSession);
@@ -506,7 +509,8 @@ VOID IoHandler::ProcessAcceptedSessionList()
 		// Recv俊 角菩窍绰 版快 贸府
 		if( !pSession->PreRecv() )
 		{
-			m_pTempList->erase( it-- );
+			bIncrement = false;
+			iter = m_pTempList->erase(iter);
 			//pSession->CloseSocket();
 			ReuseSession(pSession);
 			m_pReuseSessionList->push_back(pSession);
@@ -530,6 +534,12 @@ VOID IoHandler::ProcessAcceptedSessionList()
 
 		// 悼立荐 刘啊
 		++m_numActiveSessions;
+
+		// 处理迭代器自增
+		if (bIncrement)
+		{
+			iter++;
+		}
 	}
 
 	if( !m_pTempList->empty() )
@@ -539,6 +549,7 @@ VOID IoHandler::ProcessAcceptedSessionList()
 		m_pActiveSessionList->splice( m_pActiveSessionList->begin(), *m_pTempList );
 //		m_pActiveSessionList->Unlock();
 	}
+	DEBUG_CATCH("IoHandler::ProcessAcceptedSessionList crash!")
 }
 
 //=============================================================================================================================
@@ -549,46 +560,44 @@ VOID IoHandler::ProcessAcceptedSessionList()
 //=============================================================================================================================
 VOID IoHandler::ProcessActiveSessionList()
 {
-	SESSION_LIST_ITER	it=m_pActiveSessionList->begin();
-	Session				*pSession=NULL;
 	DEBUG_TRY;
-	for( it = m_pActiveSessionList->begin(); it != m_pActiveSessionList->end(); ++it )
+	bool bIncrement = true;
+	Session* pSession = NULL;
+	SESSION_LIST_ITER iter = m_pActiveSessionList->begin();
+	for(;iter != m_pActiveSessionList->end();)
 	{
-		pSession = *it;
+		bIncrement = true;
 
-		if(NULL==pSession)///如果为空直接忽略
-			continue;
+		// 检测会话的有效性
+		pSession = *iter;
+		CHECKC_NOLOG(pSession);
 		CHECKC(Session::IsValidPt(pSession));
-// 		try
-// 		{
-// 			///测试指针有效性
-// 			int nLength=pSession->GetSendBuffer()->GetLength();
-// 		}
-// 		catch(...)
-// 		{
-// 			///如果产生错误,则删掉这个野指针,并且处理下一个有效对象
-// 			tolog("IoHandler::ProcessActiveSessionList crash!m_pActiveSessionList have not vaild point! Force Del it!");
-// 			m_pActiveSessionList->erase(it--);
-// 			continue;
-// 		}
 
-		//处理发送
-		if( pSession->PreSend() == FALSE ) 
+		// 处理发送
+		if(FALSE == pSession->PreSend()) 
 		{
 			pSession->Remove(REMOVE_REASON_PRESEND_ACTIVELIST);
 		}
 
-		if( pSession->ShouldBeRemoved() )
+		// 处理移除会话
+		if(pSession->ShouldBeRemoved())
 		{
-			m_pActiveSessionList->erase( it-- );
+			bIncrement = false;
+			iter = m_pActiveSessionList->erase(iter);
 			m_pDeadSessionList->push_back( pSession );
 			continue;
 		}
 		
-		// 罐扁 滚欺 贸府
-		if( !pSession->ProcessRecvdPacket( m_dwMaxPacketSize ) )
+		// 处理接收包
+		if(!pSession->ProcessRecvdPacket(m_dwMaxPacketSize))
 		{
 			pSession->Remove(REMOVE_REASON_RECV_PROCESS);
+		}
+
+		// 迭代器自增
+		if (bIncrement)
+		{
+			iter++;
 		}
 	}
 	DEBUG_CATCH("IoHandler::ProcessActiveSessionList crash!")
@@ -769,17 +778,29 @@ VOID IoHandler::Shutdown()
 
 VOID IoHandler::ProcessReuseSessionList()
 {
-	SESSION_LIST_ITER	it;
-
-	for( it = m_pReuseSessionList->begin(); it != m_pReuseSessionList->end(); ++it )
+	DEBUG_TRY;
+	bool bIncrement = true;
+	SESSION_LIST_ITER iter = m_pReuseSessionList->begin();
+	for(;iter != m_pReuseSessionList->end();)
 	{
- 		if((*it)->CanReuse())
+		bIncrement = true;
+
+		// 处理会话重用
+ 		if((*iter)->CanReuse())
  		{
-			Session* pSession = *it;
+			Session* pSession = *iter;
 			ReuseSession(pSession);
-			m_pReuseSessionList->erase(it--);
+			iter = m_pReuseSessionList->erase(iter);
+			bIncrement = false;
+		}
+
+		// 处理迭代器自增
+		if (bIncrement)
+		{
+			iter++;
 		}
 	}
+	DEBUG_CATCH("IoHandler::ProcessReuseSessionList crash!")
 }
 
 ////////////////////////////////////////////////////////////////////////
