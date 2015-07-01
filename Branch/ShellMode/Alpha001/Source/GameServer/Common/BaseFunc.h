@@ -7,15 +7,14 @@
 
 #pragma	warning(disable:4786)
 
-#include <time.h>
-#include <math.h>
 #include "common.h"
 #include "BaseType.h"
 #include "logfile.h"
 #include "AutoPtr.h"
-#include <vector>
 #include "MxyString.h"
-#include "../../../Include/Global.h"
+#include <time.h>
+#include <math.h>
+#include <vector>
 using namespace std;
 
 extern char g_szServerName[64];				// ·þÎñÆ÷Ãû

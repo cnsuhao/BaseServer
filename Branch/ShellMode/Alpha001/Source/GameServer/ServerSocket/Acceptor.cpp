@@ -1,4 +1,3 @@
-#include "../MSGSERVER/share/define.h"
 #include <winsock2.h>
 #include <mswsock.h>
 #include <iostream>
@@ -10,6 +9,7 @@
 #include "SessionList.h"
 #include "SessionPool.h"
 #include "MsWinsockUtil.h"
+#include "../Share/define.h"
 
 //=============================================================================================================================
 /**

@@ -1,10 +1,9 @@
-#include "../MSGSERVER/share/define.h"
 #include <winsock2.h>
 #include <assert.h>
 #include "SessionPool.h"
 #include "Session.h"
 #include "SessionList.h"
-/*#include "../share/define.h"*/
+#include "../Share/define.h"
 
 //=============================================================================================================================
 /**

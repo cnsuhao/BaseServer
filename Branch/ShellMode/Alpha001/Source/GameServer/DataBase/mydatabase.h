@@ -8,8 +8,8 @@
 #include "map"
 #include <deque>
 #include <string> 
-#include "./../../COMMON/ThreadBase.h"
-#include "./../../COMMON/TimeOut.h"
+#include "../Common/ThreadBase.h"
+#include "../Common/TimeOut.h"
 
 using namespace std;
 

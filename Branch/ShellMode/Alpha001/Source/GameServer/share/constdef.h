@@ -29,9 +29,10 @@ static const char* GAMESERVER_FILENAME = "GameServer.ini";
 const int	WINDOW_TEXT_SIZE = 9;
 //////////////////////////////////////////////////////////////////////
 
+// 控制变量
+const int	CLOSETHREAD_MILLISECS					= 30000;	// 等待线程关闭的毫秒数
 
 //////////////////////////////////////////////////////////////////////
-// 控制变量
 const int	THREADDELAY_MS							= 400;		// 等待内部消息的最大时间
 const int	SOCKETKERNEL_ONTIMER_MS					= 1000;		// 网络线程的ONTIMER频率
 const int	LOGINKERNEL_ONTIMER_MS					= 333;		// 登陆线程的ONTIMER频率
@@ -40,7 +41,7 @@ const int	RELATIONKERNEL_ONTIMER_MS				= 1000;		// 关系线程的ONTIMER频率
 const int	AIKERNEL_ONTIMER_MS						= 1000;		// AI  线程的ONTIMER频率
 
 const int	ONTIMER_MS_ROLLBACK_MS					= 5000;		// 心跳发生回滚阀值
-const int	CLOSETHREAD_MILLISECS					= 30000;	// 等待线程关闭的毫秒数
+
 
 const int	LOG_TIMEOUT_SOCKET_PROCESS				= 100;		// 网络线程ontimer日志超时时间
 const int	LOG_TIMEOUT_LOGIN_PROCESS				= 100;		// 登陆线程ontimer日志超时时间

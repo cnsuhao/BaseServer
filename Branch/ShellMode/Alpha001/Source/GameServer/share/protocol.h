@@ -7,8 +7,8 @@
 #ifndef	_SHARE_PROTOCOL_H_
 #define	_SHARE_PROTOCOL_H_
 
-#include <string.h>
 #include "define.h"
+#include <string.h>
 #include <vector>
 
 // 各线程处理的消息类型

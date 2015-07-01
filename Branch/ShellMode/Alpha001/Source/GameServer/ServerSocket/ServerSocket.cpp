@@ -8,21 +8,17 @@
 #include <windows.h>
 #pragma	warning(disable:4786)
 
-
 #include "Session.h"
 #include "IOCPServer.h"
-
-#include "../MSGSERVER/share/define.h"
-#include "../MSGSERVER/share/protocol.h"
-#include "EncryptServer.h"
-#include "../MSGSERVER/share/I_Shell.h"
-
-#include "./../COMMON/I_MessagePort.h"
-#include "./../COMMON/basefunc.h"
-
 #include "ServerSocket.h"
 #include "SendBuffer.h"
 #include "RecvBuffer.h"
+#include "EncryptServer.h"
+#include "../Share/I_Shell.h"
+#include "../Share/define.h"
+#include "../Share/protocol.h"
+#include "../Common/basefunc.h"
+#include "../Common/MessagePort/I_MessagePort.h"
 
 #define			HANDLEIONUM					1
 #define			MAXPACKETSIZE				1024
@@ -86,98 +82,98 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 
 	switch(idPacket)
 	{
-	case	SOCKET_CLOSESOCKET:
-		{
-			SOCKET_ID	idSocket	= *(int*)buf;
-			if(idSocket >= (int)m_setSocket.size())
-				break;
+	//case	SOCKET_CLOSESOCKET:
+	//	{
+	//		SOCKET_ID	idSocket	= *(int*)buf;
+	//		if(idSocket >= (int)m_setSocket.size())
+	//			break;
 
-			if(m_setSocket[idSocket])			// readme.txt (1-7)
-			{
-				::LogSaveLoginout("ServerSocket Recv Close Connect Msg, SOCKET_ID[%u], IP[%s]", idSocket, m_setSocket[idSocket]->GetIP());
-				m_setSocket[idSocket]		= NULL;
-				m_setProcessID[idSocket]	= PROCESS_NONE;
-				m_setNetBreakFlag[idSocket]	= false;
+	//		if(m_setSocket[idSocket])			// readme.txt (1-7)
+	//		{
+	//			::LogSaveLoginout("ServerSocket Recv Close Connect Msg, SOCKET_ID[%u], IP[%s]", idSocket, m_setSocket[idSocket]->GetIP());
+	//			m_setSocket[idSocket]		= NULL;
+	//			m_setProcessID[idSocket]	= PROCESS_NONE;
+	//			m_setNetBreakFlag[idSocket]	= false;
 
-				//把idsocket加入到m_ReuseIDList中供以后使用
-				EnterCriticalSection(&m_ReuseIDListLock);
-				m_ReuseIDList.push_back(idSocket);
-				LeaveCriticalSection(&m_ReuseIDListLock);
-			}
-			else
-			{
-				::LogSaveLoginout("ServerSocket Recv Close Connect Msg, SOCKET_ID[%u]", idSocket);
-			}
-		}
-		break;
-	case	SOCKET_SENDCLIENTMSG:
-		{
-			int nStep = 0;
-			unsigned int nMsgType = 0;
-			SOCKET_ID idSocket=ID_NONE;
-			char szIP[64]="";
-			try
-			{
-				const SENDCLIENTMSG_PACKET0* pPack = (SENDCLIENTMSG_PACKET0*)buf;
-				if(pPack->idSocket >= (int)m_setSocket.size())
-					break;
-				idSocket=pPack->idSocket;
-				nStep = 1;
-				if(m_setSocket[pPack->idSocket])
-				{
-					SafeCopy(szIP,m_setSocket[pPack->idSocket]->GetIP(),sizeof(szIP));
-					static char buf[MAX_PACKETSIZE];
-					nStep = 2;
-					int	nNetPacketSize = UnitePacket(buf, MAX_PACKETSIZE, pPack->idPacket, pPack->buf, pPack->nSize,nMsgType);
-					ASSERT(nNetPacketSize);
-					if(nNetPacketSize >= 4)
-					{
-						nStep = 3;
-						CPerformanceStatisticsCount objPS1(PERFORMANCE_STATISTICS_TYPE_NET_CLIENT_SEND_5SECOND, nNetPacketSize);
-						m_setSocket[pPack->idSocket]->Send((BYTE*)buf,nNetPacketSize);
-					}
-				}
-			}
-			catch(...)
-			{
-				LogSave("SOCKET_SENDCLIENTMSG step = %u MsgType = %u,idSocket=%d,szIP:%s",nStep,nMsgType,idSocket,szIP);
-			}
-		}
-		break;
-	case	SOCKET_CHANGECODE:
-		{
-			const CHANGE_USERDATA*	pPack = (CHANGE_USERDATA*)buf;
-			SOCKET_ID idSocket	= pPack->idSocket;
-			DWORD	dwData		= pPack->nData;
-			CHECKF(idSocket>=0 && idSocket < (int)m_setSocket.size());
-		}
-		break;
-	case	SOCKET_BREAKCONNECT:
-		{
-			SOCKET_ID	idSocket = *(SOCKET_ID*)buf;
- 			CHECKF(idSocket>=0 && idSocket < (int)m_setSocket.size());
-			::LogSaveLoginout("ServerSocket Kick Socket: SOCKET_ID[%d], FromProcessID[%d], Because[SOCKET_BREAKCONNECT]", idSocket, nFrom);
-			if(m_setSocket[idSocket] && !IsNetBreakFlag(idSocket))
-			{
-				m_setSocket[idSocket]->PreSend();
-				m_setSocket[idSocket]->Remove(REMOVE_REASON_KICK_ONE);
-			}
-		}
-		break;
-	case	SOCKET_BREAKALLCONNECT:
-		{
-			SOCKET_ID	idGmSocket = *(SOCKET_ID*)buf;
-			::LogSaveLoginout("ServerSocket Kick All Socket: GmSocket[%d], Because[SOCKET_BREAKALLCONNECT]", idGmSocket);
-			m_piocpServer->ProcessSend();
-			for(int i = m_setSocket.size()-1; i >= 0; i--)
-			{
-				if(i != idGmSocket && m_setSocket[i])
-				{
-					m_setSocket[i]->Remove(REMOVE_REASON_KICK_ALL);
-				}
-			}
-		}
-		break;
+	//			//把idsocket加入到m_ReuseIDList中供以后使用
+	//			EnterCriticalSection(&m_ReuseIDListLock);
+	//			m_ReuseIDList.push_back(idSocket);
+	//			LeaveCriticalSection(&m_ReuseIDListLock);
+	//		}
+	//		else
+	//		{
+	//			::LogSaveLoginout("ServerSocket Recv Close Connect Msg, SOCKET_ID[%u]", idSocket);
+	//		}
+	//	}
+	//	break;
+	//case	SOCKET_SENDCLIENTMSG:
+	//	{
+	//		int nStep = 0;
+	//		unsigned int nMsgType = 0;
+	//		SOCKET_ID idSocket=ID_NONE;
+	//		char szIP[64]="";
+	//		try
+	//		{
+	//			const SENDCLIENTMSG_PACKET0* pPack = (SENDCLIENTMSG_PACKET0*)buf;
+	//			if(pPack->idSocket >= (int)m_setSocket.size())
+	//				break;
+	//			idSocket=pPack->idSocket;
+	//			nStep = 1;
+	//			if(m_setSocket[pPack->idSocket])
+	//			{
+	//				SafeCopy(szIP,m_setSocket[pPack->idSocket]->GetIP(),sizeof(szIP));
+	//				static char buf[MAX_PACKETSIZE];
+	//				nStep = 2;
+	//				int	nNetPacketSize = UnitePacket(buf, MAX_PACKETSIZE, pPack->idPacket, pPack->buf, pPack->nSize,nMsgType);
+	//				ASSERT(nNetPacketSize);
+	//				if(nNetPacketSize >= 4)
+	//				{
+	//					nStep = 3;
+	//					CPerformanceStatisticsCount objPS1(PERFORMANCE_STATISTICS_TYPE_NET_CLIENT_SEND_5SECOND, nNetPacketSize);
+	//					m_setSocket[pPack->idSocket]->Send((BYTE*)buf,nNetPacketSize);
+	//				}
+	//			}
+	//		}
+	//		catch(...)
+	//		{
+	//			LogSave("SOCKET_SENDCLIENTMSG step = %u MsgType = %u,idSocket=%d,szIP:%s",nStep,nMsgType,idSocket,szIP);
+	//		}
+	//	}
+	//	break;
+	//case	SOCKET_CHANGECODE:
+	//	{
+	//		const CHANGE_USERDATA*	pPack = (CHANGE_USERDATA*)buf;
+	//		SOCKET_ID idSocket	= pPack->idSocket;
+	//		DWORD	dwData		= pPack->nData;
+	//		CHECKF(idSocket>=0 && idSocket < (int)m_setSocket.size());
+	//	}
+	//	break;
+	//case	SOCKET_BREAKCONNECT:
+	//	{
+	//		SOCKET_ID	idSocket = *(SOCKET_ID*)buf;
+ //			CHECKF(idSocket>=0 && idSocket < (int)m_setSocket.size());
+	//		::LogSaveLoginout("ServerSocket Kick Socket: SOCKET_ID[%d], FromProcessID[%d], Because[SOCKET_BREAKCONNECT]", idSocket, nFrom);
+	//		if(m_setSocket[idSocket] && !IsNetBreakFlag(idSocket))
+	//		{
+	//			m_setSocket[idSocket]->PreSend();
+	//			m_setSocket[idSocket]->Remove(REMOVE_REASON_KICK_ONE);
+	//		}
+	//	}
+	//	break;
+	//case	SOCKET_BREAKALLCONNECT:
+	//	{
+	//		SOCKET_ID	idGmSocket = *(SOCKET_ID*)buf;
+	//		::LogSaveLoginout("ServerSocket Kick All Socket: GmSocket[%d], Because[SOCKET_BREAKALLCONNECT]", idGmSocket);
+	//		m_piocpServer->ProcessSend();
+	//		for(int i = m_setSocket.size()-1; i >= 0; i--)
+	//		{
+	//			if(i != idGmSocket && m_setSocket[i])
+	//			{
+	//				m_setSocket[i]->Remove(REMOVE_REASON_KICK_ALL);
+	//			}
+	//		}
+	//	}
+	//	break;
 
 	default:
 		return false;
@@ -209,13 +205,13 @@ int CSocketKernel::ProcessRecvMsg(const char* pRecvBuf,int nSize,Session* pSessi
 
 		if(( nNetPacketSize = SplitPacket((char*)pRecvBuf, nSize, &idPacket, &pMsg, &nMsgSize) ))
 		{
-			CLIENTMSG_PACKET0* pPacket = (CLIENTMSG_PACKET0*)bufPacket;
+			/*			CLIENTMSG_PACKET0* pPacket = (CLIENTMSG_PACKET0*)bufPacket;
 			pPacket->idSocket	= pSession->GetClientID();
 			pPacket->idPacket	= idPacket;
 			pPacket->nSize		= nMsgSize;
 			memcpy(pPacket->buf, pMsg, nMsgSize);
 
-			m_pMsgPort->Send(MSGPORT_SHELL, KERNEL_CLIENTMSG, STRUCT_TYPE(bufPacket), bufPacket);		
+			m_pMsgPort->Send(MSGPORT_SHELL, KERNEL_CLIENTMSG, STRUCT_TYPE(bufPacket), bufPacket);	*/	
 		}
 
 		return nNetPacketSize;
@@ -253,9 +249,9 @@ bool CSocketKernel::OnTimer()
 				nOnline++;
 			}
 		}
-		int nMaxOnline = max(CPerformanceStatistics::GetInstance()->GetData(PERFORMANCE_STATISTICS_TYPE_MAX_USER_AMOUNT), nOnline);
-		CPerformanceStatisticsData objPS1(PERFORMANCE_STATISTICS_TYPE_MAX_USER_AMOUNT, nMaxOnline);
-		CPerformanceStatisticsData objPS2(PERFORMANCE_STATISTICS_TYPE_NOW_USER_AMOUNT, nOnline);
+		//int nMaxOnline = max(CPerformanceStatistics::GetInstance()->GetData(PERFORMANCE_STATISTICS_TYPE_MAX_USER_AMOUNT), nOnline);
+		//CPerformanceStatisticsData objPS1(PERFORMANCE_STATISTICS_TYPE_MAX_USER_AMOUNT, nMaxOnline);
+		//CPerformanceStatisticsData objPS2(PERFORMANCE_STATISTICS_TYPE_NOW_USER_AMOUNT, nOnline);
 	}
 
 
@@ -330,7 +326,7 @@ int CSocketKernel::SetNewSocket(Session* sNew)
 bool CSocketKernel::SendCloseNotify(SOCKET_ID idSocket)
 {
 	LogSaveLoginout("ServerSocket Close! Kick SocketID[%d]", idSocket);
-	m_pMsgPort->Send(MSGPORT_SHELL, KERNEL_CLOSEKERNEL, VARTYPE_INT, &idSocket);			// readme.txt (1-1)
+	//m_pMsgPort->Send(MSGPORT_SHELL, KERNEL_CLOSEKERNEL, VARTYPE_INT, &idSocket);			// readme.txt (1-1)
 	return true;
 }
 

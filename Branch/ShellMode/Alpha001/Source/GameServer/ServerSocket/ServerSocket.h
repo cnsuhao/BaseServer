@@ -6,13 +6,9 @@
 #define AFX_SERVERSOCKET_H__44A9ACE7_FE12_4CDC_9492_F39CD1423D77__INCLUDED_
 
 #pragma warning(disable:4786)
+#include "../Share/define.h"
+#include "../share/I_Shell.h"
 #include <time.h>
-#include "../MSGSERVER/share/define.h"
-
-//zeng ÐÞ¸ÄÎªIOCP
-
-
-
 #include <vector>
 #include <list>
 #include <map>

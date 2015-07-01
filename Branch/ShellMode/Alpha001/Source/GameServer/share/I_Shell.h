@@ -7,6 +7,7 @@
 #ifndef	_SHARE_I_SHELL_H_
 #define	_SHARE_I_SHELL_H_
 
+#include "../Common/common.h"
 class IMessagePort;
 
 // ÍøÂçºËÐÄ

@@ -7,15 +7,12 @@
 #include "SendBuffer.h"
 #include "RecvBuffer.h"
 #include "NetBase.h"
-//#include "NetworkObject.h"
-
 #include "IoHandler.h"
 #include "IOCPServer.h"
 #include "MsWinsockUtil.h"
-
-#include "../MSGSERVER/share/define.h"
-#include "./../COMMON/BaseFunc.h"
 #include <MSTcpIP.h>
+#include "../Share/define.h"
+#include "../Common/BaseFunc.h"
 using namespace std;
 
 MYHEAP_IMPLEMENTATION(Session, s_heap);

@@ -1,5 +1,6 @@
 
 // MyServerDlg.h : 头文件
+#include "../Share/I_Shell.h"
 #include "../Common/MessagePort/MessagePort.h"
 #include "../Common/TimeOut.h"
 
@@ -15,6 +16,8 @@ enum SHELL_STATUS
 	SHELL_STATUS_END,				// 结束
 };
 
+class CSocketThread;
+class CGameThread;
 // CMyServerDlg 对话框
 class CMyServerDlg : public CDialog
 {
@@ -62,6 +65,10 @@ protected:
 	IMessagePort*	m_pMsgPort;
 	SHELL_STATUS	m_eState;
 	DWORD			m_dwSeiyaPID;
+
+	CSocketThread*		m_pSocketThread;
+	CGameThread*		m_pGameThread;
+
 
 	void	ProcessMsg();
 	void	PrintText(const char* pszText);

@@ -1,18 +1,15 @@
-#include "../MSGSERVER/share/define.h"
 #include <winsock2.h>
 #include <assert.h>
 #include "IoHandler.h"
 #include "Acceptor.h"
-//#include "Connector.h"
 #include "SessionPool.h"
 #include "NetBase.h"
 #include "Session.h"
 #include "SendBuffer.h"
 #include "RecvBuffer.h"
 #include "IOCPServer.h"
-//#include "NetworkObject.h"
-/*#include "../share/define.h"*/
-#include "./../COMMON/BaseFunc.h"
+#include "../Share/Define.h"
+#include "../Common/BaseFunc.h"
 
 //unsigned __stdcall update_thread(LPVOID param)
 //{
@@ -554,7 +551,7 @@ VOID IoHandler::ProcessActiveSessionList()
 {
 	SESSION_LIST_ITER	it=m_pActiveSessionList->begin();
 	Session				*pSession=NULL;
-VA_TRY
+	DEBUG_TRY;
 	for( it = m_pActiveSessionList->begin(); it != m_pActiveSessionList->end(); ++it )
 	{
 		pSession = *it;
@@ -594,8 +591,7 @@ VA_TRY
 			pSession->Remove(REMOVE_REASON_RECV_PROCESS);
 		}
 	}
-VA_CATCH("IoHandler::ProcessActiveSessionList crash!")
-
+	DEBUG_CATCH("IoHandler::ProcessActiveSessionList crash!")
 }
 
 //=============================================================================================================================

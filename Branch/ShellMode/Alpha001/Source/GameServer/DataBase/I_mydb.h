@@ -1,14 +1,10 @@
 // 数据库底层的通用接口
 // 仙剑修, 2002.9.27
 //////////////////////////////////////////////////////////////////
-
-
 #ifndef	I_MYDB_H
 #define	I_MYDB_H
 
-#include "./../COMMON/AutoPtr.h"
-#include "./../../../Include/Global.h"
-
+#include "./../Common/AutoPtr.h"
 #include <vector>
 #include <map>
 #include <set>

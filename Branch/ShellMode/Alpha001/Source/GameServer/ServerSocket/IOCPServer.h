@@ -6,7 +6,7 @@
 #endif // _MSC_VER > 1000
 
 #pragma comment( lib, "ws2_32.lib" )
-
+#include "../../../Include/Global.h"
 #include <windows.h>
 #include <map>
 
