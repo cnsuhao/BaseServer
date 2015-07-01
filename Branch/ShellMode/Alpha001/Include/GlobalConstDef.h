@@ -35,7 +35,7 @@ const int   MAX_ADDRESS_SIZE	= 64;							// 玩家所在地名长度
 const int	INVITE_CODE_SIZE	= 16;							// 邀请码长度
 const int	_MAX_MSGSIZE		= 1024 ;
 
-#ifdef MYDEBUG
+#ifdef _DEBUG
 	const int	MAX_GAMESERVER_ACCEPT_SESSION	= 200;									// 游服最大会话数量
 #else
 	const int	MAX_GAMESERVER_ACCEPT_SESSION	= 5000;									// 游服最大会话数量
@@ -89,35 +89,6 @@ const int	SERVER_LISTEN_PORT_DEFAULT = 19999;
 
 const int	CROSS_SERVER_GROUP = 9999;		// 跨服服务器组号
 
-
-
-const int MAX_NEWCARD_LENGTH		= 19;				// 新手卡的位数
-const int MAX_NEWCARD_HEADER_LENGTH	= 5;				// 新手卡头的位数
-static const char* CONST_XS_NEWCARD_HEADER	= "CSMT-";	// 新手卡头
-static const char* CONST_MT_NEWCARD_HEADER	= "WSMT-";	// 媒体卡头
-const int MT_NEWCARD_TYPE_OFFSET	= 1000;				// 媒体卡类型偏移量
-
-const int ITEM_TYPE_BEGIN			= 100000;			// 物品类型开始
-
-const int MAX_MAIL_ITEM_COUNT       = 6;				// 邮件中最大物品种类
-const int MAX_MAIL_MONEY_COUNT      = 4;				// 邮件中最大货币种类
-
-const int MAX_LIVENESS_ID			= 50;				// 每日活跃配置表活跃项最大ID
-
-static const char* TALK_SYSTEM_NAME = "System";
-
-const int MAX_USER_LEV = 100;							// 玩家最高等级
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// 活动常量 start
-const int TIME_OF_DAY_LENGTH	= 1000000;				// 每天时间长度
-const int DAY_UTC_SECONDS		= 1 * 24 * 60 * 60;		// 一天的UTC秒
-const int SERVER_AWARD_CONFIG_MIN			= 1;		// 服务器多倍奖励最小配置
-const int SERVER_AWARD_CONFIG_MAX			= 16;		// 服务器多倍奖励最大配置
-const int SERVER_DROP_CHANCE_CONFIG_MIN		= 1;		// 服务器多倍掉落几率最小配置
-const int SERVER_DROP_CHANCE_CONFIG_MAX		= 16;		// 服务器多倍掉落几率最大配置
-const int SERVER_DROP_NUM_CONFIG_MIN		= 1;		// 服务器多倍掉落数量最小配置
-const int SERVER_DROP_NUM_CONFIG_MAX		= 16;		// 服务器多倍掉落数量最大配置
 /////////////////////////////////////////////////////////////////////////////////////////
 // 常量表使用的常数定义 start
 const int		ALL_SERVER_LINE_TYPE	= 99999;				//  不区分线路

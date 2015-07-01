@@ -12,8 +12,6 @@
 #endif
 
 #include <winsock2.h>
-
-#include "./../../COMMON/PerformanceStatistics.h"
 #include <windows.h>
 #include <stdio.h>
 #include <time.h>
@@ -21,6 +19,7 @@
 #include "mydb.h"
 #include "basefunc.h"
 #include "common.h"
+#include "../Common/PerformanceStatistics.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

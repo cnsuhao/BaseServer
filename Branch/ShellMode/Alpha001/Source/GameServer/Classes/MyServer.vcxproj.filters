@@ -25,6 +25,9 @@
     <Filter Include="Version">
       <UniqueIdentifier>{8c1c8935-483c-41c3-b415-a3e0b41ef98c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{f69ed584-4b00-4cf2-8240-488297164ced}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyServer.h">
@@ -105,6 +108,12 @@
     <ClInclude Include="..\..\..\Include\Psapi.h">
       <Filter>_Include</Filter>
     </ClInclude>
+    <ClInclude Include="SocketThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="GameThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">
@@ -115,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Sourse</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GameThread.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

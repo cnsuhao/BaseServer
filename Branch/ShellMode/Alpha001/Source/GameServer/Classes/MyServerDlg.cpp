@@ -1,7 +1,4 @@
-
 // MyServerDlg.cpp : 实现文件
-//
-
 #include "stdafx.h"
 #include "MyServer.h"
 #include "MyServerDlg.h"
@@ -13,6 +10,9 @@
 #include "../Common/IniFile.h"
 #include "../Common/logfile.h"
 #include "../../../Include/CrashRpt.h"
+
+#include "SocketThread.h"
+#include "GameThread.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -76,6 +76,8 @@ CMyServerDlg::CMyServerDlg(CWnd* pParent /*=NULL*/)
 	, m_nTextLines(0)
 	, m_sShellState(_T(""))
 	, m_sText(_T(""))
+	, m_pSocketThread(NULL)
+	, m_pGameThread(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -222,8 +224,8 @@ BOOL CMyServerDlg::OnInitDialog()
 	}
 
 	// 初始化数据
-	// srand( (unsigned)time( NULL ) );
-	// RandGet(100, true);
+	srand( (unsigned)time( NULL ) );
+	RandGet(100, true);
 	DateTime(m_szStartServerTime, time(NULL));
 
 	// 设置定时器。句柄为1，刷新间隔为500MS
@@ -320,24 +322,53 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 
 				// 3.启动网络线程
 				this->PrintText("3. Start Socket Thread...");
+				m_pSocketThread = new CSocketThread(CMessagePort::GetInterface(MSGPORT_SOCKET));
+				CHECKBK(m_pSocketThread);
+				CIniFile ini(GAMESERVER_FILENAME, "System");
+				int nListenPort = ini.GetInt("ClientListenPort");
+				nListenPort = nListenPort > 0 ? nListenPort : 10000 + g_nServerLine;
+				if(!m_pSocketThread->CreateThread(false, nListenPort))
+				{
+					char szBuf[1024] = "";
+					sprintf(szBuf, "游戏服务器监听端口创建失败, 请检查! 客户端监听[%d]", nListenPort);
+					this->MessageBox(szBuf, "错误" , MB_ICONEXCLAMATION | MB_OK);
+					break;
+				}
 
-				// 4.初始化数据库
-				this->PrintText("4. Init DataBase...");
+				// 4.启动登陆线程
+				this->PrintText("4. Start Login Thread...");
 
-				// 5.启动登陆线程
-				this->PrintText("5. Start Login Thread...");
+				// 5.启动游戏线程
+				this->PrintText("5. Start Game Thread...");
 
-				// 6.启动游戏线程
-				this->PrintText("6. Start Game Thread...");
+				// 获取数据库名全局变量
+				ini.SetSection("Database");
+				char szConstDatabaseName[DBSTR_SIZE] = "";
+				char szGameDatabaseName[DBSTR_SIZE] = "";
+				char szAccountDatabaseName[DBSTR_SIZE] = "";
+				ini.GetString(szConstDatabaseName,		"DatabaseConst",	DBSTR_SIZE);
+				ini.GetString(szGameDatabaseName,		"DatabaseGame",		DBSTR_SIZE);
+				ini.GetString(szAccountDatabaseName,	"DatabaseAccount",	DBSTR_SIZE);
+				g_strConstDatabaseName = szConstDatabaseName;
+				g_strGameDatabaseName = szGameDatabaseName;
+				g_strAccountDatabaseName = szAccountDatabaseName;
 
-				// 7.启动关系线程
-				this->PrintText("7. Start Relation Thread...");
+				m_pGameThread = new CGameThread(CMessagePort::GetInterface(MSGPORT_GAME));
+				CHECKBK(m_pGameThread);
+				CHECKBK(m_pGameThread->CreateThread(false));
 
-				// 8.启动守护进程
-				this->PrintText("8. Start Seiya...");
+				// 6.启动关系线程
+				this->PrintText("6. Start Relation Thread...");
+
+				// 7.启动守护进程
+				this->PrintText("7. Start Seiya...");
 				m_dwSeiyaPID = StartSeiya();
 
+				// 8.所有线程启动完毕
 				PrintText("All thread start OK !");
+				m_pSocketThread->ResumeThread();
+				m_pGameThread->ResumeThread();
+
 				m_eState = SHELL_STATUS_RUNNING;
 			}
 			break;
@@ -406,13 +437,31 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				this->CloseSeiya(m_dwSeiyaPID);
 
 				// 关闭网络线程
-				this->PrintText("Close Socket Thread OK!");
+				if(m_pSocketThread)
+				{
+					if(m_pSocketThread->CloseThread(CLOSETHREAD_MILLISECS))
+					{
+						this->PrintText("Close Socket Thread OK!");
+					}
+					else
+					{
+						this->PrintText("Close Socket Thread failed!");
+					}
+					SAFE_DELETE(m_pSocketThread);
+				}
 
 				// 关闭关系线程
 				this->PrintText("Close Relation Thread OK!");
 
 				// 关闭游戏线程
-				this->PrintText("Close Game Thread OK!");
+				if(m_pGameThread)
+				{
+					if(m_pGameThread->CloseThread(CLOSETHREAD_MILLISECS))
+						PrintText("Close Game Thread OK!");
+					else
+						PrintText("Close Game Thread Failed!");
+					SAFE_DELETE(m_pGameThread);
+				}
 
 				// 关闭登陆线程
 				this->PrintText("Close Login Thread OK!");

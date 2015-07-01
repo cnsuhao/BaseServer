@@ -9,7 +9,7 @@
 #include <assert.h>
 #include "EncryptServer.h"
 #include "SSocket.h"
-#include "../MSGSERVER/share/define.h"
+#include "../Share/define.h"
 
 #define ENCRYPT
 

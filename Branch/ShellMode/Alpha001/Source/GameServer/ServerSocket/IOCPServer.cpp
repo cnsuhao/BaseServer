@@ -1,4 +1,3 @@
-#include "../MSGSERVER/share/define.h"
 #include <winsock2.h>
 #include <conio.h>
 #include <iostream>
@@ -7,15 +6,13 @@
 #include "IOCPServer.h"
 #include "IoHandler.h"
 #include "SessionList.h"
-
-//#include "../share/define.h"
-#include "../MSGSERVER/share/protocol.h"
 #include "EncryptServer.h"
-//#include "SSocket.h"
-#include "../MSGSERVER/share/I_Shell.h"
 #include "ServerSocket.h"
-#include "./../COMMON/I_MessagePort.h"
-#include "./../COMMON/basefunc.h"
+#include "../Share/I_Shell.h"
+#include "../Share/protocol.h"
+#include "../Share/define.h"
+#include "../Common/basefunc.h"
+#include "../Common/MessagePort/I_MessagePort.h"
 
 
 //=============================================================================================================================

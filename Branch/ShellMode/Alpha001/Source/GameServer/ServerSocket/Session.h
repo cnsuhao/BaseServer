@@ -2,9 +2,9 @@
 #define _SESSION_H_
 
 #include <windows.h>
-#include "./../COMMON/BaseFunc.h"
 #include "EncryptServer.h"
-#include "./../COMMON/MyHeap.h"
+#include "./../Common/BaseFunc.h"
+#include "./../Common/MyHeap.h"
 
 #define LOGIN_KEY1				0xa61fce5e	// A = 0x20, B = 0xFD, C = 0x07, first = 0x1F, key = a61fce5e
 #define LOGIN_KEY2				0x443ffc04	// A = 0x7A, B = 0xCF, C = 0xE5, first = 0x3F, key = 443ffc04
