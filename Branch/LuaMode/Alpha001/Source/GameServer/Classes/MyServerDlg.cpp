@@ -115,6 +115,22 @@ BEGIN_MESSAGE_MAP(CMyServerDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_UPDATE_TABLE, &CMyServerDlg::OnBnClickedBtnUpdateTable)
 END_MESSAGE_MAP()
 
+// 重载PreTranslateMessage函数使esc和enter失效
+BOOL CMyServerDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if(pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		return TRUE; 
+	}
+
+	if(pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE)
+	{
+		return TRUE; 
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
+}
+
 // CMyServerDlg 消息处理程序
 BOOL CMyServerDlg::OnInitDialog()
 {
