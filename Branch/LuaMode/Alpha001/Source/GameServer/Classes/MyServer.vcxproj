@@ -195,6 +195,14 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+    <ProjectReference Include="..\LuaPlus\LuaPlus.vcxproj">
+      <Project>{40b052e4-1eec-4415-b082-edf71af32ac9}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
     <ProjectReference Include="..\ServerSocket\ServerSocket.vcxproj">
       <Project>{5d97f727-7a89-43d6-a5d8-98ba5ac37c9b}</Project>
       <Private>false</Private>
