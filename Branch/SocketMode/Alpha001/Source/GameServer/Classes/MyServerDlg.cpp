@@ -369,6 +369,10 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				m_pSocketThread->ResumeThread();
 				m_pGameThread->ResumeThread();
 
+				// 9.初始化更新选项
+				this->InitCtrlLuaView();
+				this->InitCtrlTableView();
+
 				m_eState = SHELL_STATUS_RUNNING;
 			}
 			break;
@@ -407,11 +411,11 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 			break;
 		case SHELL_STATUS_CLOSING_KICK:
 			{
-				static int nCount = 0;
-				nCount++;
+				static int nCloseCount = 0;
+				nCloseCount++;
 				
 				// 3次心跳后退出
-				if (nCount > 3)
+				if (nCloseCount > 3)
 				{
 					m_eState = SHELL_STATUS_CLOSING;
 				}
@@ -477,13 +481,49 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				m_eState = SHELL_STATUS_END;
 			}
 			break;
+		case SHELL_STATUS_RESTARTING:
+			{
+				static int nRestartCount = 0;
+				nRestartCount++;
+
+				// 3次心跳后重启
+				if (nRestartCount > 3)
+				{
+					m_eState = SHELL_STATUS_RESTART;
+					nRestartCount = 0;
+				}
+			}
+			break;
+		case SHELL_STATUS_RESTART:
+			{
+				m_eState = SHELL_STATUS_CLOSING;
+
+				// 关闭游戏核心
+				if(m_pGameThread)
+				{
+					if(m_pGameThread->CloseThread(CLOSETHREAD_MILLISECS))
+						PrintText("Close Game Thread OK!");
+					else
+						PrintText("Close Game Thread Failed!");
+					SAFE_DELETE(m_pGameThread);
+				}
+
+				// 重启游戏核心
+				this->PrintText("Restart Game Thread OK!");
+				m_pGameThread = new CGameThread(CMessagePort::GetInterface(MSGPORT_GAME));
+				CHECKBK(m_pGameThread);
+				CHECKBK(m_pGameThread->CreateThread(false));
+
+				m_eState = SHELL_STATUS_RUNNING;
+			}
+			break;
 		case SHELL_STATUS_END:
 			{
 				// 关闭ONTIMER
 				KillTimer(1);
 
 				// 关闭数据库
-				//CloseDatabaseServer();
+				CloseDatabaseServer();
 
 				// 延迟3秒
 				Sleep(3000);
@@ -666,12 +706,12 @@ void CMyServerDlg::CloseSeiya(DWORD dwPID)
 
 void CMyServerDlg::CloseServer()
 {
+	// 剔除所有玩家
 	this->PrintText("Kick All User...");
-
-	//SOCKET_ID idSocket = SOCKET_NONE;
-	//m_pMsgPort->Send(MSGPORT_LOGIN, LOGINTHREAD_CLOSE_ENTRANCE, VARTYPE_INT, &idSocket);
-	//m_pMsgPort->Send(MSGPORT_GAME, GAMETHREAD_KICK_ALLUSER, VARTYPE_INT, &idSocket);
-	//m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_BREAKALLCONNECT, VARTYPE_INT, &idSocket);
+	SOCKET_ID idSocket = SOCKET_NONE;
+	m_pMsgPort->Send(MSGPORT_LOGIN, LOGINTHREAD_CLOSE_ENTRANCE, VARTYPE_INT, &idSocket);
+	m_pMsgPort->Send(MSGPORT_GAME, GAMETHREAD_KICK_ALLUSER, VARTYPE_INT, &idSocket);
+	m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_BREAKALLCONNECT, VARTYPE_INT, &idSocket);
 
 	// 实质性处理
 	m_eState = SHELL_STATUS_CLOSING_KICK;
@@ -696,15 +736,39 @@ void CMyServerDlg::InitCtrlTableView()
 void CMyServerDlg::OnBnClickedBtnnotify()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	int i = 1;
-	i = 3;
+	CString strNotify;
+	GetDlgItemText(IDC_EDT_NOTIFY, strNotify);
+	CHECK_NOLOG(strNotify.GetLength() > 0);
+
+	// 提示对话框
+	if (IDCANCEL == this->MessageBox("确认要发送此公告吗?\n正确无误请点[确定]", "发送公告" , MB_ICONEXCLAMATION | MB_OKCANCEL)) 
+	{
+		return;
+	}
+
+	
+
 }
 
 void CMyServerDlg::OnBnClickedBtnRestart()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	int i = 1;
-	i = 3;
+
+	// 提示对话框
+	this->PrintText("Restart Button pressed!");
+	if (IDCANCEL == this->MessageBox("确认要重启服务器吗?\n正确无误请点[确定]", "重启服务器" , MB_ICONEXCLAMATION | MB_OKCANCEL)) 
+	{
+		return;
+	}
+	this->PrintText("Server Restart...");
+
+	// 剔除所有玩家
+	this->PrintText("Kick All User...");
+	SOCKET_ID idSocket = SOCKET_NONE;
+	m_pMsgPort->Send(MSGPORT_LOGIN, LOGINTHREAD_CLOSE_ENTRANCE, VARTYPE_INT, &idSocket);
+	m_pMsgPort->Send(MSGPORT_GAME, GAMETHREAD_KICK_ALLUSER, VARTYPE_INT, &idSocket);
+	m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_BREAKALLCONNECT, VARTYPE_INT, &idSocket);
+	m_eState = SHELL_STATUS_RESTARTING;
 }
 
 void CMyServerDlg::OnBnClickedBtnClose()
@@ -759,9 +823,17 @@ void CMyServerDlg::OnBnClickedBtnUpdateLua()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	auto pListBoxLua = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_LUA);
-	if (pListBoxLua->GetSelCount() > 0)
+	auto nSelCount = pListBoxLua->GetSelCount();
+	if (nSelCount > 0)
 	{
 		// 通知更新
+		char szBuf[1024] = "";
+		sprintf(szBuf, "当前选中[%d]个，确认要更新吗？", nSelCount);
+		if (IDCANCEL == this->MessageBox(szBuf, "更新脚本" , MB_ICONEXCLAMATION | MB_OKCANCEL)) 
+		{
+			return;
+		}
+
 
 	}
 	else
@@ -778,10 +850,16 @@ void CMyServerDlg::OnBnClickedBtnUpdateTable()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	auto pListBoxTable = (CListBox*)GetDlgItem(IDC_LIST_UPDATE_TABLE);
-	if (pListBoxTable->GetSelCount() > 0)
+	auto nSelCount = pListBoxTable->GetSelCount();
+	if (nSelCount > 0)
 	{
 		// 通知更新
-
+		char szBuf[1024] = "";
+		sprintf(szBuf, "当前选中[%d]个，确认要更新吗？", nSelCount);
+		if (IDCANCEL == this->MessageBox(szBuf, "更新表" , MB_ICONEXCLAMATION | MB_OKCANCEL)) 
+		{
+			return;
+		}
 	}
 	else
 	{
