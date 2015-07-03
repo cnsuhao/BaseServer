@@ -150,6 +150,7 @@
     <ClInclude Include="..\share\String\MyDDString.h" />
     <ClInclude Include="..\share\StructDef.h" />
     <ClInclude Include="GameThread.h" />
+    <ClInclude Include="LuaScriptMachine.h" />
     <ClInclude Include="MyServer.h" />
     <ClInclude Include="MyServerDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameThread.cpp" />
+    <ClCompile Include="LuaScriptMachine.cpp" />
     <ClCompile Include="MyServer.cpp" />
     <ClCompile Include="MyServerDlg.cpp" />
     <ClCompile Include="SocketThread.cpp" />
