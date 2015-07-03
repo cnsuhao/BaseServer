@@ -28,6 +28,9 @@
     <Filter Include="Thread">
       <UniqueIdentifier>{f69ed584-4b00-4cf2-8240-488297164ced}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{54f657e8-4831-490f-b06d-d0a1fdd94767}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyServer.h">
@@ -114,6 +117,9 @@
     <ClInclude Include="GameThread.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="LuaScriptMachine.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">
@@ -130,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="GameThread.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaScriptMachine.cpp">
+      <Filter>Lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
