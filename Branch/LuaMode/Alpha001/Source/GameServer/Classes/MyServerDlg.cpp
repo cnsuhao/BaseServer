@@ -170,8 +170,8 @@ BOOL CMyServerDlg::OnInitDialog()
 
 #ifdef _DEBUG
 	// 调试模式检测内存块泄露
-	_CrtSetBreakAlloc(334);
-	_CrtSetBreakAlloc(333);
+	//_CrtSetBreakAlloc(334);
+	//_CrtSetBreakAlloc(333);
 #endif
 
 	// 初始化服务器名和线路号

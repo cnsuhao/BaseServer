@@ -54,9 +54,11 @@ public:
 
 	// 运行脚本接口
 public:
-	bool SetLuaEnv(OBJID idUser = ID_NONE, OBJID idAction = ID_NONE);		// 设置运行环境
+	bool SetLuaEnv(OBJID idUser = ID_NONE, OBJID idAction = ID_NONE);				// 设置运行环境
 	void SetParam(int nIndex, int nData)	{CHECK(nIndex >= 0 && nIndex <= MAX_LUA_PARAM_COUNT);m_stNowStack.nParam[nIndex] = nData;}	
-	bool RunScriptFunction(const char* pszFileName, const char* pszTxtScript);				// 函数执行
+	bool RunScriptFunction(const char* pszFileName, const char* pszTxtScript);		// 函数执行
+	bool ProcessAction(OBJID idAction, OBJID idUser = ID_NONE, int nParam1 = 0, int nParam2 = 0, int nParam3 = 0, int nParam4 = 0, int nParam5 = 0);
+	bool ProcessLuaFunction(const char* pszFileName, const char* pszTxtFunction, OBJID idUser = ID_NONE, int nParam1 = 0, int nParam2 = 0, int nParam3 = 0, int nParam4 = 0, int nParam5 = 0);
 
 	// 基本成员
 private:
