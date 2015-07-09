@@ -22,11 +22,11 @@ bool CLuaScriptMachine::Init()
 
 	ZeroMemory(&m_stNowStack, sizeof(m_stNowStack));
 
+	// 注册C++函数接口
 	CHECKF(this->RegeditInterface());
-	
-	// 预加载所有系统块
-	RunScriptFunction("script/startup.lua", "start");
 
+	// 执行lua启动文件
+	//CHECKF(this->RunScriptFunction("startup.lua", "start()"));
 	return true;
 }
 
@@ -120,6 +120,37 @@ bool CLuaScriptMachine::RunScriptFunction(const char* pszFileName,const char* ps
 		::LogSave("CLuaScriptMachine::RunScriptFunction crash:[%s]", pszFileName);
 	}
 	return bThisResult;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description: 根据action id执行脚本
+// Arguments:	返回脚本的Result
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool CLuaScriptMachine::ProcessAction( OBJID idAction, OBJID idUser /*= ID_NONE*/, int nParam1 /*= 0*/, int nParam2 /*= 0*/, int nParam3 /*= 0*/, int nParam4 /*= 0*/, int nParam5 /*= 0*/ )
+{
+	CHECKF(idAction);
+	return this->GetResult();
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description: 指定文件与函数进行执行
+// Arguments:
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool CLuaScriptMachine::ProcessLuaFunction( const char* pszFileName, const char* pszTxtFunction, OBJID idUser /*= ID_NONE*/, int nParam1 /*= 0*/, int nParam2 /*= 0*/, int nParam3 /*= 0*/, int nParam4 /*= 0*/, int nParam5 /*= 0*/ )
+{
+	CHECKF(pszFileName && pszTxtFunction);
+	CHECKF(this->SetLuaEnv(idUser));
+	this->SetParam(1, nParam1);
+	this->SetParam(2, nParam2);
+	this->SetParam(3, nParam3);
+	this->SetParam(4, nParam4);
+	this->SetParam(5, nParam5);
+	CHECKF(this->RunScriptFunction(pszFileName, pszTxtFunction));
+	return this->GetResult();
 }
 
 ////////////////////////////////////////////////////////////////////////

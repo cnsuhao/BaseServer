@@ -16,6 +16,9 @@
     <Filter Include="_Kernel">
       <UniqueIdentifier>{a4a5ea10-1426-4ec2-9af5-343542b834c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="_Msg">
+      <UniqueIdentifier>{0081cdad-c986-4c4a-8ca9-3bb133cc660b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

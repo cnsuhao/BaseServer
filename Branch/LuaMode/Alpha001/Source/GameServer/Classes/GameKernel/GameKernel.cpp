@@ -47,16 +47,13 @@ bool CGameKernel::Create( IMessagePort* pPort )
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// 各单例管理器初始化
-
-	// 最先初始化常量表
-
+	// 初始化脚本机
 	CHECKF(pLuaScriptMachine->Init());
 
+	// 各单例管理器初始化
 	// 启动时, 需要清理无效的服务器掩码
 	//pMaskMgr->ClearInvalidGroupServerMask();
 	//pMaskMgr->ClearInvalidWorldServerMask();
-
 	return true;
 }
 
@@ -77,13 +74,8 @@ bool CGameKernel::ProcessMsg( OBJID idPacket, void* buf, int nType, int nFrom )
 	{
 	case GAMETHREAD_CLIENT_MSG:
 		{
-			CHECKF(pLuaScriptMachine->SetLuaEnv(0, 0));
-			pLuaScriptMachine->SetParam(1, 0);
-			pLuaScriptMachine->SetParam(2, 0);
-			pLuaScriptMachine->SetParam(3, 0);
-			pLuaScriptMachine->SetParam(4, 0);
-			pLuaScriptMachine->SetParam(5, 0);
-			CHECKF(pLuaScriptMachine->RunScriptFunction("test1.lua", "test1"));
+			CHECKF(pLuaScriptMachine->ProcessLuaFunction("startup.lua", "start()"));
+			//CHECKF(pLuaScriptMachine->RunScriptFunction("test1.lua", "test1.add()"));
 		}
 		break;
 	case GAMETHREAD_FORCE_KICK:
