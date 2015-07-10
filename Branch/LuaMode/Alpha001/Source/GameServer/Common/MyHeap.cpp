@@ -37,7 +37,7 @@ CMyHeap::CMyHeap(const char* pszClassName)
 		SafeCopy(m_szClassName, "Default Class Name", CLASSNAME_SIZE);
 
 	// 每个自建堆开启低碎片标记, debug模式lfh不开启
-#ifndef MYDEBUG
+#ifndef _DEBUG
 	if (NULL != m_hHeap)
 	{ 
 		int nFlag = HEAP_LFH;

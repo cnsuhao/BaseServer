@@ -33,6 +33,9 @@ public:
 	virtual bool	OnTimer			(void);
 	virtual bool	OnTimerRollback	(void);
 	virtual void	PrintText(const char* pszText);
+	
+public:
+	IDatabase*		GetDatabase(){return m_pDb;}
 
 private:
 	PROCESS_ID		m_idProcess;
@@ -42,5 +45,6 @@ private:
 };
 
 #define pGameKernel CGameKernel::GetInstance()
+#define pGameDatabase CGameKernel::GetInstance()->GetDatabase()
 
 #endif // end of _GAME_KERNEL_H_

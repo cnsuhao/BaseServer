@@ -1412,7 +1412,7 @@ bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount)
 	}
 
 	// 调试版本不验证时间
-#ifdef MYDEBUG
+#ifdef _DEBUG
 	return true;
 #endif
 	

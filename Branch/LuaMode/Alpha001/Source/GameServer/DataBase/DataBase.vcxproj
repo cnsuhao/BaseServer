@@ -119,15 +119,13 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ConstGameData.h" />
-    <ClInclude Include="GameData.h" />
-    <ClInclude Include="I_mydb.h" />
-    <ClInclude Include="source\mydatabase.h" />
-    <ClInclude Include="source\MyField.h" />
-    <ClInclude Include="source\myrecord.h" />
-    <ClInclude Include="source\myrecordset.h" />
     <ClInclude Include="..\Common\common.h" />
-    <ClInclude Include="source\Mydb.h" />
+    <ClInclude Include="I_mydb.h" />
+    <ClInclude Include="mydatabase.h" />
+    <ClInclude Include="Mydb.h" />
+    <ClInclude Include="MyField.h" />
+    <ClInclude Include="myrecord.h" />
+    <ClInclude Include="myrecordset.h" />
     <ClInclude Include="Temple\TConstDoubleTable.h" />
     <ClInclude Include="Temple\TConstSingleTable.h" />
   </ItemGroup>

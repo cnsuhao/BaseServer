@@ -494,7 +494,7 @@ void LogSaveBase(const char* pszLogFileName, const char* pszLogInfo)
 		rename(szLogFullName, szBackupFile);
 	}
 	
-#ifdef MYDEBUG
+#ifdef _DEBUG
 	if (strcmp(pszLogFileName, "syslog/PerformanceStatistics") == 0 ||
 		strcmp(pszLogFileName, "syslog/MemMonitor") == 0 )
 	{
