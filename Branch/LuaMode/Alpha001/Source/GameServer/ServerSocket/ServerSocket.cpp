@@ -80,8 +80,8 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 		return true;
 	}
 
-	switch(idPacket)
-	{
+	//switch(idPacket)
+	//{
 	//case	SOCKET_CLOSESOCKET:
 	//	{
 	//		SOCKET_ID	idSocket	= *(int*)buf;
@@ -175,9 +175,9 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 	//	}
 	//	break;
 
-	default:
-		return false;
-	}
+	//default:
+	//	return false;
+	//}
 
 	return true;	
 }

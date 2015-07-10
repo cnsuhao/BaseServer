@@ -74,8 +74,7 @@ bool CGameKernel::ProcessMsg( OBJID idPacket, void* buf, int nType, int nFrom )
 	{
 	case GAMETHREAD_CLIENT_MSG:
 		{
-			CHECKF(pLuaScriptMachine->ProcessLuaFunction("startup.lua", "start()"));
-			//CHECKF(pLuaScriptMachine->RunScriptFunction("test1.lua", "test1.add()"));
+			CHECKF(pLuaScriptMachine->RunScriptFunction("test1.lua", "test1.add()"));
 		}
 		break;
 	case GAMETHREAD_FORCE_KICK:

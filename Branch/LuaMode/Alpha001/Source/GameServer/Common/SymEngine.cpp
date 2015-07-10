@@ -14,7 +14,7 @@
  It is provided "as is" without express or implied warranty.
 
 */
-#ifdef WIN32
+#ifdef  WIN32
 #ifndef WINVER 
 #define WINVER 0x0501
 #endif  
@@ -29,7 +29,7 @@
 #define VC_EXTRALEAN
 #define NOSOUND
 
-#ifdef MYDEBUG
+#ifdef _DEBUG
 #pragma warning(disable:4127)		// conditional expression is constant
 #endif
 
