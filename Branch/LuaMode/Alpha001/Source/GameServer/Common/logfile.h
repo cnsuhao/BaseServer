@@ -61,7 +61,6 @@ private:
 private:
 	CSimpleCriticalSection		m_csAsync;			// 异步线程临界区
 	std::deque<PAIR_LOGINFO>	m_deqAsyncLog;		// 异步线程日志容器
-	std::list<PAIR_LOGINFO>		m_listAsyncLog;		// 异步线程日志容器
 	int							m_nAsyncLogAmount;	// 异步线程日志数量
 	bool						m_bOpenServe;		// 是否开启线程服务
 

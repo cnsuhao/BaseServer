@@ -158,8 +158,6 @@ PAIR_LOGINFO CLogThread::TakeAsyncLog(void)
 	CMySingleLock xLock(&m_csAsync);
 	PAIR_LOGINFO pairLogInfo = m_deqAsyncLog.front();
 	m_deqAsyncLog.pop_front();
-	//PAIR_LOGINFO pairLogInfo = m_listAsyncLog.front();
-	//m_listAsyncLog.pop_front();
 	m_nAsyncLogAmount--;
 	return pairLogInfo;
 }
@@ -179,7 +177,6 @@ void CLogThread::PushAsyncLog(const char* pszLogFile, const char* pszLogInfo)
 
 	CMySingleLock xLock(&m_csAsync);
 	m_deqAsyncLog.push_back(make_pair(pszLogFile, pszLogInfo));
-	//m_listAsyncLog.push_back(make_pair(pszLogFile, pszLogInfo));
 	m_nAsyncLogAmount++;
 }
 
