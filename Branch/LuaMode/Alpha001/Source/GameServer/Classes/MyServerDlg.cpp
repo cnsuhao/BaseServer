@@ -13,10 +13,7 @@
 
 #include "SocketThread.h"
 #include "GameThread.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+#include "ClientSocket.h"
 
 // 全局变量保存服务器名和线路
 char g_szServerName[64] = "";
@@ -168,9 +165,9 @@ BOOL CMyServerDlg::OnInitDialog()
 	// 设置进程优先级类（高于标准）
 	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
-#ifdef _DEBUG
+#ifdef MYDEBUG
 	// 调试模式检测内存块泄露
-	//_CrtSetBreakAlloc(334);
+	_CrtSetBreakAlloc(594);
 	//_CrtSetBreakAlloc(333);
 #endif
 
@@ -487,6 +484,9 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				// 关闭登陆线程
 				this->PrintText("Close Login Thread OK!");
 
+				// 析构内存监视与性能统计
+				PrintText("Begin Del MemMonitor And PerformanceStatistics...");
+				CPerformanceStatistics::DelInstance();
 
 				this->PrintText("Server is over, close all after 3 second!");
 				this->ProcessMsg();
@@ -494,6 +494,8 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				m_pMsgPort->Close();
 				CMessagePort::ClearPortSet();
 				m_pMsgPort = NULL;
+
+				::ClientSocketFinal();
 
 				m_eState = SHELL_STATUS_END;
 			}
@@ -619,7 +621,7 @@ void CMyServerDlg::PrintText(const char* pszText)
 	UpdateData(FALSE);
 
 	// debug版本不用记录日志
-#ifndef _DEBUG
+#ifndef MYDEBUG
 	::LogSave("SHELL: %s", pszText);
 #endif 
 	DEBUG_CATCH("CMsgServerDlg::PrintText");

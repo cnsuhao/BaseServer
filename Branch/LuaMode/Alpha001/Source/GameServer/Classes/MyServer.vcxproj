@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;MYDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -78,11 +78,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -149,6 +151,8 @@
     <ClInclude Include="..\share\String\En_DDRes.h" />
     <ClInclude Include="..\share\String\MyDDString.h" />
     <ClInclude Include="..\share\StructDef.h" />
+    <ClInclude Include="ClientSocket.h" />
+    <ClInclude Include="EncryptClient.h" />
     <ClInclude Include="GameThread.h" />
     <ClInclude Include="LuaScriptMachine.h" />
     <ClInclude Include="MyServer.h" />
@@ -161,6 +165,7 @@
     <ClInclude Include="version_template.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientSocket.cpp" />
     <ClCompile Include="GameThread.cpp" />
     <ClCompile Include="LuaScriptMachine.cpp" />
     <ClCompile Include="MyServer.cpp" />

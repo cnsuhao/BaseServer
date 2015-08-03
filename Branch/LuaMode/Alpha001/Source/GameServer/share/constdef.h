@@ -16,7 +16,7 @@
 #include "./EnumDef.h"
 
 // 服务器标题
-#ifdef _DEBUG
+#ifdef MYDEBUG
 static const char* GAMESERVER_TITLE = "GameServer:[%s] Group:[%d] Line:[%d] PID:[%u] SVN:[%d] Debug";
 #else
 static const char* GAMESERVER_TITLE = "GameServer:[%s] Group:[%d] Line:[%d] PID:[%u] SVN:[%d] Release";

@@ -29,7 +29,7 @@
 #define VC_EXTRALEAN
 #define NOSOUND
 
-#ifdef _DEBUG
+#ifdef MYDEBUG
 #pragma warning(disable:4127)		// conditional expression is constant
 #endif
 

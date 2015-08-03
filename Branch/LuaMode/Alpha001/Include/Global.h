@@ -12,7 +12,7 @@
 #endif // _MSC_VER > 1000
 
 // 守护进程只在release版本生效, 如果release版本也不需要注释掉SEIYA_RUN这个宏
-#ifndef _DEBUG
+#ifndef MYDEBUG
 #define SEIYA_RUN
 #endif 
 

@@ -57,7 +57,7 @@ private:
 	virtual void Close();
 			void SetCharset(MYSQL* hdbc);
 
-#ifdef _DEBUG
+#ifdef MYDEBUG
 public:
 	void IncreaseRef(UINT nKey,const char* szSQL)
 	{
