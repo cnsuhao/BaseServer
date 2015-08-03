@@ -61,311 +61,13 @@ std::string g_strAccountDatabaseName = "acc_db";
 #define FILE_EXISTS		0x00
 #define EXISTENCE_ONLY	0x00
 
-/////////////////////////////////////////////////////////////////////////////
-String	DumpBuffer(const char* buf, int nSize)
-{
-	IF_NOT(buf && nSize > 0 && nSize <= 256)
-		return String();
-
-	String str;
-	for(int i = 0; i < nSize; i++)
-	{
-		char bufChar[255];
-		sprintf(bufChar, "%02x", (*(buf++) & 0xFF));
-		str	+= bufChar;
-		if((i % 16) == 15 && i != nSize-1)
-			str += ' ';
-		else if((i % 4) == 3 && i != nSize-1)
-			str	+= '-';
-	}
-	return str;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// szFormat: "%04d-%02d-%02d %02d:%02d:%02d"
-// 格式化日期时间串
-void	DateTime(char * buf20, time_t tInput /*= 0*/)	// 填入buf20中
-{
-	if(!buf20)
-		return;
-
-	if(tInput == 0)
-		tInput = time(NULL);
-
-	tm * pTm = localtime(&tInput);
-	if(buf20)
-		sprintf(buf20, "%04d-%02d-%02d %02d:%02d:%02d", 
-					pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
-}
-
-////////////////////////////////////////////////////////////////////////////
-bool FormatDateTime(char* buf, const char* szFormat, time_t tInput /*= 0*/)
-{
-	if(!buf || !szFormat)
-		return false;
-
-	if(tInput == 0)
-		tInput = time(NULL);
-
-	tm * pTm = localtime(&tInput);
-	sprintf(buf, szFormat, 
-			pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
-
-	return true;
-}
-
-void DateTimeStamp(char * buf15, time_t tInput /*= 0*/)	// 填入buf15中
-{
-	if(!buf15)
-		return;
-
-	if(tInput == 0)
-		tInput = time(NULL);
-
-	tm * pTm = localtime(&tInput);
-	if(buf15)
-		sprintf(buf15, "%04d%02d%02d%02d%02d%02d", 
-					pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
-}
-
-////////////////////////////////////////////////////////////////////////////
-int DateStamp(time_t tTime/*=0*/)
-{
-	time_t	tInput;
-	if(tTime)
-		tInput	= tTime;
-	else
-		tInput = time(NULL);
-
-	tm * pTm = localtime(&tInput);
-	return (pTm->tm_year+1900)	* 10000
-			+ (pTm->tm_mon+1) * 100
-			+ pTm->tm_mday;
-}
-
-////////////////////////////////////////////////////////////////////////////
-// return: 时间标签nDate加上指定天数nDays
-// return -1: error
-int DateStampPass(int nDate, int nDays)
-{
-	time_t	tCurr = time(NULL);
-	tm	tmComp;
-	memset(&tmComp, 0, sizeof(tm));
-	tmComp.tm_year	= nDate/10000 - 1900;
-	tmComp.tm_mon	= (nDate/100)%100 - 1;
-	tmComp.tm_mday	= nDate%100 + nDays;
-
-	time_t	tComp	= mktime(&tmComp);
-	if(tComp == -1)
-		return -1;
-
-	return DateStamp(tComp);
-}
-
-//////////////////////////////////////////////////////////////////////
-bool IsActiveTime(time_t tCurr, unsigned long nFormat)		// DDWWHHMMSS
-{
-	tm* pTm = localtime(&tCurr);
-	CHECKF(pTm);
-
-	if(nFormat / 100000000)		// day per month
-	{
-		if(pTm->tm_mday == int(nFormat/100000000)
-			&& pTm->tm_hour == int(nFormat/10000) % 100
-			&& pTm->tm_min	== int(nFormat/100) % 100
-			&& pTm->tm_sec	== int(nFormat % 100)
-			)
-			return true;
-	}
-	else if(nFormat / 1000000)		// day per weak
-	{
-		if(((pTm->tm_wday+6)%7)+1 == int(nFormat/1000000)
-			&& pTm->tm_hour == int(nFormat/10000) % 100
-			&& pTm->tm_min	== int(nFormat/100) % 100
-			&& pTm->tm_sec	== int(nFormat % 100)
-			)
-			return true;
-	}
-	else			// time per day
-	{
-		if(pTm->tm_hour == int(nFormat/10000) % 100
-			&& pTm->tm_min	== int(nFormat/100) % 100
-			&& pTm->tm_sec	== int(nFormat % 100)
-			)
-			return true;
-	}
-	return false;
-}
-
-bool IsBetween(int nCurr, int nBegin, int nEnd)
-{
-	if(nBegin <= nEnd)
-	{
-		if(nBegin <= nCurr && nCurr < nEnd)
-			return true;
-	}
-	else // if(nEnd < nBegin)
-	{
-		if(nCurr < nEnd || nBegin <= nCurr)
-			return true;
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool IsTimeRange(unsigned long nBegin, unsigned long nEnd, time_t tCurr/*=0*/)		// DDWWHHMMSS
-{
-	if(tCurr == 0)
-		tCurr = time(NULL);
-
-	tm* pTm = localtime(&tCurr);
-	CHECKF(pTm);
-
-	if(nBegin / 100000000)		// per month
-	{
-		if(IsBetween(pTm->tm_mday*100*1000000 + pTm->tm_hour*10000 + pTm->tm_min*100 + pTm->tm_sec, nBegin, nEnd))
-			return true;
-	}
-	else		// per weak or day ...
-	{
-		if(IsBetween(pTm->tm_wday*1000000 + pTm->tm_hour*10000 + pTm->tm_min*100 + pTm->tm_sec, nBegin, nEnd))
-			return true;
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-char*	StrStrCh(const char* string, const char* strCharSet)
-{
-	CHECKF(string && strCharSet);
-	unsigned int	nLen	= strlen(strCharSet);
-	if(nLen == 0 || strlen(string) < nLen)
-		return NULL;
-
-	char	head	= *strCharSet;
-	const char* ptr = string;
-	while(*ptr)
-	{
-		while(*ptr && *ptr != head)
-		{
-			unsigned char uch = static_cast<unsigned char>(*ptr);
-			if(uch >= 0x81 && uch <= 0xFE && *(ptr+1))
-				ptr++;
-			ptr++;
-		}
-		if(*ptr && strncmp(ptr, strCharSet, nLen) == 0)
-			return const_cast<char*>(ptr);
-		ptr++;
-	}
-
-	return NULL;
-}
-
+////////////////////////////////////////////////////////////////////////
+// Description:  获取指定类型的数据
+// Arguments:
+// Return Value: DWORD
+////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-//[游途道标 2009.06.10]资金流向及物品流向记录
-void PropertyStreamLog(STPROPERTYSTREAMLOG &stProStream)
-{
-	LOGFUNC_TRY
-	char str[2048];
-	sprintf(str, "%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",
-		stProStream.idSAccount,
-		stProStream.idSource,	//1
-		stProStream.dwSVas,		//2
-		stProStream.dwSMoney,	//3
-		stProStream.idTAccount,
-		stProStream.idTarget,	//4
-		stProStream.dwTVas,		//5
-		stProStream.dwTMoney,	//6
-		stProStream.dwVas,		//7
-		stProStream.dwMoney,	//8
-		stProStream.idItemType,	//9
-		stProStream.idSItem,	//10
-		stProStream.dwSNumber,	//11
-		stProStream.idTItem,	//12
-		stProStream.dwTNumber,	//13
-		stProStream.dwSysVas,
-		stProStream.dwSysMoney,
-		stProStream.dwType);	//14
-
-	MyLogSave2("gmlog/ZiChan", str);
-	LOGFUNC_CATCH("PropertyStreamLog");
-}
-
-//////////////////////////////////////////////////////////////////////
-int	Double2Int(double dValue)
-{
-	if((int)(dValue+0.5) >(int)dValue)
-		return int(dValue)+1;
-	else
-		return int(dValue);
-}
-
-/* 02 : 2013-3-14 mengsongl : 新增函数可以从UTC秒中获取指定类型的数据 (BEGIN)  */
-
-/***********************************************************************
-* 函数名    :   unsigned int UtcSecondConvert(unsigned int nSecond, TIME_TYPE type)
-* 功能      :   从UTC秒中获取指定类型的数据
-* 入参      :   
-*               nSecond : UTC秒
-*               type    : 要获取的数据类型
-* 出参      :   无
-* 返回值    :   
-*               >=0 : 获取的数据内容
-***********************************************************************/
-UINT UtcSecondConvert(UINT unSecond, TIME_TYPE eType)
-{
-    time_t tTime = 0;
-    UINT unTime = 0;
-    tTime = unSecond;
-    struct tm *pTime;
-    pTime = localtime( &tTime );
-    switch(eType)
-    {
-    case TIME_SECOND:
-        {
-            unTime = pTime->tm_sec;
-        }
-        break;
-    case TIME_MINUTE:
-        {                     
-            unTime = pTime->tm_min;
-        }
-        break;
-    case TIME_HOUR:
-        {
-            unTime = pTime->tm_hour;
-        }
-        break;
-	case MONTH_DAY:
-		{
-			unTime = pTime->tm_mday;
-		}
-		break;
-	case WEEK_DAY:
-		{
-			unTime = pTime->tm_wday;
-		}
-		break;
-	case TIME_DAY:
-	case YEAR_DAY:
-		{
-			unTime = pTime->tm_yday;
-		}
-		break;
-    default:
-        {
-			tolog2("UtcSecondConvert UnKnow Type[%d]", (int)eType);
-            unTime = 0;
-        }
-        break;
-    }
-    return unTime;
-}
-
-/* 02 : 2013-3-14 mengsongl : 新增函数可以从UTC秒中获取指定类型的数据 (END)  */
-
-//////////////////////////////////////////////////////////////////////////
-DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
+DWORD TimeGet(TIME_TYPE type/* = TIME_MILLISECOND*/)
 {
 	DWORD dwTime = 0;
 	switch(type)
@@ -383,10 +85,10 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			pTime = localtime( &long_time ); /* Convert to local time. */
 
 			dwTime	=	pTime->tm_year%100*100000000 +
-						(pTime->tm_mon+1)*1000000 +
-						pTime->tm_mday*10000 +
-						pTime->tm_hour*100 + 
-						pTime->tm_min;
+				(pTime->tm_mon+1)*1000000 +
+				pTime->tm_mday*10000 +
+				pTime->tm_hour*100 + 
+				pTime->tm_min;
 		}
 		break;
 	case TIME_HOUR:
@@ -398,9 +100,9 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			pTime = localtime( &long_time ); /* Convert to local time. */
 
 			dwTime	=	pTime->tm_year%100*1000000 +
-						(pTime->tm_mon+1)*10000 +
-						pTime->tm_mday*100 +
-						pTime->tm_hour; 
+				(pTime->tm_mon+1)*10000 +
+				pTime->tm_mday*100 +
+				pTime->tm_hour; 
 		}
 		break;
 
@@ -413,12 +115,12 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			pTime = localtime( &long_time ); /* Convert to local time. */
 
 			dwTime	=	pTime->tm_year*10000 +
-						(pTime->tm_mon+1)*100 +
-						pTime->tm_mday;
+				(pTime->tm_mon+1)*100 +
+				pTime->tm_mday;
 		}
 		break;
 
-	case TIME_DAYTIME: 
+	case TIME_DAYSECOND: 
 		{
 			time_t long_time;
 			time( &long_time );                /* Get time as long integer. */
@@ -427,82 +129,30 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			pTime = localtime( &long_time ); /* Convert to local time. */
 
 			dwTime	=	pTime->tm_hour*10000 + 
-						pTime->tm_min *100 +
-						pTime->tm_sec;
-		}
-		break;
-	case TIME_DAYHOUR: 
-		{
-			time_t long_time;
-			time( &long_time );                /* Get time as long integer. */
-			
-			struct tm *pTime;
-			pTime = localtime( &long_time ); /* Convert to local time. */
-			
-			dwTime	=	pTime->tm_hour;		
+				pTime->tm_min *100 +
+				pTime->tm_sec;
 		}
 		break;
 	case TIME_DAYMIN: 
 		{
 			time_t long_time;
 			time( &long_time );                /* Get time as long integer. */
-			
+
 			struct tm *pTime;
 			pTime = localtime( &long_time ); /* Convert to local time. */
-			
+
 			dwTime = pTime->tm_hour*100 + pTime->tm_min;	
 		}
 		break;
-	case TIME_STAMP: 
+	case TIME_DAYHOUR: 
 		{
 			time_t long_time;
 			time( &long_time );                /* Get time as long integer. */
 
 			struct tm *pTime;
-			pTime = localtime( &long_time ); /* Convert to local time. */
+			pTime = localtime( &long_time );  /* Convert to local time. */
 
-			dwTime	=	(pTime->tm_mon+1)*100000000 +
-						pTime->tm_mday*1000000 +
-						pTime->tm_hour*10000 + 
-						pTime->tm_min *100 +
-						pTime->tm_sec;
-		}
-		break;
-		//20070402:时间点.天数
-	case TIME_EPOCH_DAY:
-		{
-			//距离1970 1月 1日 0:00:00 的天数
-			COleDateTime dt(1970,1,1,0,0,0);
-			COleDateTimeSpan dts=COleDateTime::GetCurrentTime()-dt;
-			dwTime = dts.GetDays();
-		}
-		break;
-	case MONTH_DAY:///返回月中天数1~31
-		{
-			dwTime=COleDateTime::GetCurrentTime().GetDay();
-		}
-		break;
-	case YEAR_DAY:///返回年中天数
-		{
-			dwTime=COleDateTime::GetCurrentTime().GetDayOfYear();
-		}
-		break;
-	case WEEK_DAY:///返回年中天数
-		{
-			dwTime=COleDateTime::GetCurrentTime().GetDayOfWeek() - 1;
-		}
-		break;
-	case YEAR_MONTH_DAY:
-		{
-			time_t long_time = 0;
-			time( &long_time );                /* Get time as long integer. */
-
-			struct tm *pTime = NULL;
-			pTime = localtime( &long_time ); /* Convert to local time. */
-
-			dwTime	=	(pTime->tm_year+1900)*10000 +
-				(pTime->tm_mon+1)*100 +
-				pTime->tm_mday;
+			dwTime	=	pTime->tm_hour;		
 		}
 		break;
 	case TIME_DAY_START:	// 今天的第一秒
@@ -511,7 +161,7 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			time( &long_time );                /* Get time as long integer. */
 
 			struct tm *pTime = NULL;
-			pTime = localtime( &long_time ); /* Convert to local time. */
+			pTime = localtime( &long_time );  /* Convert to local time. */
 			pTime->tm_hour	= 0;
 			pTime->tm_min	= 0;
 			pTime->tm_sec	= 0;
@@ -533,14 +183,24 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			dwTime = ::mktime(pTime);
 		}
 		break;
+	case TIME_WEEK_DAY:		// 返回一个星期的第几天
+		{
+			dwTime = COleDateTime::GetCurrentTime().GetDayOfWeek() - 1;
+		}
+		break;
 	case TIME_WEEK_START:	// 本周第一秒
 		{
-			dwTime = ::GetNextWeekStartUTC() - 7 * 24 * 60 * 60;
+			dwTime = ::GetNextWeekStartUtcTime() - 7 * 24 * 60 * 60;
 		}
 		break;
 	case TIME_WEEK_END:		// 本周最后一秒
 		{
-			dwTime = ::GetNextWeekStartUTC() - 1;
+			dwTime = ::GetNextWeekStartUtcTime() - 1;
+		}
+		break;
+	case TIME_MONTH_DAY:	// 返回月中天数1~31
+		{
+			dwTime=COleDateTime::GetCurrentTime().GetDay();
 		}
 		break;
 	case TIME_MONTH_START:	// 本月第一秒
@@ -558,7 +218,7 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			dwTime = ::mktime(pTime);
 		}
 		break;
-	case TIME_MONTH_END:
+	case TIME_MONTH_END:	// 本月最后一秒
 		{
 			time_t long_time = 0;
 			time( &long_time );                /* Get time as long integer. */
@@ -611,6 +271,59 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 			dwTime = ::mktime(pTime);
 		}
 		break;
+	case TIME_YEAR_DAY:		// 返回年中天数
+		{
+			dwTime=COleDateTime::GetCurrentTime().GetDayOfYear();
+		}
+		break;
+	case TIME_YEAR_MONTH_DAY:
+		{
+			time_t long_time = 0;
+			time( &long_time );                /* Get time as long integer. */
+
+			struct tm *pTime = NULL;
+			pTime = localtime( &long_time ); /* Convert to local time. */
+
+			dwTime	=	(pTime->tm_year+1900)*10000 +
+				(pTime->tm_mon+1)*100 +
+				pTime->tm_mday;
+		}
+		break;
+	case TIME_STAMP: 
+		{
+			time_t long_time;
+			time( &long_time );                /* Get time as long integer. */
+
+			struct tm *pTime;
+			pTime = localtime( &long_time ); /* Convert to local time. */
+
+			dwTime	=	(pTime->tm_mon+1)*100000000 +
+				pTime->tm_mday*1000000 +
+				pTime->tm_hour*10000 + 
+				pTime->tm_min *100 +
+				pTime->tm_sec;
+		}
+		break;
+	case TIME_EPOCH_DAY:	// 20070402:时间点.天数
+		{
+			//距离1970 1月 1日 0:00:00 的天数
+			COleDateTime dt(1970,1,1,0,0,0);
+			COleDateTimeSpan dts=COleDateTime::GetCurrentTime()-dt;
+			dwTime = dts.GetDays();
+		}
+		break;
+	case TIME_DAYMINISECOND:
+		{
+			SYSTEMTIME sysTime={0};
+			::GetLocalTime(&sysTime);
+
+			dwTime = sysTime.wDay * 100000000 + 
+					 sysTime.wHour * 1000000 +
+					 sysTime.wMinute * 10000 +
+					 sysTime.wSecond * 100 +
+					 sysTime.wMilliseconds / 10;
+		}
+		break;
 	default:
 		dwTime = ::timeGetTime();
 		break;
@@ -619,17 +332,82 @@ DWORD TimeGet(TIME_TYPE type/*=TIME_MILLISECOND*/)
 	return dwTime;
 }
 
-int GetCurTimeSpan(UINT nDataTime)	//返回分钟数跨度
+////////////////////////////////////////////////////////////////////////
+// Description:  将TimeGet接口获得时间转换成UTC秒
+// Arguments:
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int GetUTCSecond(int nTimeType, I64 i64Time)
 {
-	int nYear	= nDataTime/100000000 + 2000;
-	int nMonth	= nDataTime%100000000/1000000;
-	int nDay	= nDataTime%1000000/10000;
-	int nHour	= nDataTime%10000/100;
-	int nMunite = nDataTime%100;
-	COleDateTime dt(nYear, nMonth, nDay, nHour, nMunite, 0);
-	COleDateTimeSpan dts = COleDateTime::GetCurrentTime() - dt;
-	int nTimeSpan = (int)dts.GetTotalMinutes();
-	return nTimeSpan;
+	CHECKF(nTimeType > TIME_BEGIN && nTimeType < TIME_END);
+	time_t tCurTime = ::time(NULL);
+	struct tm *pTime = ::localtime(&tCurTime);
+	CHECKF(pTime);
+	switch (nTimeType)
+	{
+	case TIME_MINUTE:
+		{
+			pTime->tm_sec	= 0;
+			pTime->tm_min	= i64Time%100;
+			pTime->tm_hour	= i64Time%10000/100;
+			pTime->tm_mday	= i64Time%1000000/10000;
+			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
+			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
+		}
+		break;
+	case  TIME_HOUR:
+		{
+			pTime->tm_sec	= 0;
+			pTime->tm_min	= 0;
+			pTime->tm_hour	= i64Time%100;
+			pTime->tm_mday	= i64Time%10000/100;
+			pTime->tm_mon	= i64Time%1000000/10000 - 1;
+			pTime->tm_year	= i64Time%100000000/1000000 + 100;
+		}
+		break;
+	case  TIME_DAY:
+		{
+			pTime->tm_sec	= 0;
+			pTime->tm_min	= 0;
+			pTime->tm_hour	= 0;
+			pTime->tm_mday	= i64Time%100;
+			pTime->tm_mon	= i64Time%10000/100 - 1;
+			pTime->tm_year	= i64Time/10000;
+		}
+		break;
+	case TIME_DAYSECOND:
+		{
+			pTime->tm_sec	= i64Time%100;
+			pTime->tm_min	= i64Time%10000/100;
+			pTime->tm_hour	= i64Time/10000;
+		}
+		break;
+	case TIME_DAY_START:	// 天的第一秒
+		{
+			pTime->tm_sec	= 0;
+			pTime->tm_min	= 0;
+			pTime->tm_hour	= 0;
+			pTime->tm_mday	= i64Time%1000000/10000;
+			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
+			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
+		}
+		break;
+	case TIME_DAY_END:		// 天的最后一秒
+		{
+			pTime->tm_sec	= 59;
+			pTime->tm_min	= 59;
+			pTime->tm_hour	= 23;
+			pTime->tm_mday	= i64Time%1000000/10000;
+			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
+			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
+		}
+		break;
+	default:
+		tolog2("GetUTCSecond need process type:%d",nTimeType);
+	}
+	int nNeedTime = (int)::mktime(pTime);
+
+	return nNeedTime;
 }
 
 int gettimeofday(struct timeval * val, struct timezone *)
@@ -654,11 +432,9 @@ int gettimeofday(struct timeval * val, struct timezone *)
 	return 0;
 }
 
-
 ////////////////////////////////////////////////////////////////////////
-// Description:  高精度utc毫秒时间
+// Description:  获取高精度utc毫秒时间
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: I64
 ////////////////////////////////////////////////////////////////////////
 I64	GetUtcMillisecond(void)
@@ -668,13 +444,481 @@ I64	GetUtcMillisecond(void)
 	return (I64)(tv.tv_sec) * 1000 + (I64)(tv.tv_usec) / 1000;       
 }
 
+////////////////////////////////////////////////////////////////////////
+// Description:  从UTC秒中获取指定类型的数据 
+// Arguments:	 unSecond : UTC秒 
+//				 type     : 要获取的数据类型
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+UINT GetUtcTimeConvert(UINT unTimeSecond, TIME_TYPE eType)
+{
+	UINT unTime = 0;
+	time_t tTime = unTimeSecond;
+	struct tm *pTime = localtime( &tTime );
+	switch(eType)
+	{
+	case TIME_SECOND:
+		{
+			unTime = pTime->tm_sec;
+		}
+		break;
+	case TIME_MINUTE:
+		{                     
+			unTime = pTime->tm_min;
+		}
+		break;
+	case TIME_HOUR:
+		{
+			unTime = pTime->tm_hour;
+		}
+		break;
+	case TIME_MONTH_DAY:
+		{
+			unTime = pTime->tm_mday;
+		}
+		break;
+	case TIME_WEEK_DAY:
+		{
+			unTime = pTime->tm_wday;
+		}
+		break;
+	case TIME_DAY:
+	case TIME_YEAR_DAY:
+		{
+			unTime = pTime->tm_yday;
+		}
+		break;
+	case TIME_YEAR_MONTH_DAY:	// 获取年月日
+		{
+			unTime = (pTime->tm_year + 1900) * 10000 +
+					 (pTime->tm_mon+1) * 100 +
+					  pTime->tm_mday;
+		}
+		break;
+	default:
+		{
+			tolog2("UtcSecondConvert UnKnow Type[%d]", (int)eType);
+			unTime = 0;
+		}
+		break;
+	}
+	return unTime;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  取下周一的0时0分0秒
+// Arguments:
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+UINT GetNextWeekStartUtcTime(void)
+{
+	COleDateTime tCur = COleDateTime::GetCurrentTime();
+	const int DAYS_OF_WEEK = 7;
+	int nCurDayOfWeek = tCur.GetDayOfWeek();	// 星期天为1 星期六为7
+	int nSpanDay = 0;
+	if (1 == nCurDayOfWeek)						// 如果今天是星期天
+	{
+		nSpanDay = 1;
+	}
+	else
+	{
+		nSpanDay = DAYS_OF_WEEK - nCurDayOfWeek + 2;
+	}
+	CHECKF(nSpanDay);
+
+	COleDateTimeSpan tSpan(nSpanDay,0,0,0);
+	COleDateTime tNeedTime = tCur + tSpan;
+	tNeedTime.SetDateTime(tNeedTime.GetYear(), tNeedTime.GetMonth(), tNeedTime.GetDay(),0,0,0);
+
+	time_t tNowTime = ::time(NULL);
+	struct tm * pTime = ::localtime(&tNowTime);
+	CHECKF(pTime);
+	pTime->tm_year = tNeedTime.GetYear()%1000 + 100;
+	pTime->tm_mon = tNeedTime.GetMonth() - 1;
+	pTime->tm_mday = tNeedTime.GetDay();
+	pTime->tm_hour = tNeedTime.GetHour();
+	pTime->tm_min = tNeedTime.GetMinute();
+	pTime->tm_sec = tNeedTime.GetSecond();
+
+	int nNeedUTC = ::mktime(pTime);
+	return nNeedUTC;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  根据时间类型返回下次更新时间
+// Arguments:	 unHour 时
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+UINT GetNextUpdateTime(UINT unHour, TIME_TYPE type/* = TIME_SECOND*/)
+{
+	COleDateTimeSpan tDaySpan(1,0,0,0);
+	COleDateTime tCur = COleDateTime::GetCurrentTime();
+	COleDateTime tNext(tCur.GetYear(),tCur.GetMonth(),tCur.GetDay(),unHour,0,0);
+	if(tCur.GetHour() >= (int)unHour)
+		tNext+=tDaySpan;
+	UINT unYear		= tNext.GetYear();
+	UINT unMonth	= tNext.GetMonth();
+	UINT unDay		= tNext.GetDay();
+	UINT unHours	= tNext.GetHour();
+	UINT unMinite	= tNext.GetMinute();
+
+	UINT unNextTime = 0;
+	switch (type)
+	{
+	case TIME_SECOND:
+		{
+			time_t long_time = 0;
+			time( &long_time );              /* Get time as long integer. */
+
+			struct tm *pTime = NULL;
+			pTime = localtime( &long_time ); /* Convert to local time. */
+			pTime->tm_yday  = unYear;
+			pTime->tm_mon   = unMonth - 1;
+			pTime->tm_mday	= unDay;
+			pTime->tm_hour	= unHours;
+			pTime->tm_min	= unMinite;
+			pTime->tm_sec	= 0;
+
+			unNextTime = ::mktime(pTime);
+		}
+		break;
+	case TIME_MINUTE:		// 保持与TimeGet函数返回的分钟值一致
+		{
+			unNextTime = unYear%100 * 100000000 + unMonth * 1000000 + unDay * 10000 + unHours * 100 + unMinite;
+		}
+		break;
+	default:
+		break;
+	}
+	return unNextTime;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  返回下一周的一个时间点 TIME_MINUTE 格式时间
+// Arguments:	 unTimeOfDay 一个天时间如2300表示23点，如果为0则取当前时间
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+UINT GetNextUpdateTimeOfWeek(UINT unTimeOfDay)
+{
+	CHECKF(unTimeOfDay<2400);
+	COleDateTime tCur = COleDateTime::GetCurrentTime();
+	COleDateTimeSpan tSpan(7,0,0,0);
+	COleDateTime tNext;
+	if (unTimeOfDay!=0)
+	{
+		tCur.SetDateTime(tCur.GetYear(),tCur.GetMonth(),tCur.GetDay(),unTimeOfDay/100,unTimeOfDay%100,0);
+	}
+	tNext = tCur + tSpan;
+	UINT unYear = tNext.GetYear();
+	UINT unMonth = tNext.GetMonth();
+	UINT unDay = tNext.GetDay();
+	UINT unHours = tNext.GetHour();
+	UINT unMinute = tNext.GetMinute();
+	UINT unNextTime = unYear%100 * 100000000 + unMonth*1000000 + unDay*10000+unHours*100+unMinute;
+	
+	return unNextTime;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取下个月的每一天精确到日
+// Arguments:	 
+// Return Value: UINT (YYYYMMDD)
+////////////////////////////////////////////////////////////////////////
+UINT GetNextUpdateMonthDate(void)
+{
+	COleDateTime tCur = COleDateTime::GetCurrentTime();
+	UINT nNextYear = tCur.GetYear();
+	UINT nNextMonth = tCur.GetMonth() + 1;
+	if (nNextMonth > 12) //是否超过了自然月
+	{
+		nNextYear += 1;
+		nNextMonth = 1;
+	}
+	COleDateTime tNext = COleDateTime(nNextYear, nNextMonth, 1, 0, 0, 0);
+	CHECKF(tNext.GetStatus() == COleDateTime::valid);
+	UINT nNextTime = tNext.GetYear()*10000 + tNext.GetMonth()*100 + tNext.GetDay();//YYYYMMDD
+	return nNextTime;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  是否超过指定结束日期
+// Arguments:	 nEndDate 结束日期(YYMMDDHHMM)
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+bool IsTimeOver(UINT nEndDate)
+{
+	int nYear   = 2000 + nEndDate / 100000000;
+	int nMounth = (nEndDate % 100000000) / 1000000;
+	int nDay    = (nEndDate % 1000000) / 10000;
+	int nHour   = (nEndDate % 10000) / 100;
+	int nMin    = nEndDate % 100;   
+	CTime timeEnd(nYear,nMounth,nDay,nHour,nMin,0);
+	CTime& timeNow=CTime::GetCurrentTime();
+	CTimeSpan span = timeEnd - timeNow;
+	int nTotalMin = (int)span.GetTotalMinutes();
+	if (nTotalMin <= 0)
+		return true;
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获得当天一个小时数对应的UTC时间
+// Arguments:	 
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+int GetHourUTCSecond(int nHour)
+{
+	CHECKF(nHour >= 0 && nHour < 24);
+	time_t curTime = ::time(NULL);
+	struct tm * pTimeStruct = ::localtime(&curTime);
+	CHECKF(pTimeStruct);
+	pTimeStruct->tm_hour = nHour;
+	pTimeStruct->tm_min = 0;
+	pTimeStruct->tm_sec = 0;
+
+	int nNeedTime = (int)::mktime(pTimeStruct);
+	return nNeedTime;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取指定时间（UTC时间所在天）到当前时间的间隔秒数
+// Arguments:	 
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int GetTimeSpanFromSecond( UINT unUtcTime )
+{
+	struct tm *pTime;
+	time_t tUTCTime = unUtcTime;
+	pTime = ::localtime( &tUTCTime ); /* Convert to local time. */
+	if (pTime)
+	{
+		pTime->tm_hour	= 0;
+		pTime->tm_min	= 0;
+		pTime->tm_sec	= 0;
+	}
+
+	int unDayBeginUTC	= (int)::mktime(pTime);
+	int unCurTime		= ::TimeGet(TIME_SECOND);
+	return unCurTime - unDayBeginUTC;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取当前时间到指定时间的分钟数跨度
+// Arguments:	 nDataTime 指定时间(YYMMDDHHMM)
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+int GetTimeSpanToMunite(UINT nDataTime)
+{
+	int nYear	= nDataTime / 100000000 + 2000;
+	int nMonth	= nDataTime % 100000000 / 1000000;
+	int nDay	= nDataTime % 1000000 / 10000;
+	int nHour	= nDataTime % 10000 / 100;
+	int nMunite = nDataTime % 100;
+	COleDateTime dt(nYear, nMonth, nDay, nHour, nMunite, 0);
+	COleDateTimeSpan dts = COleDateTime::GetCurrentTime() - dt;
+	int nTimeSpan = (int)dts.GetTotalMinutes();
+	return nTimeSpan;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取当前时间到指定时间的天数跨度
+// Arguments:	 dwTimeDay 指定时间(YYYYMMDD)
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+int GetTimeSpanToDay(DWORD dwTimeDay)
+{
+	CHECKF(dwTimeDay > 10000000 && dwTimeDay < 30000000);
+	CTime timecount(dwTimeDay/10000,(dwTimeDay % 10000)/100,dwTimeDay % 100,0,0,0);
+	CTime timeCurr = CTime::GetCurrentTime();
+	CTimeSpan spanTime =timeCurr - timecount;
+	int nPassDay = (int)spanTime.GetTotalHours() / 24;
+	return nPassDay;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description: 根据剩余时间（分钟）获取真实的时间（精确到分）
+// Arguments:	nMuniteOffset 分钟数偏移量
+// Return Value: UINT
+////////////////////////////////////////////////////////////////////////
+UINT GetTimeMinuteFromLeftMunite(int nMuniteOffset)
+{
+	CHECKF(nMuniteOffset > 0);
+	CTime time = CTime::GetCurrentTime();
+	CTimeSpan timeSpan(0, 0, nMuniteOffset, 0);
+	CTime timeEnd = time + timeSpan;
+	UINT unResult = (timeEnd.GetYear() - 2000) * 100000000 +
+					timeEnd.GetMonth() * 1000000 +
+					timeEnd.GetDay() * 10000 +
+					timeEnd.GetHour() * 100 +
+					timeEnd.GetMinute();
+	return unResult;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  格式化日期时间串(填入buf20中)
+// Arguments:	 szFormat: "%04d-%02d-%02d %02d:%02d:%02d"
+// Return Value: None
+////////////////////////////////////////////////////////////////////////
+void DateTime(char * buf20, time_t tInput /*= 0*/)
+{
+	if(!buf20)
+		return;
+
+	if(tInput == 0)	// 0 : curr time
+		tInput = time(NULL);
+
+	tm * pTm = localtime(&tInput);
+	if(buf20)
+		sprintf(buf20, "%04d-%02d-%02d %02d:%02d:%02d", 
+		pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
+}
+
+bool FormatDateTime(char* buf, const char* szFormat, time_t tInput /*= 0*/)
+{
+	if(!buf || !szFormat)
+		return false;
+
+	if(tInput == 0)
+		tInput = time(NULL);
+
+	tm * pTm = localtime(&tInput);
+	sprintf(buf, szFormat, 
+		pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
+
+	return true;
+}
+
+int DateStamp(time_t tTime/* = 0*/)
+{
+	time_t	tInput;
+	if(tTime)
+		tInput	= tTime;
+	else
+		tInput = time(NULL);
+
+	tm * pTm = localtime(&tInput);
+	return (pTm->tm_year+1900)	* 10000
+		+ (pTm->tm_mon+1) * 100
+		+ pTm->tm_mday;
+}
+
+void DateTimeStamp(char * buf15, time_t tInput/* = 0*/)
+{
+	if(!buf15)
+		return;
+
+	if(tInput == 0)
+		tInput = time(NULL);
+
+	tm * pTm = localtime(&tInput);
+	if(buf15)
+		sprintf(buf15, "%04d%02d%02d%02d%02d%02d", 
+		pTm->tm_year+1900, pTm->tm_mon+1, pTm->tm_mday, pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  时间标签nDate加上指定天数nDays
+// Arguments:
+// Return Value: int (-1: error)
+////////////////////////////////////////////////////////////////////////
+int DateStampPass(int nDate, int nDays)
+{
+	time_t	tCurr = time(NULL);
+	tm	tmComp;
+	memset(&tmComp, 0, sizeof(tm));
+	tmComp.tm_year	= nDate/10000 - 1900;
+	tmComp.tm_mon	= (nDate/100)%100 - 1;
+	tmComp.tm_mday	= nDate%100 + nDays;
+
+	time_t	tComp	= mktime(&tmComp);
+	if(tComp == -1)
+		return -1;
+
+	return DateStamp(tComp);
+}
+
+bool IsActiveTime(time_t tCurr, unsigned long nFormat)		// DDWWHHMMSS
+{
+	tm* pTm = localtime(&tCurr);
+	CHECKF(pTm);
+
+	if(nFormat / 100000000)		// day per month
+	{
+		if(pTm->tm_mday == int(nFormat/100000000)
+			&& pTm->tm_hour == int(nFormat/10000) % 100
+			&& pTm->tm_min	== int(nFormat/100) % 100
+			&& pTm->tm_sec	== int(nFormat % 100)
+			)
+			return true;
+	}
+	else if(nFormat / 1000000)		// day per weak
+	{
+		if(((pTm->tm_wday+6)%7)+1 == int(nFormat/1000000)
+			&& pTm->tm_hour == int(nFormat/10000) % 100
+			&& pTm->tm_min	== int(nFormat/100) % 100
+			&& pTm->tm_sec	== int(nFormat % 100)
+			)
+			return true;
+	}
+	else			// time per day
+	{
+		if(pTm->tm_hour == int(nFormat/10000) % 100
+			&& pTm->tm_min	== int(nFormat/100) % 100
+			&& pTm->tm_sec	== int(nFormat % 100)
+			)
+			return true;
+	}
+	return false;
+}
+
+bool IsBetween(int nCurr, int nBegin, int nEnd)
+{
+	if(nBegin <= nEnd)
+	{
+		if(nBegin <= nCurr && nCurr < nEnd)
+			return true;
+	}
+	else // if(nEnd < nBegin)
+	{
+		if(nCurr < nEnd || nBegin <= nCurr)
+			return true;
+	}
+	return false;
+}
+
+bool IsTimeRange(unsigned long nBegin, unsigned long nEnd, time_t tCurr/*=0*/)		// DDWWHHMMSS
+{
+	if(tCurr == 0)
+		tCurr = time(NULL);
+
+	tm* pTm = localtime(&tCurr);
+	CHECKF(pTm);
+
+	if(nBegin / 100000000)		// per month
+	{
+		if(IsBetween(pTm->tm_mday*100*1000000 + pTm->tm_hour*10000 + pTm->tm_min*100 + pTm->tm_sec, nBegin, nEnd))
+			return true;
+	}
+	else		// per weak or day ...
+	{
+		if(IsBetween(pTm->tm_wday*1000000 + pTm->tm_hour*10000 + pTm->tm_min*100 + pTm->tm_sec, nBegin, nEnd))
+			return true;
+	}
+	return false;
+}
 //////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取随机值
+// Arguments:    nMax 最大值, bReset 是否重置
+// Return Value: 0 <= int < nMax (-1: error)
+////////////////////////////////////////////////////////////////////////
 int RandGet(int nMax, bool bReset)
 {
 	static _int64 RandSeed = (unsigned int)TimeGet();
 	if (bReset)
 		RandSeed = (unsigned int)TimeGet();
-	
+
 	if (RandSeed < 0)
 	{
 		RandSeed *= (-1);
@@ -723,17 +967,17 @@ int	RandGetZT(int nMax, double dRangeParamL/*=3.0*/, double dRangeParamR/*=3.0*/
 	{
 		return 0;
 	}
-	
+
 	if (dRangeParamL < 0.1)
 	{
 		dRangeParamL = 0.1;
 	}
-	
+
 	if (dRangeParamR < 0.1)
 	{
 		dRangeParamR = 0.1;
 	}
-	
+
 	const double dSigma			= 1.0;						// 不要修改σ, 调整范围用RangeParam
 	const double dPi			= 3.1415926535897932;	
 	const _int64 i64RandBase	= 0x7fffffff;				// 产生平均分布基数,
@@ -741,43 +985,46 @@ int	RandGetZT(int nMax, double dRangeParamL/*=3.0*/, double dRangeParamR/*=3.0*/
 	// 让 dRandGet_X, dRandGet_Y 服从(0,1]平均分布, 因为半开半闭区间, 所以有 +1
 	_int64 i64RandGet_X = RandGet(i64RandBase, bRest) + 1;
 	_int64 i64RandGet_Y = RandGet(i64RandBase, false) + 1;
-	
+
 	double dRandGet_X = (double)i64RandGet_X / (double)i64RandBase;	
 	double dRandGet_Y = (double)i64RandGet_Y / (double)i64RandBase;
-	
+
 	double dParam	= -2.0 * ::log(dRandGet_X);
 	if (dParam < 0.0)
 	{
 		return 0;
 	}
-	
+
 	double dResultZT = ::sqrt(dParam) * ::cos(2.0 * dPi * dRandGet_Y);
-	
+
 	// 调整中位数为3σ
 	dResultZT += (dRangeParamL * dSigma);
-	
+
 	// 将正负3σ以外的数据进行边界处理
 	if (dResultZT < 0.0 || dResultZT > (dRangeParamL + dRangeParamR) * dSigma)
 	{
 		return RandGet(nMax);
 	}
-	
+
 	// 调整为0-1之间取值
 	dResultZT /= ((dRangeParamL + dRangeParamR) * dSigma);
-	
+
 	int nResultZT = (int)(dResultZT * nMax);
-	
+
 	// 防止越界
 	if (nResultZT < 0 || nResultZT >= nMax)
 	{
 		return RandGet(nMax);
 	}
-	
+
 	return nResultZT;
 }
 
-
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// Description:  随机范围
+// Arguments:    
+// Return Value: double
+////////////////////////////////////////////////////////////////////////
 double RandomRateGet(double dRange)
 {
 	double pi=3.1415926;
@@ -793,7 +1040,517 @@ double RandomRateGet(double dRange)
 	return b;
 }
 
+////////////////////////////////////////////////////////////////////////
+// Description:  double四舍五入为int
+// Arguments:    
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int	Double2Int(double dValue)
+{
+	if((int)(dValue+0.5) >(int)dValue)
+		return int(dValue)+1;
+	else
+		return int(dValue);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  double类型保留两位小数
+// Arguments:
+// Return Value: double
+////////////////////////////////////////////////////////////////////////
+double DoubleSaveTwoDecimal(double dInput)
+{
+	I64 i64Vaule =  (I64)(100i64 * dInput);
+	double dResult = i64Vaule / 100.0;
+	return dResult;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取二进制中的1的个数
+// Arguments:    
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int bit_count(int n)
+{
+	int nCount = 0;
+	for (int i = 0; i < 32; i++)
+	{
+		if ((n & (1<<i)) != 0)
+			nCount++;
+	}
+	return nCount;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获取二进制中的1的个数
+// Arguments:    I64Data 64位数值， nEndIndex检测的索引数
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int bit_i64_count(I64 i64Data, int nEndIndex/* = 64*/)
+{
+	int nCount = 0;
+	for (int i = 0; i < nEndIndex; i++)
+	{
+		if ((i64Data & (1i64 << i)) != 0)
+		{
+			nCount++;
+		}
+	}
+	return nCount;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  获得2的幂指数，取整
+// Arguments:
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+UINT GetLog2(UINT nNum)
+{
+	CHECKF(nNum);
+	UINT i=0;
+	for (i = 0; i < 32; ++i)
+	{
+		nNum = nNum >> 1;
+		if (nNum<=0)
+		{
+			break;
+		}
+	}
+
+	return i;
+}
 //////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+String	DumpBuffer(const char* buf, int nSize)
+{
+	IF_NOT(buf && nSize > 0 && nSize <= 256)
+		return String();
+
+	String str;
+	for(int i = 0; i < nSize; i++)
+	{
+		char bufChar[255];
+		sprintf(bufChar, "%02x", (*(buf++) & 0xFF));
+		str	+= bufChar;
+		if((i % 16) == 15 && i != nSize-1)
+			str += ' ';
+		else if((i % 4) == 3 && i != nSize-1)
+			str	+= '-';
+	}
+	return str;
+}
+
+char*	StrStrCh(const char* string, const char* strCharSet)
+{
+	CHECKF(string && strCharSet);
+	unsigned int	nLen	= strlen(strCharSet);
+	if(nLen == 0 || strlen(string) < nLen)
+		return NULL;
+
+	char	head	= *strCharSet;
+	const char* ptr = string;
+	while(*ptr)
+	{
+		while(*ptr && *ptr != head)
+		{
+			unsigned char uch = static_cast<unsigned char>(*ptr);
+			if(uch >= 0x81 && uch <= 0xFE && *(ptr+1))
+				ptr++;
+			ptr++;
+		}
+		if(*ptr && strncmp(ptr, strCharSet, nLen) == 0)
+			return const_cast<char*>(ptr);
+		ptr++;
+	}
+
+	return NULL;
+}
+
+BOOL StringCheck(const char* pszString, BOOL bNewLineEnable)
+{
+	return true;
+
+	if (!pszString)
+		return false;
+
+	int nLen	=strlen(pszString);
+	for (int i=0; i < nLen; i++)
+
+	{
+		unsigned char c	=(unsigned char)pszString[i];
+		if (c >= 0x81 && c <= 0xfe)	
+		{
+			if (i+1 >= nLen)
+				return false;
+
+			unsigned char c2	=(unsigned char)pszString[i+1];
+			if (c2 < 0x40 && c2 > 0x7e && c2 < 0x80 && c2 > 0xfe)
+				return false;
+			else
+				i++;
+		}
+		else
+		{
+			if (c==0x80)
+				return false;
+			else
+			{
+				if(bNewLineEnable)
+				{
+					if (c < ' ' && c != 0x0A && c != 0x0D)
+						return false;
+				}
+				else
+				{
+					if (c < ' ')
+						return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  检查聊天字符串
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+BOOL TalkStrCheck(char* pszString, BOOL bNewLineEnable)
+{
+	return true;
+	if (!pszString)
+		return false;
+
+	int nLen	=strlen(pszString);
+	for (int i=0; i < nLen; i++)
+	{
+		unsigned char c	=pszString[i];
+		if(c < ' ' && c != 0x0d && c != 0x0a)
+			return false;
+		switch(c)
+		{
+		case '\\':
+			//case '\''://20090511haocq单双引号不过虑
+			//case '"':
+			return false;
+		}
+	}
+
+	return ::DisableWordCheck(pszString, bNewLineEnable);
+}
+
+BOOL DisableWordCheck(const char* pszString, BOOL bNewLineEnable)
+{
+	if (strstr(pszString, "fuck"))
+		return false;
+
+	if (strstr(pszString, "FUCK"))
+		return false;
+	return ::StringCheck(pszString, bNewLineEnable);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  检查字符串是否包含sql语句
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool StrSqlCheck(const char* pszString)
+{
+	if (!pszString)
+		return false;
+
+	wchar_t wszTempStr[2048];
+	ZeroMemory(wszTempStr, sizeof(wszTempStr));
+	::MyUTF8ToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t));
+
+	int nLen = wcslen(wszTempStr);
+	wchar_t c = L'\0';
+	for (int i=0; i < nLen; i++)
+	{
+		c = wszTempStr[i];
+		if(c < L' ')
+			return false;
+		switch(c)
+		{
+			// 		case L'	'://tab
+			// 		case L' ':
+		case L';':
+		case L',':
+		case L'/':
+		case L'\\':
+		case L'=':
+		case L'%':
+		case L'@':
+		case L'\'':
+		case L'"':
+		case L'[':
+		case L']':
+		case L'#':
+		case L'?':
+		case L'*':
+		case L'!':
+		case L'<':
+		case L'>':
+			return false;
+		}
+	}
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  检查名字字符串
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+BOOL NameStrCheck(const char* pszString)
+{
+	if (!pszString)
+		return false;
+
+	if (0 == strlen(pszString))
+		return false;
+
+	if (!StrSqlCheck(pszString))
+		return false;
+
+	if (strstr(pszString, "　"))
+		return false;
+
+	if (strstr(pszString, "GM"))
+		return false;
+
+	if (strstr(pszString, "gm"))
+		return false;
+
+	if (strstr(pszString, "PM"))
+		return false;
+
+	if (strstr(pszString, "pm"))
+		return false;
+
+	if (strstr(pszString, "SYSTEM"))
+		return false;
+
+	if (strstr(pszString, "system"))
+		return false;
+
+	if (strstr(pszString, "NPC"))
+		return false;
+
+	if (strstr(pszString, "npc"))
+		return false;
+
+	return ::DisableWordCheck(pszString);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串从Ansi到Unicode编码
+// Arguments:	 从OUT参数传出, 返回值表示转换是否成功
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool MyANSIToUnicode(IN const char* pszStr, OUT wchar_t* pwszStr, int nUnicodeStrSize)
+{
+	CHECKF(pszStr && pwszStr && nUnicodeStrSize > 0);
+	const int nUnicodeNeedLen = ::MultiByteToWideChar(CP_ACP, 0, pszStr, -1, NULL, 0);
+	CHECKF(nUnicodeNeedLen < nUnicodeStrSize);
+	ZeroMemory(pwszStr, nUnicodeStrSize);
+	::MultiByteToWideChar(CP_ACP, 0, pszStr, -1, pwszStr, nUnicodeNeedLen);  
+	return  true;  
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串 从Unicode到Ansi编码
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool MyUnicodeToANSI(IN const wchar_t* pwszStr, OUT char* pszStr, int nAnsiStrSize)
+{
+	CHECKF(pszStr && pwszStr && nAnsiStrSize > 0);	
+	const int nAnsiNeedLen = ::WideCharToMultiByte(CP_ACP, 0, pwszStr, -1, NULL, 0, NULL, NULL);
+	CHECKF(nAnsiNeedLen < nAnsiStrSize);
+	ZeroMemory(pszStr, nAnsiStrSize);
+	::WideCharToMultiByte(CP_ACP, 0, pwszStr, -1, pszStr, nAnsiNeedLen, NULL, NULL);
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串 从Unicode到UTF8
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool MyUnicodeToUTF8(IN const wchar_t* pwszStr, OUT char* pszStr, int nUtf8StrSize)
+{
+	CHECKF(pwszStr && pszStr && nUtf8StrSize > 0);
+	const int nNeedLen = ::WideCharToMultiByte(CP_UTF8, NULL, pwszStr, wcslen(pwszStr), NULL, 0, NULL, NULL);
+	CHECKF(nNeedLen < nUtf8StrSize);
+	ZeroMemory(pszStr, nUtf8StrSize);
+	::WideCharToMultiByte(CP_UTF8, NULL, pwszStr, wcslen(pwszStr), pszStr, nNeedLen, NULL, NULL);
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串 从UTF8到Unicode
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool MyUTF8ToUnicode(IN const char* pszStr, OUT wchar_t* pwszStr, int nUnicodeStrSize)
+{
+	CHECKF(pszStr && pwszStr && nUnicodeStrSize > 0);
+	const int nNeedLen = ::MultiByteToWideChar(CP_UTF8, NULL, pszStr, strlen(pszStr), NULL, 0);
+	CHECKF(nNeedLen < nUnicodeStrSize);
+	ZeroMemory(pwszStr, nUnicodeStrSize);
+	::MultiByteToWideChar(CP_UTF8, NULL, pszStr, strlen(pszStr), pwszStr, nUnicodeStrSize);
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串 从UTF8到Ansi编码
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+CMxyString MyUtf8ToANSI( const char* pszString )
+{
+	CMxyString strResult = "";
+	wchar_t wszTempStr[8192];
+	char	szAnsiStr[8192];
+	if (::MyUTF8ToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t)) && 
+		::MyUnicodeToANSI(wszTempStr, szAnsiStr, sizeof(szAnsiStr) / sizeof(szAnsiStr[0])))
+	{
+		strResult = szAnsiStr;
+	}
+	return strResult;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  转换字符串 从Ansi到UTF8编码
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+CMxyString MyANSIToUtf8( const char* pszString )
+{
+	CMxyString strResult = "";
+	wchar_t wszTempStr[8192];
+	char	szAnsiStr[8192];
+	if (::MyANSIToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t)) && 
+		::MyUnicodeToUTF8(wszTempStr, szAnsiStr, sizeof(szAnsiStr) / sizeof(szAnsiStr[0])))
+	{
+		strResult = szAnsiStr;
+	}
+	return strResult;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  安全拷贝字符串
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool	SafeCopy(char * pTarget, const char * pSource, int nBufLen /*= 0*/)
+{
+	DEBUG_TRY;
+	if (pTarget == pSource)
+	{
+		return true;
+	}
+
+	if(pTarget)
+	{
+		pTarget[0] = 0;
+		if(pSource)
+		{
+			if(nBufLen && (int)strlen(pSource) >= nBufLen)
+			{
+				strncpy(pTarget, pSource, nBufLen-1);
+				pTarget[nBufLen-1] = 0;
+				return false;
+			}
+			strcpy(pTarget, pSource);
+			return true;
+		}
+	}
+	DEBUG_CATCH("CATCH: *** SafeCopy() crash! ***\n");
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  替换std::string中的字符
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+int ReplaceStdString(IN OUT string& str, const char* pszOld, const char* pszNew, bool bReplaceAll/* = true*/)
+{
+	CHECKF(pszOld && ::strlen(pszOld) > 0);
+	CHECKF(pszNew && ::strlen(pszNew) > 0);
+	if (str.empty())
+	{
+		return 0;
+	}
+
+	std::string::size_type unOldSize = ::strlen(pszOld);
+	std::string::size_type unNewSize = ::strlen(pszNew);
+
+	int nReplaceCount = 0;
+	std::string::size_type unPos = 0;
+	while ((unPos = str.find(pszOld, unPos)) != str.npos)
+	{
+		nReplaceCount++;
+		str.replace(unPos, unOldSize, pszNew);
+		unPos += unNewSize;
+		if (!bReplaceAll)
+		{
+			break;
+		}
+	}
+
+	return nReplaceCount;
+}
+//////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
+// Description: 判断文件存在性
+// Arguments:
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool IsExistFile( const char* pszFileName )
+{
+	CHECKF(pszFileName);
+	if (FILE_EXISTS == FILE_ACCESS(pszFileName, EXISTENCE_ONLY))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+////////////////////////////////////////////////////////////////////////
+// Description:  把文件读到string返回
+// Arguments:
+// Return Value: std::string
+////////////////////////////////////////////////////////////////////////
+std::string LoadFileToString(const std::string& strFileName)
+{
+	std::ostringstream buf;
+	std::ifstream inFile(strFileName.c_str(), std::ios::in);
+	char ch;
+	int nCount = 0;
+	while(buf && inFile.get(ch))
+	{
+		if (nCount < 3)
+		{
+			if (SZ_UTF8_FILE_HEADER[nCount++] == ch)
+			{
+				continue;
+			}
+		}
+		buf.put(ch);
+	}
+	inFile.close();
+	return buf.str();
+}
+
 void DDALineEx(int x0, int y0, int x1, int y1, vector<POINT>& vctPoint)
 {
 	vctPoint.clear();
@@ -864,131 +1621,8 @@ void DDALineEx(int x0, int y0, int x1, int y1, vector<POINT>& vctPoint)
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
-BOOL StringCheck(const char* pszString, BOOL bNewLineEnable)
-{
-	return true;
 
-	if (!pszString)
-		return false;
-
-	int nLen	=strlen(pszString);
-	for (int i=0; i < nLen; i++)
-
-	{
-		unsigned char c	=(unsigned char)pszString[i];
-		if (c >= 0x81 && c <= 0xfe)	
-		{
-			if (i+1 >= nLen)
-				return false;
-
-			unsigned char c2	=(unsigned char)pszString[i+1];
-			if (c2 < 0x40 && c2 > 0x7e && c2 < 0x80 && c2 > 0xfe)
-				return false;
-			else
-				i++;
-		}
-		else
-		{
-			if (c==0x80)
-				return false;
-			else
-			{
-				if(bNewLineEnable)
-				{
-					if (c < ' ' && c != 0x0A && c != 0x0D)
-						return false;
-				}
-				else
-				{
-					if (c < ' ')
-						return false;
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-BOOL NameStrCheck(const char* pszString)
-{
- 	if (!pszString)
-		return false;
-
-	if (0 == strlen(pszString))
-		return false;
-	
-	if (!StrSqlCheck(pszString))
-		return false;
-
-	if (strstr(pszString, "　"))
-		return false;
-
-	if (strstr(pszString, "GM"))
-		return false;
-
-	if (strstr(pszString, "gm"))
-		return false;
-
-	if (strstr(pszString, "PM"))
-		return false;
-
-	if (strstr(pszString, "pm"))
-		return false;
-
-	if (strstr(pszString, "SYSTEM"))
-		return false;
-
-	if (strstr(pszString, "system"))
-		return false;
-
-	if (strstr(pszString, "NPC"))
-		return false;
-
-	if (strstr(pszString, "npc"))
-		return false;
-
-	return ::DisableWordCheck(pszString);
-}
-
-//////////////////////////////////////////////////////////////////////
-BOOL TalkStrCheck(char* pszString, BOOL bNewLineEnable)
-{
-	return true;
-	if (!pszString)
-		return false;
-
-	int nLen	=strlen(pszString);
-	for (int i=0; i < nLen; i++)
-	{
-		unsigned char c	=pszString[i];
-		if(c < ' ' && c != 0x0d && c != 0x0a)
-			return false;
-		switch(c)
-		{
-		case '\\':
-		//case '\''://20090511haocq单双引号不过虑
-		//case '"':
-			return false;
-		}
-	}
-
-	return ::DisableWordCheck(pszString, bNewLineEnable);
-}
-
-//////////////////////////////////////////////////////////////////////
-BOOL DisableWordCheck(const char* pszString, BOOL bNewLineEnable)
-{
-	if (strstr(pszString, "fuck"))
-		return false;
-
-	if (strstr(pszString, "FUCK"))
-		return false;
-	return ::StringCheck(pszString, bNewLineEnable);
-}
 
 //////////////////////////////////////////////////////////////////////////
 int NumConversion(int nTrainPoint,int nConvNum)
@@ -1011,172 +1645,6 @@ int NumConversion(int nTrainPoint,int nConvNum)
 	}
 	return nResult;
 }
-
-//////////////////////////////////////////////////////////////////////////
-DWORD GetTimeDayToMiniSecond()
-{
-	SYSTEMTIME sysTime={0};
-	::GetLocalTime(&sysTime);
-	
-	DWORD dwDay = sysTime.wDay;
-	DWORD dwHour = sysTime.wHour;
-	DWORD dwMinute = sysTime.wMinute;
-	DWORD dwSecond = sysTime.wSecond;
-	DWORD dwMiniSecond = sysTime.wMilliseconds;
-
-	return dwDay*100000000 + dwHour*1000000 + dwMinute*10000 + dwSecond*100 + dwMiniSecond/10;
-}
-
-//////////////////////////////////////////////////////////////////////////
-UINT GetLog2(UINT nNum)
-{
-	CHECKF(nNum);
-	UINT i=0;
-	for (i = 0; i < 32; ++i)	//获得2的幂指数，取整
-	{
-		nNum = nNum >> 1;
-		if (nNum<=0)
-		{
-			break;
-		}
-	}
-	
-	return i;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool IsTimeOver(UINT nEndDate)
-{
-	int nYear = 2000 + nEndDate / 100000000;
-	int nMounth =  (nEndDate % 100000000) / 1000000;
-	int nDay =  (nEndDate % 1000000) / 10000;
-	int nHour =  (nEndDate % 10000) / 100;
-	int nMin =  nEndDate % 100;   
-	CTime timeEnd(nYear,nMounth,nDay,nHour,nMin,0);
-	CTime& timeNow=CTime::GetCurrentTime();
-	CTimeSpan span = timeEnd - timeNow;
-	int nTotalMin = (int)span.GetTotalMinutes();
-	if (nTotalMin <= 0)
-		return true;
-	return false;
-}
-
-//************************************
-// Method:    GetNextUpdateTime
-// FullName:  GetNextUpdateTime
-// Access:    public 
-// Returns:   bool
-// Qualifier: 用于处理每天非0点清理掩码
-// Parameter: UINT unHour
-//************************************
-UINT GetNextUpdateTime(UINT unHour, TIME_TYPE type/* = TIME_SECOND*/)
-{
-	COleDateTimeSpan tDaySpan(1,0,0,0);
-	COleDateTime tCur = COleDateTime::GetCurrentTime();
-	COleDateTime tNext(tCur.GetYear(),tCur.GetMonth(),tCur.GetDay(),unHour,0,0);
-	if(tCur.GetHour() >= (int)unHour)
-		tNext+=tDaySpan;
-	UINT unYear		= tNext.GetYear();
-	UINT unMonth	= tNext.GetMonth();
-	UINT unDay		= tNext.GetDay();
-	UINT unHours	= tNext.GetHour();
-	UINT unMinite	= tNext.GetMinute();
-
-	UINT unNextTime = 0;
-	switch (type)
-	{
-	case TIME_SECOND:
-		{
-			time_t long_time = 0;
-			time( &long_time );              /* Get time as long integer. */
-
-			struct tm *pTime = NULL;
-			pTime = localtime( &long_time ); /* Convert to local time. */
-			pTime->tm_yday  = unYear;
-			pTime->tm_mon   = unMonth - 1;
-			pTime->tm_mday	= unDay;
-			pTime->tm_hour	= unHours;
-			pTime->tm_min	= unMinite;
-			pTime->tm_sec	= 0;
-
-			unNextTime = ::mktime(pTime);
-		}
-		break;
-	case TIME_MINUTE:		// 保持与TimeGet函数返回的分钟值一致
-		{
-			unNextTime = unYear%100 * 100000000 + unMonth * 1000000 + unDay * 10000 + unHours * 100 + unMinite;
-		}
-		break;
-	default:
-		break;
-	}
-	return unNextTime;
-}
-
-//************************************
-// Method:    GetNextUpdateTimeOfWeek
-// FullName:  GetNextUpdateTimeOfWeek
-// Access:    public 
-// Returns:   UINT
-// Qualifier: 返回下一周的一个时间点 TIME_MINUTE 格式时间
-// Parameter: UINT unTimeOfDay 一个天时间如2300表示23点，如果为0则取当前时间
-//************************************
-UINT GetNextUpdateTimeOfWeek(UINT unTimeOfDay)
-{
-	CHECKF(unTimeOfDay<2400);
-	COleDateTime tCur = COleDateTime::GetCurrentTime();
-	COleDateTimeSpan tSpan(7,0,0,0);
-	COleDateTime tNext;
-	if (unTimeOfDay!=0)
-	{
-		tCur.SetDateTime(tCur.GetYear(),tCur.GetMonth(),tCur.GetDay(),unTimeOfDay/100,unTimeOfDay%100,0);
-	}
-	tNext = tCur + tSpan;
-	UINT unYear = tNext.GetYear();
-	UINT unMonth = tNext.GetMonth();
-	UINT unDay = tNext.GetDay();
-	UINT unHours = tNext.GetHour();
-	UINT unMinute = tNext.GetMinute();
-	UINT unNextTime = unYear%100 * 100000000 + unMonth*1000000 + unDay*10000+unHours*100+unMinute;
-	
-	return unNextTime;
-}
-
-// 取下周一的0时0分0秒
-int GetNextWeekStartUTC()
-{
-	COleDateTime tCur = COleDateTime::GetCurrentTime();
-	const int DAYS_OF_WEEK = 7;
-	int nCurDayOfWeek = tCur.GetDayOfWeek();	// 星期天为1 星期六为7
-	int nSpanDay = 0;
-	if (1 == nCurDayOfWeek) // 如果今天是星期天
-	{
-		nSpanDay = 1;
-	}
-	else
-	{
-		nSpanDay = DAYS_OF_WEEK - nCurDayOfWeek + 2;
-	}
-	CHECKF(nSpanDay);
-	 
-	COleDateTimeSpan tSpan(nSpanDay,0,0,0);
-	COleDateTime tNeedTime = tCur + tSpan;
-	tNeedTime.SetDateTime(tNeedTime.GetYear(), tNeedTime.GetMonth(), tNeedTime.GetDay(),0,0,0);
-	
-	time_t tNowTime = ::time(NULL);
-	struct tm * pTime = ::localtime(&tNowTime);
-	CHECKF(pTime);
-	pTime->tm_year = tNeedTime.GetYear()%1000 + 100;
-	pTime->tm_mon = tNeedTime.GetMonth() - 1;
-	pTime->tm_mday = tNeedTime.GetDay();
-	pTime->tm_hour = tNeedTime.GetHour();
-	pTime->tm_min = tNeedTime.GetMinute();
-	pTime->tm_sec = tNeedTime.GetSecond();
-
-	int nNeedUTC = ::mktime(pTime);
-	return nNeedUTC;
-}
-
 
 ////////////////////////////////////////////////////////////////////////
 // Description:  计算数轴上两个线段的交集数量(线段为开区间)
@@ -1207,180 +1675,6 @@ int CalcNumberAxisIntersection(int x1, int y1, int x2, int y2)
 		return y1 - x2;
 	
 	return -1;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  转换字符串从Ansi到Unicode编码
-// Arguments: 从OUT参数传出, 返回值表示转换是否成功
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool MyANSIToUnicode(IN const char* pszStr, OUT wchar_t* pwszStr, int nUnicodeStrSize)
-{
-	CHECKF(pszStr && pwszStr && nUnicodeStrSize > 0);
-	const int nUnicodeNeedLen = ::MultiByteToWideChar(CP_ACP, 0, pszStr, -1, NULL, 0);
-	CHECKF(nUnicodeNeedLen < nUnicodeStrSize);
-	ZeroMemory(pwszStr, nUnicodeStrSize);
-	::MultiByteToWideChar(CP_ACP, 0, pszStr, -1, pwszStr, nUnicodeNeedLen);  
-	return  true;  
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  转换字符串 从Unicode到Ansi编码
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool MyUnicodeToANSI(IN const wchar_t* pwszStr, OUT char* pszStr, int nAnsiStrSize)
-{
-	CHECKF(pszStr && pwszStr && nAnsiStrSize > 0);	
-	const int nAnsiNeedLen = ::WideCharToMultiByte(CP_ACP, 0, pwszStr, -1, NULL, 0, NULL, NULL);
-	CHECKF(nAnsiNeedLen < nAnsiStrSize);
-	ZeroMemory(pszStr, nAnsiStrSize);
-	::WideCharToMultiByte(CP_ACP, 0, pwszStr, -1, pszStr, nAnsiNeedLen, NULL, NULL);
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  转换字符串 从Unicode到UTF8
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool MyUnicodeToUTF8(IN const wchar_t* pwszStr, OUT char* pszStr, int nUtf8StrSize)
-{
-	CHECKF(pwszStr && pszStr && nUtf8StrSize > 0);
-	const int nNeedLen = ::WideCharToMultiByte(CP_UTF8, NULL, pwszStr, wcslen(pwszStr), NULL, 0, NULL, NULL);
-	CHECKF(nNeedLen < nUtf8StrSize);
-	ZeroMemory(pszStr, nUtf8StrSize);
-	::WideCharToMultiByte(CP_UTF8, NULL, pwszStr, wcslen(pwszStr), pszStr, nNeedLen, NULL, NULL);
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  转换字符串 从UTF8到Unicode
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool MyUTF8ToUnicode(IN const char* pszStr, OUT wchar_t* pwszStr, int nUnicodeStrSize)
-{
-	CHECKF(pszStr && pwszStr && nUnicodeStrSize > 0);
-	const int nNeedLen = ::MultiByteToWideChar(CP_UTF8, NULL, pszStr, strlen(pszStr), NULL, 0);
-	CHECKF(nNeedLen < nUnicodeStrSize);
-	ZeroMemory(pwszStr, nUnicodeStrSize);
-	::MultiByteToWideChar(CP_UTF8, NULL, pszStr, strlen(pszStr), pwszStr, nUnicodeStrSize);
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  检查字符串是否包含sql语句
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool StrSqlCheck(const char* pszString)
-{
-	if (!pszString)
-		return false;
-
-	wchar_t wszTempStr[2048];
-	ZeroMemory(wszTempStr, sizeof(wszTempStr));
-	::MyUTF8ToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t));
-
-	int nLen = wcslen(wszTempStr);
-	wchar_t c = L'\0';
-	for (int i=0; i < nLen; i++)
-	{
-		c = wszTempStr[i];
-		if(c < L' ')
-			return false;
-		switch(c)
-		{
-// 		case L'	'://tab
-// 		case L' ':
-		case L';':
-		case L',':
-		case L'/':
-		case L'\\':
-		case L'=':
-		case L'%':
-		case L'@':
-		case L'\'':
-		case L'"':
-		case L'[':
-		case L']':
-		case L'#':
-		case L'?':
-		case L'*':
-		case L'!':
-		case L'<':
-		case L'>':
-			return false;
-		}
-	}
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-int bit_count(int n)
-{
-	int nCount = 0;
-	for (int i = 0; i < 32; i++)
-	{
-		if ((n & (1<<i)) != 0)
-			nCount++;
-	}
-	return nCount;
-}
-
-//////////////////////////////////////////////////////////////////////////
-int I64_bit_count(I64 I64Data, int nEndIndex/* = 64*/)
-{
-	int nCount = 0;
-	for (int i = 0; i < nEndIndex; i++)
-	{
-		if ((I64Data & (1i64 << i)) != 0)
-		{
-			nCount++;
-		}
-	}
-	return nCount;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-UINT GetNextUpdateMonthDate()
-{
-	COleDateTime tCur = COleDateTime::GetCurrentTime();
-	UINT nNextYear = tCur.GetYear();
-	UINT nNextMonth = tCur.GetMonth() + 1;
-	if (nNextMonth > 12)//是否超过了自然月
-	{
-		nNextYear += 1;
-		nNextMonth = 1;
-	}
-	COleDateTime tNext = COleDateTime(nNextYear, nNextMonth, 1, 0, 0, 0);
-	CHECKF(tNext.GetStatus() == COleDateTime::valid);
-	UINT nNextTime = tNext.GetYear()*10000 + tNext.GetMonth()*100 + tNext.GetDay();//YYYYMMDD
-	return nNextTime;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  获取物品剩余时间真实的分钟数, nLifeTimeOffset为偏移量, 支持大于0的分钟偏移量
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: None
-////////////////////////////////////////////////////////////////////////
-UINT GetItemLifeTimeMinute(int nLifeTimeOffset)
-{
-	CHECKF(nLifeTimeOffset > 0);
-	CTime time = CTime::GetCurrentTime();
-	CTimeSpan timeSpan(0, 0, nLifeTimeOffset, 0);
-	CTime timeEnd = time + timeSpan;
-	UINT unResult = (timeEnd.GetYear() - 2000) * 100000000 + timeEnd.GetMonth() * 1000000  + timeEnd.GetDay() * 10000+ timeEnd.GetHour() * 100+ timeEnd.GetMinute();
-	return unResult;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1427,50 +1721,9 @@ bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool	SafeCopy(char * pTarget, const char * pSource, int nBufLen /*= 0*/)
-{
-	DEBUG_TRY;
-	if (pTarget == pSource)
-	{
-		return true;
-	}
-
-	if(pTarget)
-	{
-		pTarget[0] = 0;
-		if(pSource)
-		{
-			if(nBufLen && (int)strlen(pSource) >= nBufLen)
-			{
-				strncpy(pTarget, pSource, nBufLen-1);
-				pTarget[nBufLen-1] = 0;
-				return false;
-			}
-			strcpy(pTarget, pSource);
-			return true;
-		}
-	}
-	DEBUG_CATCH("CATCH: *** SafeCopy() crash! ***\n");
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool IsObjType(OBJID idObjType, OBJID idUnion) 
 { 
 	return (idObjType & idUnion & 0x0FFF) != 0; 
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  double类型保留两位小数
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: None
-////////////////////////////////////////////////////////////////////////
-double SaveTwoDecimal(double dInput)
-{
-	I64 i64Vaule =  (I64)(100i64 * dInput);
-	double dResult = i64Vaule / 100.0;
-	return dResult;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1497,105 +1750,6 @@ LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo
 	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
-}
-///////////////////////////////////////////////////////////////////////
-// 将TimeGet接口获得时间转换成UTC秒
-int GetUTCSecond(int nTimeType, I64 i64Time)
-{
-	CHECKF(nTimeType > TIME_BEGIN && nTimeType < TIME_END);
-	time_t tCurTime = ::time(NULL);
-	struct tm *pTime = ::localtime(&tCurTime);
-	CHECKF(pTime);
-	switch (nTimeType)
-	{
-	case TIME_MINUTE:
-		{
-			pTime->tm_sec	= 0;
-			pTime->tm_min	= i64Time%100;
-			pTime->tm_hour	= i64Time%10000/100;
-			pTime->tm_mday	= i64Time%1000000/10000;
-			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
-			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
-		}
-		break;
-	case  TIME_HOUR:
-		{
-			pTime->tm_sec	= 0;
-			pTime->tm_min	= 0;
-			pTime->tm_hour	= i64Time%100;
-			pTime->tm_mday	= i64Time%10000/100;
-			pTime->tm_mon	= i64Time%1000000/10000 - 1;
-			pTime->tm_year	= i64Time%100000000/1000000 + 100;
-		}
-		break;
-	case  TIME_DAY:
-		{
-			pTime->tm_sec	= 0;
-			pTime->tm_min	= 0;
-			pTime->tm_hour	= 0;
-			pTime->tm_mday	= i64Time%100;
-			pTime->tm_mon	= i64Time%10000/100 - 1;
-			pTime->tm_year	= i64Time/10000;
-		}
-		break;
-	case TIME_DAYTIME:
-		{
-			pTime->tm_sec	= i64Time%100;
-			pTime->tm_min	= i64Time%10000/100;
-			pTime->tm_hour	= i64Time/10000;
-		}
-		break;
-	case TIME_DAY_START:	// 天的第一秒
-		{
-			pTime->tm_sec	= 0;
-			pTime->tm_min	= 0;
-			pTime->tm_hour	= 0;
-			pTime->tm_mday	= i64Time%1000000/10000;
-			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
-			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
-		}
-		break;
-	case TIME_DAY_END:		// 天的最后一秒
-		{
-			pTime->tm_sec	= 59;
-			pTime->tm_min	= 59;
-			pTime->tm_hour	= 23;
-			pTime->tm_mday	= i64Time%1000000/10000;
-			pTime->tm_mon	= i64Time%100000000/1000000 - 1;
-			pTime->tm_year	= i64Time%10000000000/100000000 + 100;
-		}
-		break;
-	default:
-		tolog2("GetUTCSecond need process type:%d",nTimeType);
-	}
-	int nNeedTime = (int)::mktime(pTime);
-
-	return nNeedTime;
-}
-
-// 获得当天一个小时数对应的UTC时间
-int GetHourUTCSecond(int nHour)
-{
-	CHECKF(nHour >= 0 && nHour < 24);
-	time_t curTime = ::time(NULL);
-	struct tm * pTimeStruct = ::localtime(&curTime);
-	CHECKF(pTimeStruct);
-	pTimeStruct->tm_hour = nHour;
-	pTimeStruct->tm_min = 0;
-	pTimeStruct->tm_sec = 0;
-
-	int nNeedTime = (int)::mktime(pTimeStruct);
-	return nNeedTime;
-}
-//获取经过的天数
-DWORD GetPassDay(DWORD dwTimeDay)
-{
-	CHECKF(dwTimeDay > 10000000 && dwTimeDay < 30000000);
-	CTime timecount(dwTimeDay/10000,(dwTimeDay % 10000)/100,dwTimeDay % 100,0,0,0);
-	CTime timeCurr = CTime::GetCurrentTime();
-	CTimeSpan spanTime =timeCurr - timecount;
-	int nPassDay = (int)spanTime.GetTotalHours() / 24;
-	return nPassDay;
 }
 
 //获取本机IP
@@ -1633,67 +1787,6 @@ std::string GetLocalIpAddr()
 	tmpLocalIP = inet_ntoa(stTmpSockAddrIn.sin_addr);
 	
 	return tmpLocalIP;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  把文件读到string返回
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: std::string
-////////////////////////////////////////////////////////////////////////
-std::string LoadFileToString(const std::string& strFileName)
-{
-	std::ostringstream buf;
-	std::ifstream inFile(strFileName.c_str(), std::ios::in);
-	char ch;
-	int nCount = 0;
-	while(buf && inFile.get(ch))
-	{
-		if (nCount < 3)
-		{
-			if (SZ_UTF8_FILE_HEADER[nCount++] == ch)
-			{
-				continue;
-			}
-		}
-		buf.put(ch);
-	}
-	inFile.close();
-	return buf.str();
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  替换std::string中的字符
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-int ReplaceStdString(IN OUT string& str, const char* pszOld, const char* pszNew, bool bReplaceAll/* = true*/)
-{
-	CHECKF(pszOld && ::strlen(pszOld) > 0);
-	CHECKF(pszNew && ::strlen(pszNew) > 0);
-	if (str.empty())
-	{
-		return 0;
-	}
-	
-	std::string::size_type unOldSize = ::strlen(pszOld);
-	std::string::size_type unNewSize = ::strlen(pszNew);
-	
-	int nReplaceCount = 0;
-	std::string::size_type unPos = 0;
-	while ((unPos = str.find(pszOld, unPos)) != str.npos)
-	{
-		nReplaceCount++;
-		str.replace(unPos, unOldSize, pszNew);
-		unPos += unNewSize;
-		if (!bReplaceAll)
-		{
-			break;
-		}
-	}
-	
-	return nReplaceCount;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1775,28 +1868,6 @@ CTimeUseMSLog::~CTimeUseMSLog()
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Description:  由utc时间获得年月日
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: int
-////////////////////////////////////////////////////////////////////////
-int GetYearMonthDayFormUtcSecond( time_t nUtcSecond )
-{
-	CHECKF(nUtcSecond > 0);
-	struct tm *pTime;
-	pTime = localtime( &nUtcSecond ); /* Convert to local time. */
-	if (pTime)
-	{
-		int	nTime	=	(pTime->tm_year+1900)*10000 +
-						(pTime->tm_mon+1)*100 +
-						pTime->tm_mday;
-		return nTime;
-	}
-
-	return 0;
-}
-
-////////////////////////////////////////////////////////////////////////
 // Description:  加权随机数生成
 // Arguments:
 // Author: 彭文奇(Peng Wenqi)
@@ -1849,69 +1920,6 @@ void GenWeightRandomVector(const VEC_WEIGHTED_VALUE& rInputVec, OUT VEC_WEIGHT_O
 			}
 		}
 	}
-}
-
-// 获取一个UTC时间所在天开始时间到现在的间隔秒数,
-int GetTimeSpanFromDayBeginOfUTC( UINT unUTCTime )
-{
-	struct tm *pTime;
-	time_t tUTCTime = unUTCTime;
-	pTime = ::localtime( &tUTCTime ); /* Convert to local time. */
-	if (pTime)
-	{
-		pTime->tm_hour	= 0;
-		pTime->tm_min	= 0;
-		pTime->tm_sec	= 0;
-	}
-
-	int unDayBeginUTC	= (int)::mktime(pTime);
-	int unCurTime		= ::TimeGet(TIME_SECOND);
-
-	return unCurTime - unDayBeginUTC;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description: 判断文件存在性
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: bool
-////////////////////////////////////////////////////////////////////////
-bool IsExistFile( const char* pszFileName )
-{
-	CHECKF(pszFileName);
-	if (FILE_EXISTS == FILE_ACCESS(pszFileName, EXISTENCE_ONLY))
-	{
-		return true;
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-CMxyString MyUtf8ToANSI( const char* pszString )
-{
-	CMxyString strResult = "";
-	wchar_t wszTempStr[8192];
-	char	szAnsiStr[8192];
-	if (::MyUTF8ToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t)) && 
-		::MyUnicodeToANSI(wszTempStr, szAnsiStr, sizeof(szAnsiStr) / sizeof(szAnsiStr[0])))
-	{
-		strResult = szAnsiStr;
-	}
-	return strResult;
-}
-
-//////////////////////////////////////////////////////////////////////////
-CMxyString MyANSIToUtf8( const char* pszString )
-{
-	CMxyString strResult = "";
-	wchar_t wszTempStr[8192];
-	char	szAnsiStr[8192];
-	if (::MyANSIToUnicode(pszString, wszTempStr, sizeof(wszTempStr) / sizeof(wchar_t)) && 
-		::MyUnicodeToUTF8(wszTempStr, szAnsiStr, sizeof(szAnsiStr) / sizeof(szAnsiStr[0])))
-	{
-		strResult = szAnsiStr;
-	}
-	return strResult;
 }
 
 

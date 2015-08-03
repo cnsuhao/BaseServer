@@ -490,7 +490,7 @@ void LogSaveBase(const char* pszLogFileName, const char* pszLogInfo)
 	if (nLogSize >= MAX_LOGFILESIZE)
 	{
 		char szBackupFile[256] = "";
-		_snprintf(szBackupFile, 255, "%s %04d-%02d-%02d.%06u.log", pszLogFileName, pTime->tm_year + 1900, pTime->tm_mon+1, pTime->tm_mday, ::TimeGet(TIME_DAYTIME));
+		_snprintf(szBackupFile, 255, "%s %04d-%02d-%02d.%06u.log", pszLogFileName, pTime->tm_year + 1900, pTime->tm_mon+1, pTime->tm_mday, ::TimeGet(TIME_DAYSECOND));
 		rename(szLogFullName, szBackupFile);
 	}
 	
