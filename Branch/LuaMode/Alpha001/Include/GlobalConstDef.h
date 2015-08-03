@@ -35,7 +35,7 @@ const int   MAX_ADDRESS_SIZE	= 64;							// 玩家所在地名长度
 const int	INVITE_CODE_SIZE	= 16;							// 邀请码长度
 const int	_MAX_MSGSIZE		= 1024 ;
 
-#ifdef _DEBUG
+#ifdef MYDEBUG
 	const int	MAX_GAMESERVER_ACCEPT_SESSION	= 200;									// 游服最大会话数量
 #else
 	const int	MAX_GAMESERVER_ACCEPT_SESSION	= 5000;									// 游服最大会话数量

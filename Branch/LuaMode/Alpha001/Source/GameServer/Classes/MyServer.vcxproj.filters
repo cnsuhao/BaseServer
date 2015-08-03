@@ -120,6 +120,12 @@
     <ClInclude Include="LuaScriptMachine.h">
       <Filter>Lua</Filter>
     </ClInclude>
+    <ClInclude Include="ClientSocket.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="EncryptClient.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="LuaScriptMachine.cpp">
       <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientSocket.cpp">
+      <Filter>Sourse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

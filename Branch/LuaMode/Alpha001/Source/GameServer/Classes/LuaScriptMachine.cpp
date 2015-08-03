@@ -15,11 +15,12 @@ MYHEAP_IMPLEMENTATION(CLuaScriptMachine, s_heap);
 //////////////////////////////////////////////////////////////////////////
 bool CLuaScriptMachine::Init()
 {
-#ifdef _DEBUG
+#ifdef MYDEBUG
 	m_bDebug = true;
 #else
 	m_bDebug = false;
 #endif
+	ZeroMemory(&m_stNowStack, sizeof(m_stNowStack));
 
 	// 注册C++函数接口
 	CHECKF(this->RegeditInterface());
@@ -33,6 +34,24 @@ bool CLuaScriptMachine::Init()
 void CLuaScriptMachine::Release()
 {
 
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description: 设置运行环境
+// Arguments:
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool CLuaScriptMachine::SetLuaEnv( OBJID idUser /*= ID_NONE*/, OBJID idAction /*= ID_NONE*/ )
+{
+	m_bLuaResult = false;
+	m_stNowStack.idUser = idUser;
+	m_stNowStack.idAction = idAction;
+	for (int i = 0; i < MAX_LUA_PARAM_COUNT; i++)
+	{
+		m_stNowStack.nParam[i] = 0;
+	}
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -61,12 +80,14 @@ bool CLuaScriptMachine::RunScriptFunction(const char* pszFileName,const char* ps
 		{
 			strLuaFileName += ".lua";
 		}
-		
+
 		// 路径
 		if (strLuaFileName.npos == strLuaFileName.find(LUA_FILE_PATH))
 		{
 			strLuaFileName = LUA_FILE_PATH + strLuaFileName;
 		}
+
+		this->PushStack();	// 自定义信息栈压栈
 
 		this->AutoLoadLuaFileCache(strLuaFileName);				// 自动加载lua文件到缓存(如果已经加载无处理, 从未加载的新脚本自动加入缓存)
 		int nLuaRet = this->LoadLuaFileToStack(strLuaFileName);	// 加载lua文件到lua栈上
@@ -82,15 +103,19 @@ bool CLuaScriptMachine::RunScriptFunction(const char* pszFileName,const char* ps
 				bThisResult = this->SaveLastLuaError(nLuaRet, strLuaFileName.c_str());
 			}
 		}
+
+		this->PopStack();	// 自定义信息栈出栈
 	}
 	catch (LuaPlus::LuaException& e)
 	{
+		this->ResetStack();	// 清空自定义信息栈
 		const char* pszErrorMsg = e.GetErrorMessage();
 		CHECKF(pszErrorMsg);
 		::LogLuaError("CLuaScriptMachine::RunScriptFunction crash! File[%s] Error[%s]", pszFileName, pszErrorMsg);
 	}
 	catch (...)
 	{
+		this->ResetStack();	// 清空自定义信息栈
 		STACK_TRACE_ONCE; 
 		::LogSave("CLuaScriptMachine::RunScriptFunction crash:[%s]", pszFileName);
 	}
@@ -285,6 +310,65 @@ bool CLuaScriptMachine::SaveLastLuaError(int nLuaRet, const char* pszFileName)
 }
 
 ////////////////////////////////////////////////////////////////////////
+// Description:  设置当前信息栈上的部分内容
+// Arguments:	 
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: None
+////////////////////////////////////////////////////////////////////////
+void CLuaScriptMachine::SetNowStack(const MY_LUA_INFO& rInfo)
+{
+	m_stNowStack = rInfo;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  重置所有信息栈内容
+// Arguments:	 仅用于脚本运行异常情况
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: None
+////////////////////////////////////////////////////////////////////////
+void CLuaScriptMachine::ResetStack(void)
+{
+	ZeroMemory(&m_stNowStack, sizeof(m_stNowStack));
+	int nCount = 0;
+	while (!m_stackInfo.empty())
+	{
+		DEAD_LOOP_BREAK(nCount, 100);
+		m_stackInfo.pop();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  自定义信息栈 压栈处理
+// Arguments:
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: None
+////////////////////////////////////////////////////////////////////////
+void CLuaScriptMachine::PushStack(void)
+{
+	m_stackInfo.push(m_stNowStack);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+// Description:  自定义信息栈 出栈处理
+// Arguments:
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: None
+////////////////////////////////////////////////////////////////////////
+void CLuaScriptMachine::PopStack(void)
+{
+	// 栈空不理
+	if (m_stackInfo.empty())
+	{
+		return;
+	}
+
+	// 将上一层栈还原
+	m_stNowStack = m_stackInfo.top();
+	m_stackInfo.pop();
+}
+
+////////////////////////////////////////////////////////////////////////
 // Description: 获得可配置的lua文字
 // Arguments:
 // Author: 彭文奇(Peng Wenqi)
@@ -364,6 +448,7 @@ bool CLuaScriptMachine::SetLuaTextString( const char* pszParamName, const char* 
 	DEBUG_CATCHF("CLuaScriptMachine::SetLuaTextString");
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 // Description:  数据操作接口加载sql
 // Arguments:	 
@@ -431,9 +516,13 @@ bool CLuaScriptMachine::RegeditInterface()
 	//lua_register(L, "DataPack.LoadRecord", LoadRecordset);
 
 	// 注册脚本机环境接口
-	RegisterObjectDirect("Lua", "CLuaScriptMachine", "GetLuaText",		 this, &CLuaScriptMachine::GetLuaText);
+	RegisterObjectDirect("Lua", "CLuaScriptMachine", "GetUserID", this, &CLuaScriptMachine::GetUserID);
+	RegisterObjectDirect("Lua", "CLuaScriptMachine", "GetActionID", this, &CLuaScriptMachine::GetActionID);
+	RegisterObjectDirect("Lua", "CLuaScriptMachine", "GetParam",  this, &CLuaScriptMachine::GetParam);
+	RegisterObjectDirect("Lua", "CLuaScriptMachine", "SetResult", this, &CLuaScriptMachine::SetResult);
+
+	RegisterObjectDirect("Lua", "CLuaScriptMachine", "GetLuaText", this, &CLuaScriptMachine::GetLuaText);
 	RegisterObjectDirect("Lua", "CLuaScriptMachine", "SetLuaTextString", this, &CLuaScriptMachine::SetLuaTextString);
-	RegisterObjectDirect("Lua", "CLuaScriptMachine", "SetResult",		 this, &CLuaScriptMachine::SetResult);
 
 	return true;
 	DEBUG_CATCHF("CLuaScriptMachine::RegeditManyInterface");
