@@ -126,6 +126,9 @@
     <ClInclude Include="EncryptClient.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="LoginThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="ClientSocket.cpp">
       <Filter>Sourse</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginThread.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

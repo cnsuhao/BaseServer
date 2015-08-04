@@ -13,6 +13,7 @@
 
 #include "SocketThread.h"
 #include "GameThread.h"
+#include "LoginThread.h"
 #include "ClientSocket.h"
 
 // 全局变量保存服务器名和线路
@@ -349,12 +350,6 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 					break;
 				}
 
-				// 4.启动登陆线程
-				this->PrintText("4. Start Login Thread...");
-
-				// 5.启动游戏线程
-				this->PrintText("5. Start Game Thread...");
-
 				// 获取数据库名全局变量
 				ini.SetSection("Database");
 				char szConstDatabaseName[DBSTR_SIZE] = "";
@@ -367,6 +362,14 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				g_strGameDatabaseName = szGameDatabaseName;
 				g_strAccountDatabaseName = szAccountDatabaseName;
 
+				// 4.启动登陆线程
+				this->PrintText("4. Start Login Thread...");
+				m_pLoginThread = new CLoginThread(CMessagePort::GetInterface(MSGPORT_LOGIN));
+				CHECKBK(m_pLoginThread);
+				CHECKBK(m_pLoginThread->CreateThread(false));
+
+				// 5.启动游戏线程
+				this->PrintText("5. Start Game Thread...");
 				m_pGameThread = new CGameThread(CMessagePort::GetInterface(MSGPORT_GAME));
 				CHECKBK(m_pGameThread);
 				CHECKBK(m_pGameThread->CreateThread(false));

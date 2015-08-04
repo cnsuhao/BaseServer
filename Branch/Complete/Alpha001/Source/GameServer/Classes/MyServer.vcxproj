@@ -175,6 +175,7 @@
     <ClInclude Include="ClientSocket.h" />
     <ClInclude Include="EncryptClient.h" />
     <ClInclude Include="GameThread.h" />
+    <ClInclude Include="LoginThread.h" />
     <ClInclude Include="LuaScriptMachine.h" />
     <ClInclude Include="MyServer.h" />
     <ClInclude Include="MyServerDlg.h" />
@@ -188,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="ClientSocket.cpp" />
     <ClCompile Include="GameThread.cpp" />
+    <ClCompile Include="LoginThread.cpp" />
     <ClCompile Include="LuaScriptMachine.cpp" />
     <ClCompile Include="MyServer.cpp" />
     <ClCompile Include="MyServerDlg.cpp" />
@@ -241,6 +243,14 @@
     </ProjectReference>
     <ProjectReference Include="GameKernel\GameKernel.vcxproj">
       <Project>{03fb5566-1517-48a3-8a79-dff413e45801}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="LoginKernel\LoginKernel.vcxproj">
+      <Project>{16fe07d2-f498-4eaa-9257-f922b2e0165c}</Project>
       <Private>false</Private>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
