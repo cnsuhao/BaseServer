@@ -32,7 +32,7 @@ void CLoginThread::OnInit()
 {
 	m_i64LastOnTimerMS = ::GetUtcMillisecond(); 
 	char	szText[1024] = "";
-	sprintf(szText, "#%u: GameKernel thread running", m_pMsgPort->GetID());
+	sprintf(szText, "#%u: LoginKernel thread running", m_pMsgPort->GetID());
 	m_pMsgPort->Send(MSGPORT_SHELL, SHELL_PRINTTEXT, STRING_TYPE(szText), szText);
 }
 

@@ -20,7 +20,7 @@ CLoginKernel::CLoginKernel()
 bool CLoginKernel::Create( IMessagePort* pPort )
 {
 	CHECKF(pPort);
-	CHECKF(pPort->GetID() == MSGPORT_GAME);
+	CHECKF(pPort->GetID() == MSGPORT_LOGIN);
 
 	// м╗пе╤к©з
 	m_pMsgPort = pPort;
@@ -63,12 +63,7 @@ bool CLoginKernel::ProcessMsg( OBJID idPacket, void* buf, int nType, int nFrom )
 	DEBUG_TRY;
 	switch (idPacket)
 	{
-	case GAMETHREAD_CLIENT_MSG:
-		{
-
-		}
-		break;
-	case GAMETHREAD_FORCE_KICK:
+	case LOGINTHREAD_CLIENT_MSG:
 		{
 
 		}
