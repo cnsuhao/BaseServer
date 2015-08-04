@@ -1551,6 +1551,36 @@ std::string LoadFileToString(const std::string& strFileName)
 	return buf.str();
 }
 
+////////////////////////////////////////////////////////////////////////
+// Description:  计算数轴上两个线段的交集数量(线段为开区间)
+// Arguments:
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
+int CalcNumberAxisIntersection(int x1, int y1, int x2, int y2)
+{
+	// 保证每个线段的x比y小
+	if (x1 > y1)
+		swap(x1, y1);
+	if (x2 > y2)
+		swap(x2, y2);
+
+	// 保证线段1的起始值比线段2小
+	if (x1 > x2)
+	{
+		swap(x1, x2);
+		swap(y1, y2);
+	}
+
+	if		(y1 <= x2)	// 无交集情况
+		return 0;
+	else if (y1 >= y2)	// 线段2被包含
+		return y2 - x2;
+	else if (y1 >= x2)	// 两个线段交叉
+		return y1 - x2;
+
+	return -1;
+}
+
 void DDALineEx(int x0, int y0, int x1, int y1, vector<POINT>& vctPoint)
 {
 	vctPoint.clear();
@@ -1621,10 +1651,12 @@ void DDALineEx(int x0, int y0, int x1, int y1, vector<POINT>& vctPoint)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
 
-
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// Description:  进制转换(如6进制转换 nConvNum = 6, nTrainPoint = 7 返回值为11.)
+// Arguments:	 nTrainPoint 要转换的数值， nConvNum 要转换的进制(2~9)
+// Return Value: int
+////////////////////////////////////////////////////////////////////////
 int NumConversion(int nTrainPoint,int nConvNum)
 {
 	if(nConvNum<=1 || nConvNum >= 10)
@@ -1633,55 +1665,23 @@ int NumConversion(int nTrainPoint,int nConvNum)
 		return 0;
 	}
 
-	const int _conversion_num = nConvNum;//n进制转换
-	
+	const int _conversion_num = nConvNum;	// n进制转换
+
 	int nResult = 0;
-	for(int i=0;//计位数
-	nTrainPoint&&i<9;//最高不超过9位
-	i++)
+	for(int i = 0;							// 计位数
+		nTrainPoint && i < 9;				// 最高不超过9位
+		i++)
 	{
-		nResult += (int)(pow(10.0, i)*(nTrainPoint%_conversion_num));
+		nResult += (int)(pow(10.0, i) * (nTrainPoint % _conversion_num));
 		nTrainPoint = nTrainPoint/_conversion_num;
 	}
 	return nResult;
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Description:  计算数轴上两个线段的交集数量(线段为开区间)
+// Description: 验证认证ID, true通过, false失败
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: int
-////////////////////////////////////////////////////////////////////////
-int CalcNumberAxisIntersection(int x1, int y1, int x2, int y2)
-{
-	// 保证每个线段的x比y小
-	if (x1 > y1)
-		swap(x1, y1);
-	if (x2 > y2)
-		swap(x2, y2);
-	
-	// 保证线段1的起始值比线段2小
-	if (x1 > x2)
-	{
-		swap(x1, x2);
-		swap(y1, y2);
-	}
-	
-	if		(y1 <= x2)	// 无交集情况
-		return 0;
-	else if (y1 >= y2)	// 线段2被包含
-		return y2 - x2;
-	else if (y1 >= x2)	// 两个线段交叉
-		return y1 - x2;
-	
-	return -1;
-}
-
-////////////////////////////////////////////////////////////////////////
-// Description:  验证认证ID, true通过, false失败
-// Arguments:
-// Author: 彭文奇(Peng Wenqi)
-// Return Value: None
+// Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount)
 {
@@ -1698,7 +1698,7 @@ bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount)
 		dwRightResult = ((dwMinute + AUTHEN_ID_COUNT_KEY[0]) ^ AUTHEN_ID_COUNT_KEY[1]) % AUTHEN_ID_MOD_KEY % 100;
 	else
 		dwRightResult = ((dwMinute + AUTHEN_ID_COUNT_KEY[1]) ^ AUTHEN_ID_COUNT_KEY[2]) % AUTHEN_ID_MOD_KEY % 100;
-	
+
 	// 验证码验算
 	if (dwRightResult != dwResult)
 	{
@@ -1709,50 +1709,22 @@ bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount)
 #ifdef MYDEBUG
 	return true;
 #endif
-	
+
 	// 有效期2分钟
 	DWORD dwNowMinute = (DWORD)::time(NULL) / 60;
 	if (dwNowMinute > dwMinute + 2)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool IsObjType(OBJID idObjType, OBJID idUnion) 
-{ 
-	return (idObjType & idUnion & 0x0FFF) != 0; 
-}
-
-//////////////////////////////////////////////////////////////////////////
-// 打dump
-LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo)
-{
-	CHECKF(ExceptionInfo);
-	MINIDUMP_EXCEPTION_INFORMATION ExInfo;
-	ExInfo.ThreadId = ::GetCurrentThreadId();
-    ExInfo.ExceptionPointers = ExceptionInfo;
-	ExInfo.ClientPointers = TRUE;
-	
-	COleDateTime dt=COleDateTime::GetCurrentTime();
-	CString strDumpFileName;
-	CString temp=dt.Format("%Y年%m月%d日%H时%M分%S秒");
-	strDumpFileName.Format("./dump/%s_%lu.dmp", temp, ::GetTickCount());
-
-	::CreateDirectory("dump", NULL);
-	HANDLE lhDumpFile = CreateFile(strDumpFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL ,NULL);
-	if (NULL != lhDumpFile)
-	{
-		MiniDumpWriteDump( GetCurrentProcess(), GetCurrentProcessId(), lhDumpFile, MiniDumpNormal/*MiniDumpWithFullMemory*/, &ExInfo, NULL, NULL);		// 备选项:MiniDumpNormal  不打印内存, 小很多
-		CloseHandle(lhDumpFile);
-	}
-
-	return EXCEPTION_EXECUTE_HANDLER;
-}
-
-//获取本机IP
+////////////////////////////////////////////////////////////////////////
+// Description: 获取本机IP
+// Arguments:
+// Return Value: std::string
+////////////////////////////////////////////////////////////////////////
 std::string GetLocalIpAddr()
 {
 	const int MAX_HOST_NAME_LEN = 256;	// 主机名最大长度
@@ -1785,92 +1757,42 @@ std::string GetLocalIpAddr()
 
 	memcpy ( &stTmpSockAddrIn.sin_addr.s_addr, stTmpHostent.h_addr_list[nAdapter],stTmpHostent.h_length);
 	tmpLocalIP = inet_ntoa(stTmpSockAddrIn.sin_addr);
-	
+
 	return tmpLocalIP;
 }
 
-//////////////////////////////////////////////////////////////////////////
-CTimeCostChk::CTimeCostChk(const char* pszReason,const char* pszString, I64 i64CheckMS, const char* pszFileName, int nFileLine) 
+////////////////////////////////////////////////////////////////////////
+// Description: 打印dump
+// Arguments:
+// Return Value: std::string
+////////////////////////////////////////////////////////////////////////
+LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
-	m_i64BeginMS	= ::GetUtcMillisecond();
-	m_i64CheckMS	= i64CheckMS;
-	if (pszReason)
+	CHECKF(ExceptionInfo);
+	MINIDUMP_EXCEPTION_INFORMATION ExInfo;
+	ExInfo.ThreadId = ::GetCurrentThreadId();
+	ExInfo.ExceptionPointers = ExceptionInfo;
+	ExInfo.ClientPointers = TRUE;
+
+	COleDateTime dt=COleDateTime::GetCurrentTime();
+	CString strDumpFileName;
+	CString temp=dt.Format("%Y年%m月%d日%H时%M分%S秒");
+	strDumpFileName.Format("./dump/%s_%lu.dmp", temp, ::GetTickCount());
+
+	::CreateDirectory("dump", NULL);
+	HANDLE lhDumpFile = CreateFile(strDumpFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL ,NULL);
+	if (NULL != lhDumpFile)
 	{
-		m_strReason =pszReason;
-	}
-	else
-	{
-		m_strReason = "";
+		MiniDumpWriteDump( GetCurrentProcess(), GetCurrentProcessId(), lhDumpFile, MiniDumpNormal/*MiniDumpWithFullMemory*/, &ExInfo, NULL, NULL);		// 备选项:MiniDumpNormal  不打印内存, 小很多
+		CloseHandle(lhDumpFile);
 	}
 
-	if (pszString)
-	{
-		m_strString	= pszString;
-	}
-	else
-	{
-		m_strString = "";
-	}
-
-	if (pszFileName)
-	{
-		m_strFileName = pszFileName;
-	}
-	else
-	{
-		m_strFileName = "";
-	}
-
-	m_nFileLine = nFileLine;
-}
-
-//////////////////////////////////////////////////////////////////////////
-CTimeCostChk::~CTimeCostChk()
-{
-	I64 i64UsedMS = ::GetUtcMillisecond() - m_i64BeginMS;
-	if (i64UsedMS > m_i64CheckMS)
-	{
-		::LogTimeOut("%s(%d):CTimeCostChk Overtime (%I64dms>%I64dms) when szReason:%s chk:%s", 
-			m_strFileName.c_str(), m_nFileLine, i64UsedMS, m_i64CheckMS, m_strReason.c_str(), m_strString.c_str()); 
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-CTimeUseMSLog::CTimeUseMSLog(const char* pszReason, const char* pszFileName, int nFileLine)
-{
-	m_i64BeginMS	= ::GetUtcMillisecond();
-	if (pszReason)
-	{
-		m_strReason = pszReason;
-	}
-	else
-	{
-		m_strReason = "";
-	}
-
-	if (pszFileName)
-	{
-		m_strFileName = pszFileName;
-	}
-	else
-	{
-		m_strFileName = "";
-	}
-
-	m_nFileLine = nFileLine;
-}
-
-//////////////////////////////////////////////////////////////////////////
-CTimeUseMSLog::~CTimeUseMSLog()
-{
-	I64 i64UsedMS = ::GetUtcMillisecond() - m_i64BeginMS;
-	::LogSave("%s(%d):TimeUseLog Reason[%s], Used[%I64d]MS", m_strFileName.c_str(), m_nFileLine, m_strReason.c_str(), i64UsedMS);
+	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Description:  加权随机数生成
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: void
 ////////////////////////////////////////////////////////////////////////
 void GenWeightRandomVector(const VEC_WEIGHTED_VALUE& rInputVec, OUT VEC_WEIGHT_OUTPUT& rOutputVec, int nCount/* = 1*/)
@@ -1921,12 +1843,89 @@ void GenWeightRandomVector(const VEC_WEIGHTED_VALUE& rInputVec, OUT VEC_WEIGHT_O
 		}
 	}
 }
+//////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////
+CTimeCostChk::CTimeCostChk(const char* pszReason,const char* pszString, I64 i64CheckMS, const char* pszFileName, int nFileLine) 
+{
+	m_i64BeginMS	= ::GetUtcMillisecond();
+	m_i64CheckMS	= i64CheckMS;
+	if (pszReason)
+	{
+		m_strReason =pszReason;
+	}
+	else
+	{
+		m_strReason = "";
+	}
+
+	if (pszString)
+	{
+		m_strString	= pszString;
+	}
+	else
+	{
+		m_strString = "";
+	}
+
+	if (pszFileName)
+	{
+		m_strFileName = pszFileName;
+	}
+	else
+	{
+		m_strFileName = "";
+	}
+
+	m_nFileLine = nFileLine;
+}
+
+CTimeCostChk::~CTimeCostChk()
+{
+	I64 i64UsedMS = ::GetUtcMillisecond() - m_i64BeginMS;
+	if (i64UsedMS > m_i64CheckMS)
+	{
+		::LogTimeOut("%s(%d):CTimeCostChk Overtime (%I64dms>%I64dms) when szReason:%s chk:%s", 
+			m_strFileName.c_str(), m_nFileLine, i64UsedMS, m_i64CheckMS, m_strReason.c_str(), m_strString.c_str()); 
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+CTimeUseMSLog::CTimeUseMSLog(const char* pszReason, const char* pszFileName, int nFileLine)
+{
+	m_i64BeginMS	= ::GetUtcMillisecond();
+	if (pszReason)
+	{
+		m_strReason = pszReason;
+	}
+	else
+	{
+		m_strReason = "";
+	}
+
+	if (pszFileName)
+	{
+		m_strFileName = pszFileName;
+	}
+	else
+	{
+		m_strFileName = "";
+	}
+
+	m_nFileLine = nFileLine;
+}
+
+CTimeUseMSLog::~CTimeUseMSLog()
+{
+	I64 i64UsedMS = ::GetUtcMillisecond() - m_i64BeginMS;
+	::LogSave("%s(%d):TimeUseLog Reason[%s], Used[%I64d]MS", m_strFileName.c_str(), m_nFileLine, m_strReason.c_str(), i64UsedMS);
+}
+//////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
 // Description:  判断是不是浮点0
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 inline bool gbase::IsDoubleZero(double dParam)
@@ -1937,7 +1936,6 @@ inline bool gbase::IsDoubleZero(double dParam)
 ////////////////////////////////////////////////////////////////////////
 // Description:  获得两点间的距离
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: double
 ////////////////////////////////////////////////////////////////////////
 double gbase::GetDistance(const gbase::ST_POINT& rPoint1, const gbase::ST_POINT& rPoint2)
@@ -1950,7 +1948,6 @@ double gbase::GetDistance(const gbase::ST_POINT& rPoint1, const gbase::ST_POINT&
 ////////////////////////////////////////////////////////////////////////
 // Description:  点是否在线段上
 // Arguments:	 算法: AB线段，C为点，只要AC+BC的长度等于AB的长度就是在线段上
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsPointOnLine(const gbase::ST_POINT& rPoint, const gbase::ST_LINE& rLine)
@@ -1962,7 +1959,6 @@ bool gbase::IsPointOnLine(const gbase::ST_POINT& rPoint, const gbase::ST_LINE& r
 ////////////////////////////////////////////////////////////////////////
 // Description:  获得行列式的值
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: double
 ////////////////////////////////////////////////////////////////////////
 inline double gbase::GetDeterminant(double v1, double v2, double v3, double v4)
@@ -1974,7 +1970,6 @@ inline double gbase::GetDeterminant(double v1, double v2, double v3, double v4)
 // Description:  线段是否相交
 // Arguments:	 行列式解法 算法证明: http://dec3.jlu.edu.cn/webcourse/t000096/graphics/chapter5/01_1.html
 //				 由于环境需要, 若线段一点与在另一线段上, 也认为线段相交
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsLineOverlapping(const gbase::ST_LINE& rLine1, const gbase::ST_LINE& rLine2)
@@ -2028,7 +2023,6 @@ bool gbase::IsLineOverlapping(const gbase::ST_LINE& rLine1, const gbase::ST_LINE
 ////////////////////////////////////////////////////////////////////////
 // Description:  点是否在三角形内
 // Arguments:	 射线法函数调用
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsPointInTriangle(const gbase::ST_POINT& rPoint, const gbase::ST_TRIANGLE& rTriangle)
@@ -2036,11 +2030,9 @@ bool gbase::IsPointInTriangle(const gbase::ST_POINT& rPoint, const gbase::ST_TRI
 	return gbase::IsInPolygon(rTriangle.stVertex, 3, rPoint);
 }
 
-
 ////////////////////////////////////////////////////////////////////////
 // Description:  是否在多边形内
 // Arguments:	 射线法
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsInPolygon(const gbase::ST_POINT arr[], size_t len, const gbase::ST_POINT& p)
@@ -2078,7 +2070,6 @@ bool gbase::IsInPolygon(const gbase::ST_POINT arr[], size_t len, const gbase::ST
 ////////////////////////////////////////////////////////////////////////
 // Description:  点是否在正方形内
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsPointInSquare(const gbase::ST_POINT& rPoint, const gbase::ST_SQUARE& rSquare)
@@ -2097,7 +2088,6 @@ bool gbase::IsPointInSquare(const gbase::ST_POINT& rPoint, const gbase::ST_SQUAR
 ////////////////////////////////////////////////////////////////////////
 // Description: 判断点是否在矩形内
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsPointInRectangle( const ST_POINT& rPoint, const ST_RECTANGLE& rRectangle )
@@ -2105,11 +2095,9 @@ bool gbase::IsPointInRectangle( const ST_POINT& rPoint, const ST_RECTANGLE& rRec
 	return gbase::IsInPolygon(rRectangle.stVertex, 4, rPoint);
 }
 
-
 ////////////////////////////////////////////////////////////////////////
 // Description:  三角形和正方形是否相交
 // Arguments:	 优先快排除, 互相有点包含直接返回true, 再进行3*4条线段相交测试
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsTriangleSquareOverlapping(const gbase::ST_TRIANGLE& rTriangle, const gbase::ST_SQUARE& rSquare)
@@ -2176,7 +2164,6 @@ bool gbase::IsTriangleSquareOverlapping(const gbase::ST_TRIANGLE& rTriangle, con
 ////////////////////////////////////////////////////////////////////////
 // Description:  获得两个三角形的关系
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: TRIANGLE_RELATION
 ////////////////////////////////////////////////////////////////////////
 gbase::TRIANGLE_RELATION gbase::GetTriangleRelation( const gbase::ST_TRIANGLE& rTriangle1, const gbase::ST_TRIANGLE& rTriangle2 )
@@ -2221,7 +2208,6 @@ gbase::TRIANGLE_RELATION gbase::GetTriangleRelation( const gbase::ST_TRIANGLE& r
 ////////////////////////////////////////////////////////////////////////
 // Description:  三角形顶点逆时针序列化
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: void
 ////////////////////////////////////////////////////////////////////////
 void gbase::ProcessTriangleSeialization( gbase::ST_TRIANGLE& rTriangle )
@@ -2268,7 +2254,6 @@ void gbase::ProcessTriangleSeialization( gbase::ST_TRIANGLE& rTriangle )
 ////////////////////////////////////////////////////////////////////////
 // Description:  根据时间与速度算前进距离
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: int
 ////////////////////////////////////////////////////////////////////////
 int gbase::CalcGoDistance(__int64 i64TimeMSStart, __int64 i64TimeMSEnd, int nSpeed)
@@ -2291,7 +2276,6 @@ int gbase::CalcGoDistance(__int64 i64TimeMSStart, __int64 i64TimeMSEnd, int nSpe
 ////////////////////////////////////////////////////////////////////////
 // Description:  根据两点和长度算目标点
 // Arguments:
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: gbase::ST_POINT
 ////////////////////////////////////////////////////////////////////////
 gbase::ST_POINT gbase::CalcWalkTarget(const gbase::ST_POINT& rSrcPoint, const gbase::ST_POINT& rTargetPoint, int nLength)
@@ -2349,7 +2333,6 @@ gbase::ST_POINT gbase::CalcWalkTarget(const gbase::ST_POINT& rSrcPoint, const gb
 ////////////////////////////////////////////////////////////////////////
 // Description:  计算客户端角度
 // Arguments:	 由x轴正向顺时针计算, 取值范围[0, 359]
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: int
 ////////////////////////////////////////////////////////////////////////
 int gbase::GetClientAngle( int nX, int nY )
@@ -2370,7 +2353,6 @@ int gbase::GetClientAngle( int nX, int nY )
 ////////////////////////////////////////////////////////////////////////
 // Description: 判断是否是正确的矩形描述
 // Arguments:	非相邻边不应相交
-// Author: 彭文奇(Peng Wenqi)
 // Return Value: bool
 ////////////////////////////////////////////////////////////////////////
 bool gbase::IsRightRectangle( const gbase::ST_RECTANGLE& rRectangle )
