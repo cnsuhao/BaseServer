@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameKernel", "..\Source\Gam
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaPlus", "..\Source\GameServer\LuaPlus\LuaPlus.vcxproj", "{40B052E4-1EEC-4415-B082-EDF71AF32AC9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoginKernel", "..\Source\GameServer\Classes\LoginKernel\LoginKernel.vcxproj", "{16FE07D2-F498-4EAA-9257-F922B2E0165C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -46,6 +48,10 @@ Global
 		{40B052E4-1EEC-4415-B082-EDF71AF32AC9}.Debug|Win32.Build.0 = Debug|Win32
 		{40B052E4-1EEC-4415-B082-EDF71AF32AC9}.Release|Win32.ActiveCfg = Release|Win32
 		{40B052E4-1EEC-4415-B082-EDF71AF32AC9}.Release|Win32.Build.0 = Release|Win32
+		{16FE07D2-F498-4EAA-9257-F922B2E0165C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{16FE07D2-F498-4EAA-9257-F922B2E0165C}.Debug|Win32.Build.0 = Debug|Win32
+		{16FE07D2-F498-4EAA-9257-F922B2E0165C}.Release|Win32.ActiveCfg = Release|Win32
+		{16FE07D2-F498-4EAA-9257-F922B2E0165C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,7 @@ enum SHELL_STATUS
 
 class CSocketThread;
 class CGameThread;
+class CLoginThread;
 // CMyServerDlg ¶Ô»°¿ò
 class CMyServerDlg : public CDialog
 {
@@ -70,8 +71,8 @@ protected:
 	DWORD			m_dwSeiyaPID;
 
 	CSocketThread*		m_pSocketThread;
+	CLoginThread*		m_pLoginThread;
 	CGameThread*		m_pGameThread;
-
 
 	void	ProcessMsg();
 	void	PrintText(const char* pszText);
