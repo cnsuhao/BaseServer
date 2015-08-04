@@ -116,6 +116,34 @@ bool CheckBetween(IN OUT T& nowVaule, T minVaule, T maxVaule, T defaultValue)
 	return bResult;
 }
 
+inline unsigned int	ExchangeShortBits(unsigned long nData, int nBits)
+{
+	ASSERT(nBits >= 0 && nBits < 16);
+	nData	&= 0xFFFF;
+	return ((nData>>nBits) | (nData<<(16-nBits))) & 0xFFFF;
+}
+
+inline unsigned int	ExchangeLongBits(unsigned long nData, int nBits)
+{
+	ASSERT(nBits >= 0 && nBits < 32);
+	return (nData>>nBits) | (nData<<(32-nBits));
+}
+
+inline double CalculationRatio(DWORD dwData, DWORD dwRatio)
+{
+	double dValue = ceil(dwData*dwRatio/10000.0);
+	return dValue;
+}
+
+inline int	AddToTop(int nData, int nAdd, int nTop) 
+{ 
+	int res = nData + nAdd;
+	if (nAdd > 0 && res < nData || res > nTop)
+		return nTop;
+	else 
+		return res; 
+}
+
 int		RandGet(int nMax, bool bReset=false);
 int		RandGetZT(int nMax, double dRangeParamL = 3.0, double dRangeParamR = 3.0, bool bRest = false);
 double	RandomRateGet(double dRange);
@@ -154,22 +182,39 @@ int		ReplaceStdString(IN OUT string& str, const char* pszOld, const char* pszNew
 
 //////////////////////////////////////////////////////////////////////////
 // 其他一些函数
+// 判断对象type
+inline bool	IsObjType(OBJID idObjType, OBJID idUnion)
+{
+	return (idObjType & idUnion & 0x0FFF) != 0; 
+}
+
 bool	IsExistFile(const char* pszFileName);
 std::string LoadFileToString(const std::string& strFileName);
 
 int		CalcNumberAxisIntersection(int x1, int y1, int x2, int y2);
-
 void	DDALineEx(int x0, int y0, int x1, int y1, vector<POINT>& vctPoint);
 
-//////////////////////////////////////////////////////////////////////////
-//20071212:进制转换.nConvNum:2~9.
-//如6进制转换.
-//nConvNum = 6
-//nTrainPoint = 7
-//返回值为11.
-int NumConversion(int nTrainPoint,int nConvNum);
+int		NumConversion(int nTrainPoint,int nConvNum);
 
-inline int	AddToTop(int nData, int nAdd, int nTop) { int res=nData+nAdd; if(nAdd>0 && res<nData || res>nTop) return nTop; else return res; }
+bool	IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount);
+
+std::string GetLocalIpAddr();
+
+LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo);
+
+struct WEIGHTED_VALUE
+{
+	int nWeight;
+	int nValue;
+};
+typedef std::vector<WEIGHTED_VALUE>			VEC_WEIGHTED_VALUE;
+typedef VEC_WEIGHTED_VALUE::iterator		ITER_WEIGHTED_VALUE;
+typedef VEC_WEIGHTED_VALUE::const_iterator	CITER_WEIGHTED_VALUE;
+typedef std::vector<int>					VEC_WEIGHT_OUTPUT;
+typedef VEC_WEIGHT_OUTPUT::iterator			ITER_WEIGHT_OUTPUT;
+typedef VEC_WEIGHT_OUTPUT::const_iterator	CITER_WEIGHT_OUTPUT;
+void GenWeightRandomVector(const VEC_WEIGHTED_VALUE& rInputVec, OUT VEC_WEIGHT_OUTPUT& rOutputVec, int nCount = 1);
+/////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
 // 这个类用于超时统计, 有专用TimeOut日志记录
@@ -205,61 +250,17 @@ private:
 	int			m_nFileLine;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-inline unsigned int	ExchangeShortBits(unsigned long nData, int nBits)
-{
-	ASSERT(nBits >= 0 && nBits < 16);
-	nData	&= 0xFFFF;
-	return ((nData>>nBits) | (nData<<(16-nBits))) & 0xFFFF;
-}
-
-inline unsigned int	ExchangeLongBits(unsigned long nData, int nBits)
-{
-	ASSERT(nBits >= 0 && nBits < 32);
-	return (nData>>nBits) | (nData<<(32-nBits));
-}
-
-inline double CalculationRatio(DWORD dwData, DWORD dwRatio)
-{
-	double dValue = ceil(dwData*dwRatio/10000.0);
-	return dValue;
-}
-
-
 //////////////////////////////////////////////////////////////////////
-inline int pos2index(int x, int y, int cx, int cy) { return (x + y*cx); }
-inline int index2x(int idx, int cx, int cy) { return (idx % cy); }
-inline int index2y(int idx, int cx, int cy) { return (idx / cy); }
+
+//////////////////////////////////////////////////////////////////////////
+// 图形学函数
+inline int	index2x(int idx, int cx, int cy) { return (idx % cy); }
+inline int	index2y(int idx, int cx, int cy) { return (idx / cy); }
+inline int	pos2index(int x, int y, int cx, int cy) { return (x + y*cx); }
 inline void pos2lt(POINT* pTarget, const POINT& pos, int nRange) { pTarget->x = pos.x - nRange; pTarget->y = pos.y - nRange; }
 inline void posadd(POINT* pTarget, int nOffsetX, int nOffsetY) { pTarget->x += nOffsetX; pTarget->y += nOffsetY; }
 inline void possub(POINT* pTarget, int nOffsetX, int nOffsetY) { pTarget->x -= nOffsetX; pTarget->y -= nOffsetY; }
 
-inline bool ConvertMailText(OUT LPSTR lpstrText, UINT nAction, int nParam1 = 0, int nParam2 = 0, int nParam3 = 0, 
-							int nParam4 = 0, int nParam5 = 0, int nParam6 = 0, LPCSTR lpstrParam1 = "", LPCSTR lpstrParam2 = "");
-
-bool IsRightAuthenID(DWORD dwAuthenID, DWORD dwAccount);				// 验证登陆时的票id
-bool IsObjType(OBJID idObjType, OBJID idUnion);							// 判断对象type
-
-LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo);
-
-std::string GetLocalIpAddr();
-
-struct WEIGHTED_VALUE
-{
-	int nWeight;
-	int nValue;
-};
-typedef std::vector<WEIGHTED_VALUE>			VEC_WEIGHTED_VALUE;
-typedef VEC_WEIGHTED_VALUE::iterator		ITER_WEIGHTED_VALUE;
-typedef VEC_WEIGHTED_VALUE::const_iterator	CITER_WEIGHTED_VALUE;
-typedef std::vector<int>					VEC_WEIGHT_OUTPUT;
-typedef VEC_WEIGHT_OUTPUT::iterator			ITER_WEIGHT_OUTPUT;
-typedef VEC_WEIGHT_OUTPUT::const_iterator	CITER_WEIGHT_OUTPUT;
-void GenWeightRandomVector(const VEC_WEIGHTED_VALUE& rInputVec, OUT VEC_WEIGHT_OUTPUT& rOutputVec, int nCount = 1);
-
-
-//////////////////////////////////////////////////////////////////////////
-// 图形学函数
 namespace gbase
 {
 	struct ST_POINT		{int nX;int nY;};					// 点坐标
