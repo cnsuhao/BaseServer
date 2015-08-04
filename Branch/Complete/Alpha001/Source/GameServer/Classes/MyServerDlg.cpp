@@ -384,6 +384,7 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 				// 8.所有线程启动完毕
 				PrintText("All thread start OK !");
 				m_pSocketThread->ResumeThread();
+				m_pLoginThread->ResumeThread();
 				m_pGameThread->ResumeThread();
 
 				// 9.初始化更新选项
@@ -486,6 +487,14 @@ void CMyServerDlg::OnTimer(UINT nIDEvent)
 
 				// 关闭登陆线程
 				this->PrintText("Close Login Thread OK!");
+				if(m_pLoginThread)
+				{
+					if(m_pLoginThread->CloseThread(CLOSETHREAD_MILLISECS))
+						PrintText("Close Login Thread OK!");
+					else
+						PrintText("Close Login Thread Failed!");
+					SAFE_DELETE(m_pLoginThread);
+				}
 
 				// 析构内存监视与性能统计
 				PrintText("Begin Del MemMonitor And PerformanceStatistics...");
