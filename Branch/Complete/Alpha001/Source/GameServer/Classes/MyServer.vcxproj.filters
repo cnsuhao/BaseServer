@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resourse">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Sourse">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="_Include">
+      <UniqueIdentifier>{d2034ab5-5847-4873-b728-fc04d479a72d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Share">
+      <UniqueIdentifier>{8ca89e95-5423-4ee5-a5dd-63fee56d6153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Share\String">
+      <UniqueIdentifier>{2710a237-334f-4984-86a9-f4cbbbbfacb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Version">
+      <UniqueIdentifier>{8c1c8935-483c-41c3-b415-a3e0b41ef98c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{f69ed584-4b00-4cf2-8240-488297164ced}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{54f657e8-4831-490f-b06d-d0a1fdd94767}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyServer.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MyServerDlg.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Global.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\GlobalConstDef.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\GlobalEnumDef.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\GlobalFuction.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\GlobalStructDef.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\I_Shell.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\StructDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\EnumDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\String\Cn_DDRes.h">
+      <Filter>_Share\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\String\En_DDRes.h">
+      <Filter>_Share\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\String\MyDDString.h">
+      <Filter>_Share\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\Define.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\Protocol.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\ConstDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="..\share\ActionDef.h">
+      <Filter>_Share</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Version</Filter>
+    </ClInclude>
+    <ClInclude Include="version_template.h">
+      <Filter>Version</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\CrashRpt.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\DbgHelp.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\IMySocket.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Psapi.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="GameThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaScriptMachine.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientSocket.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="EncryptClient.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MyServer.cpp">
+      <Filter>Sourse</Filter>
+    </ClCompile>
+    <ClCompile Include="MyServerDlg.cpp">
+      <Filter>Sourse</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Sourse</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GameThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaScriptMachine.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientSocket.cpp">
+      <Filter>Sourse</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MyServer.rc">
+      <Filter>Resourse</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MyServer.rc2">
+      <Filter>Resourse</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\MyServer.ico">
+      <Filter>Resourse</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
