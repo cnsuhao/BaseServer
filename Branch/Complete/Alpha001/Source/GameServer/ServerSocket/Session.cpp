@@ -17,20 +17,6 @@ using namespace std;
 
 MYHEAP_IMPLEMENTATION(Session, s_heap);
 
-//=============================================================================================================================
-/**
-	@remarks
-			¼¼¼Ç »ý¼ºÀÚ.\n
-			º¸³»±â ¹öÆÛ¿Í ¹Þ±â ¹öÆÛ¸¦ »ý¼ºÇÏ°í Çã¿ë ÈÞ¸é ½Ã°£À» ¼ÂÆÃÇÑ´Ù.
-	@param	dwSendBufferSize
-			º¸³»±â ¹öÆÛ »çÀÌÁî
-	@param	dwRecvBufferSize
-			¹Þ±â ¹öÆÛ »çÀÌÁî
-	@param	dwTimeOut
-			ÀÌ ½Ã°£µ¿¾È ¼¼¼ÇÀ¸·Î µé¾î¿À´Â ¸Þ¼¼Áö°¡ ¾øÀ¸¸é Á¢¼ÓÀ» ²÷´Â´Ù.
-			ÀÌ °ªÀÌ 0ÀÌ¸é ¸Þ¼¼Áö ¼Û½ÅÀÌ ¾ø¾îµµ Á¢¼ÓÀ» ²÷Áö ¾Ê´Â´Ù.
-*/
-//=============================================================================================================================
 Session::Session( DWORD dwSendBufferSize, DWORD dwRecvBufferSize, DWORD dwMaxPacketSize/*, DWORD dwTimeOut*/ )
 {
 	m_pSendBuffer = new SendBuffer;
@@ -39,7 +25,6 @@ Session::Session( DWORD dwSendBufferSize, DWORD dwRecvBufferSize, DWORD dwMaxPac
 	m_pRecvBuffer = new RecvBuffer;
 	m_pRecvBuffer->Create( dwRecvBufferSize, dwMaxPacketSize );
 
-	//m_dwTimeOut			= dwTimeOut;
 	m_socket			= INVALID_SOCKET;
 	m_bAcceptSocket		= FALSE;
 	m_bRemove			= FALSE;
@@ -63,18 +48,6 @@ Session::~Session()
 	if( m_pRecvBuffer )		delete m_pRecvBuffer;
 }
 
-//=============================================================================================================================
-/**
-	@remarks
-			¼¼¼ÇÀ» ÃÊ±âÈ­ÇÑ´Ù.
-	@param	socket
-			¼¼¼Ç¿¡ ÇÒ´çµÉ ¼ÒÄÏ ÇÚµé
-	@param	sockaddr
-			¼¼¼Ç¿¡ ÇÒ´çµÉ ¼ÒÄÏ ÁÖ¼Ò
-	@retval	BOOL
-			ÁÖ¾îÁø ¼ÒÄÏ ÇÚµéÀÌ À¯È¿ÇÏÁö ¾ÊÀº °æ¿ì FALSE¸¦ ¸®ÅÏÇÑ´Ù.
-*/
-//=============================================================================================================================
 VOID Session::Init()
 {
 	m_pSendBuffer->Clear();
@@ -83,48 +56,17 @@ VOID Session::Init()
 	ResetKillFlag();
 
 	m_bDisconnectOrdered = FALSE;
-
-//	m_cEncryptRecv.Init();
-//	m_cEncryptSend.Init();
-
 	m_OverlappedIONum = 0;
 }
 
 VOID Session::Reuse( HANDLE hIOCP )
 {
-	//Disconnect¿ë ovl IO »ý¼º
-// 	ZeroMemory( &m_disconnectIoData, sizeof(OVERLAPPEDEX) );
-// 	m_disconnectIoData.dwOperationType	= DISCONNECT_POSTED;
-
-	// TransmitFile¿¡ ½ÇÆÐÇÏ¸é °æ¿ì IOCP¿¡ °­Á¦·Î ³Ö¾îÁØ´Ù.
-// 	if( !MsWinsockUtil::m_lpfnTransmitFile( m_socket, 0, 0, 0, &m_disconnectIoData, 0, TF_DISCONNECT | TF_REUSE_SOCKET )
-// 		&& WSAGetLastError() != WSA_IO_PENDING )
-// 	{		
-// 		CloseSocket();		
-// 		PostQueuedCompletionStatus( hIOCP, 0, (ULONG_PTR)this, &m_disconnectIoData );
-// 	}
-
-
 	ZeroMemory( &m_disconnectIoData, sizeof(OVERLAPPEDEX) );
 	m_disconnectIoData.dwOperationType	= DISCONNECT_POSTED;
-
 		
-	PostQueuedCompletionStatus( hIOCP, 0, (ULONG_PTR)this, &m_disconnectIoData );
-	
+	PostQueuedCompletionStatus( hIOCP, 0, (ULONG_PTR)this, &m_disconnectIoData );	
 }
 
-//=============================================================================================================================
-/**
-	@remarks
-			ÇØ´ç ÆÐÅ¶À» º¸³»±â ¹öÆÛ¿¡ ¾´´Ù.
-	@param	pMsg
-			ÆÐÅ¶ Æ÷ÀÎÅÍ
-	@param	wSize
-			Çì´õ Å©±â¸¦ Á¦¿ÜÇÑ ÆÐÅ¶ »çÀÌÁî
-	@retval	BOOL
-			¹öÆÛ¿¡ ¼º°øÀûÀ¸·Î ¾²±â¸¦ ¸¶Ä¡¸é TRUE¸¦ ¸®ÅÏÇÏ°í º¸³»±â ¹öÆÛ°¡ ²ËÂù °æ¿ì FALSE¸¦ ¸®ÅÏÇÑ´Ù.
-*/
-//=============================================================================================================================
 BOOL Session::Send( BYTE *pMsg, WORD wSize )
 {
 	if(m_bRemove)
@@ -177,15 +119,6 @@ BOOL Session::ProcessRecvdPacket( DWORD dwMaxPacketSize )
 	return TRUE;
 }
 
-//=============================================================================================================================
-/**
-	@remarks
-			IOCP¿¡ send¸¦ °É¾î ³õ´Â´Ù.
-	@retval BOOL
-			- º¸³»±â ¹öÆÛ°¡ ºñ¾îÀÖ°Å³ª º¸³¾ ÁØºñ°¡ ¾ÈµÈ »óÅÂÀÌ¸é ±×³É TRUE¸¦ ¸®ÅÏÇÑ´Ù.
-			- send¿¡ ½ÇÆÐÇÏ¸é FALSE¸¦ ¸®ÅÏÇÑ´Ù.
-*/
-//=============================================================================================================================
 BOOL Session::PreSend()
 {
 	// ÕýÔÚÍ¶µÝÖÐ, µÈ´ýÏÂ´ÎÍ¶µÝ
@@ -218,14 +151,6 @@ BOOL Session::PreSend()
 	return TRUE;
 }
 
-//=============================================================================================================================
-/**
-	@remarks
-			IOCP¿¡ recv¸¦ °É¾î ³õ´Â´Ù.
-	@retval BOOL
-			recv¿¡ ½ÇÆÐÇÏ¸é FALSE¸¦ ¸®ÅÏÇÑ´Ù.
-*/
-//=============================================================================================================================
 BOOL Session::PreRecv()
 {
 	WSABUF wsabuf = {0};
@@ -268,17 +193,12 @@ BOOL Session::PreAccept( SOCKET listenSocket )
 
 	Init();
 
-	//Session ¿¡¼­ Recv Ptr¾ò¾î¿Í ¼Â¾÷..
 	GetRecvBuffer()->GetRecvParam( &pRecvBuf, nLen );
 
-	//AcceptEx ¿ë ovl IO »ý¼º
 	ZeroMemory( &m_acceptIoData, sizeof(OVERLAPPEDEX) );
 	m_acceptIoData.dwOperationType	= ACCEPT_POSTED;
-	m_acceptIoData.pSession			= this;				//ÀÚ½ÅÀÇ ptr
+	m_acceptIoData.pSession			= this;
 
-	//printf("[ACCEPT][%d] Session::PreAccept, m_bRemove=%d\n", (int)GetSocket(), (int)m_bRemove);
-
-	//AcceptEx¿¡ ¼ÒÄÏ Add
 	int nRet = 	MsWinsockUtil::m_lpfnAccepteEx(	listenSocket, 
 												GetSocket(), 
 												pRecvBuf, 
@@ -309,95 +229,12 @@ SOCKET Session::CreateSocket()
 	}
 	::SetClientSockOpt(newSocket);
 
-	/*
-	nZero	= 0;
-	nRet	= setsockopt( newSocket, SOL_SOCKET, SO_SNDBUF, (char *)&nZero, sizeof(nZero) );
-
-	if( nRet == SOCKET_ERROR ) 
-	{
-		return INVALID_SOCKET;
-	}
-	*/
-
 	return newSocket;
 }
 
-//VOID Session::BindNetworkObject( NetworkObject *pNetworkObject )
-//{
-//	m_pNetworkObject = pNetworkObject;
-//	pNetworkObject->SetSession( this );
-//}
-//
-//VOID Session::UnbindNetworkObject()
-//{
-//	if( m_pNetworkObject == NULL )
-//	{
-//		return;
-//	}
-//	m_pNetworkObject->SetSession( NULL );
-//
-//	m_pNetworkObject = NULL;
-//}
-
 VOID Session::OnAccept()
 {
-	ResetKillFlag();
-
-	//ResetTimeOut();
-
-	//m_pNetworkObject->OnAccept( GetIndex() );
-
-	//printf("[Session::OnAccept][%d] m_bRemove=%d\n", (int)GetSocket(), (int)m_bRemove);
-}
-
-//VOID Session::OnConnect( BOOL bSuccess )
-//{
-//	Init();
-//
-//	NetworkObject *pNetworkObject = m_pNetworkObject;
-//
-//	if( !bSuccess )
-//	{		
-//		UnbindNetworkObject();
-//	}
-//
-//	pNetworkObject->OnConnect( bSuccess, GetIndex() );
-//}
-
-//VOID Session::OnLogString( char *pszLog, ... )
-//{
-//	if( !m_pNetworkObject ) return;
-//
-//	char		szBuffer[512] = "";
-//	va_list		pArguments;
-//
-//	va_start( pArguments, pszLog );
-//	vsprintf( szBuffer, pszLog, pArguments );
-//	va_end( pArguments );
-//
-//	printf( "%s(%s)\n", szBuffer, GetIP() );
-//
-//	m_pNetworkObject->OnLogString( szBuffer );
-//}
-
-// VOID Session::Disconnect( BOOL bGracefulDisconnect )
-// { 
-// 	if( bGracefulDisconnect ) 
-// 	{ 
-// 		//printf("[REMOVE][%d] bGracefulDisconnect\n", (int)GetSocket()); 
-// 		Remove(12); 
-// 	} 
-// 	else 
-// 	{
-// 		m_bDisconnectOrdered = TRUE; 
-// 	}
-// }
-
-
-void Session::EncyRecvData(int nSize)
-{
-	
-//	m_cEncryptRecv.Encrypt((unsigned char *)(m_pRecvBuffer->GetWritePtr()),nSize);
+	this->ResetKillFlag();
 }
 
 VOID Session::Remove(int nReason, const char* pszLogEx/*= "Nothing"*/) 
@@ -423,8 +260,6 @@ inline VOID Session::ResetKillFlag()
 
 inline VOID	Session::CloseSocket() 
 { 
-//	MyLogSave("syslog/SessionCloseSocket", "SessionCloseSocket socket[%d], ShouldBeRemove[%d]", this->GetClientID(), this->ShouldBeRemoved());
-//	shutdown(m_socket, 0x02);
 	MsWinsockUtil::m_lpfnDisconnectEx(m_socket, NULL, TF_DISCONNECT, 0);
 	closesocket( m_socket ); 
 	m_socket = INVALID_SOCKET; 
@@ -433,25 +268,23 @@ inline VOID	Session::CloseSocket()
 void SetClientSockOpt(SOCKET sock)
 {
 	// ÉèÖÃSOCKETÎªKEEPALIVE
-	{
-		int nKeepAlive = 1;
-		struct tcp_keepalive inKeepAlive	= {0};
-		struct tcp_keepalive outKeepAlive	= {0};
-		unsigned long lInLen				= sizeof(struct tcp_keepalive);
-		unsigned long lOutLen				= sizeof(struct tcp_keepalive);
-		unsigned long lBytesReturn			= 0;
+	int nKeepAlive = 1;
+	struct tcp_keepalive inKeepAlive	= {0};
+	struct tcp_keepalive outKeepAlive	= {0};
+	unsigned long lInLen				= sizeof(struct tcp_keepalive);
+	unsigned long lOutLen				= sizeof(struct tcp_keepalive);
+	unsigned long lBytesReturn			= 0;
 		
-		inKeepAlive.onoff				= 1;
-		inKeepAlive.keepaliveinterval	= CLIENT_IOCP_SOCKET_KEEPALIVE_INTERVAL;
-		inKeepAlive.keepalivetime		= CLIENT_IOCP_SOCKET_KEEPALIVE_TIME;
+	inKeepAlive.onoff				= 1;
+	inKeepAlive.keepaliveinterval	= CLIENT_IOCP_SOCKET_KEEPALIVE_INTERVAL;
+	inKeepAlive.keepalivetime		= CLIENT_IOCP_SOCKET_KEEPALIVE_TIME;
 		
-		int sRet = setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&nKeepAlive, sizeof(nKeepAlive));
+	int sRet = setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&nKeepAlive, sizeof(nKeepAlive));
 		
-		sRet = WSAIoctl(sock, _WSAIOW(IOC_VENDOR,4),
-						&inKeepAlive,	lInLen,
-						&outKeepAlive,	lOutLen,
-						&lBytesReturn,	NULL,	NULL);
-	}
+	sRet = WSAIoctl(sock, _WSAIOW(IOC_VENDOR,4),
+					&inKeepAlive,	lInLen,
+					&outKeepAlive,	lOutLen,
+					&lBytesReturn,	NULL,	NULL);
 	
 	// ÉèÖÃSENDBUG
 	{
@@ -475,5 +308,39 @@ void SetClientSockOpt(SOCKET sock)
 	{
 		int nNetTimeout = CLIENT_IOCP_SOCKET_TIMOUT;
 		setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetTimeout, sizeof(int));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description:  ÏûÏ¢Î²´íÎó¼ÆÊýÔö¼Ó, ²¢ÇÒ³¬¹ý·§Öµ×Ô¶¯ÌßºÅ
+// Arguments:
+// Return Value: void
+////////////////////////////////////////////////////////////////////////
+void Session::AddTailErrorCountAndAutoBreak( void )
+{
+	m_dwMsgTailErrorCount++;	// ´íÎó·â°ü¼ÆÊý
+
+	if (m_dwMsgTailErrorCount > FORCE_KICKOUT_ERROR_MSGTAIL_COUNT)
+	{
+		// ¼ÇÂ¼ÈÕÖ¾
+		char szLog[512] = "";
+		sprintf(szLog, "Our Base is Under Attack! Auto Break Attack! IP[%s], ClientID[%d]", this->GetIP(), this->GetClientID());
+		::MyLogSave("syslog/MsgTail", szLog);
+
+		// ·¢ËÍÇ¿ÌßÏûÏ¢
+		struct MY_KICK_REASON
+		{
+			unsigned short	msgSize;
+			unsigned short	msgType;
+			int				nReason;
+		};
+		MY_KICK_REASON stKickInfo = {0};
+		stKickInfo.msgSize = sizeof(MY_KICK_REASON);
+		stKickInfo.msgType = _MSG_LOGIN_KICK_REASON; // ¼´ _MSG_KICK_REASON
+		stKickInfo.nReason = KICK_REASON_SYSTEM;
+		this->Send((BYTE*)&stKickInfo, (WORD)sizeof(stKickInfo));
+
+		// ÒÆ³ýÁ¬½Ó
+		this->Remove(REMOVE_REASON_UNDER_ATTACK, szLog);
 	}
 }

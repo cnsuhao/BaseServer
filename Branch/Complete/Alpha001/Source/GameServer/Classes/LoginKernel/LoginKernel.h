@@ -8,6 +8,7 @@
 #include "../../Share/I_Shell.h"
 #include "../../Share/protocol.h"
 #include "../../DataBase/I_mydb.h"
+#include "./Network/NetMsg.h"
 
 #include <time.h>
 #include <winsock2.h>
@@ -37,10 +38,18 @@ public:
 public:
 	IDatabase*		GetDatabase(){return m_pDb;}
 
+public:
+	void			ProcessAccountLogin (SOCKET_ID idSocket, const char* pszAccountName, const char* pszAccountPassword);
+	int				ProcessCreateUser	(SOCKET_ID idSocket, const char* pszName, int nFaction, int nMainFly, OUT int& nUserID);
+	bool			ProcessChooseUser	(SOCKET_ID idSocket, OBJID idUser);
+	bool			ProcessDeleteUser	(SOCKET_ID idSocket, OBJID idUser);
+
 private:
 	PROCESS_ID		m_idProcess;
 	IDatabase*		m_pDb;
 	IMessagePort*	m_pMsgPort;
+
+	bool			m_bOpenLogin;		// �Ƿ񿪷ŵ�½
 
 };
 
