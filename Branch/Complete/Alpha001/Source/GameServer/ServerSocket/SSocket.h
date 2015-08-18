@@ -177,15 +177,6 @@ protected:
 	int			m_nHeadPos;		//发送缓冲区头指针
 	int			m_nTrailPos;	//发送缓冲区尾指针	
 //--------------------------------------------------------	
-
-//#ifdef	ENCRYPT	
-// public:
-// 	void	ChangeCode(DWORD dwData) { m_cEncryptRecv.ChangeCode(dwData); }
-// protected:
-// 	typedef	CEncryptServer<LOGIN_KEY1, LOGIN_KEY2>	EncryptServer;
-// 	EncryptServer	m_cEncryptRecv, m_cEncryptSend;
-//#endif
 };
-
 
 #endif // SSOCKET_H

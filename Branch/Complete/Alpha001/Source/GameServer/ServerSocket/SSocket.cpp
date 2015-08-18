@@ -572,26 +572,6 @@ bool CServerSocket::SendPacket(const char* pack, int nLen)
 	return true;
 
 //----------------------------------------end---------------------------------------
-
-
-
-
-//-----------07.1.30ÅíÕý°ï×¢ÊÍ²¢ÐÞ¸Ä--------begin---------------------------------
-//	int ret = send(m_sock, pack, nLen, 0);
-//	if(ret == nLen)
-//	{
-//		return true;
-//	}
-//	else
-//	{
-//		if( WSAGetLastError() == WSAEWOULDBLOCK )
-//		{
-//			LOGWARNING( "SendPacket err WOULDBLOCK id:%d,len:%d",idPack,nLen );
-//		}
-//		Close(true);
-//		return false;
-//	}
-//-----------------------------------------end--------------------------------------------
 }
 
 
