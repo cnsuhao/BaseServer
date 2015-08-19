@@ -116,6 +116,70 @@ void CLoginKernel::PrintText( const char* pszText )
 }
 
 ////////////////////////////////////////////////////////////////////////
+bool CLoginKernel::SendMsg( login_kernel::CNetMsg* pMsg, SOCKET_ID idSocket /*= SOCKET_NONE*/ )
+{
+	CHECKF(pMsg && m_pMsgPort);
+	IF_NOT (pMsg->GetBuf())
+	{
+		STACK_TRACE_ONCE;
+		return false;
+	}
+
+	IF_NOT (pMsg->GetType())
+	{
+		STACK_TRACE_ONCE;
+		return false;
+	}
+
+	IF_NOT (pMsg->GetSize() <= MAX_PACKETSIZE)
+	{
+		STACK_TRACE_ONCE;
+		return false;
+	}
+
+	if (pMsg->GetSocketID() < 0 && idSocket < 0)
+	{
+		::LogSave("CLoginKernel::SendMsg not set socket id! MsgType[%u], MsgLen[%d]", pMsg->GetType(), pMsg->GetSize());
+		STACK_TRACE_ONCE;
+		return false;
+	}
+
+	DEBUG_TRY;
+	char	bufPacket[MAX_MESSAGESIZE];
+	CLIENTMSG_PACKET* pPacket = (CLIENTMSG_PACKET*)bufPacket;
+	pPacket->idSocket	= (SOCKET_NONE == idSocket) ? pMsg->GetSocketID() : idSocket;
+	pPacket->idPacket	= pMsg->GetType();
+	pPacket->nSize		= pMsg->GetSize();
+	memcpy(pPacket->buf, pMsg->GetBuf(), pMsg->GetSize());
+	m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_SENDCLIENTMSG, STRUCT_TYPE(bufPacket), &bufPacket);
+	DEBUG_CATCHF3("CLoginKernel::SendMsg MsgType[%u], MsgLen[%d]", pMsg->GetType(), pMsg->GetSize());
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Description: 发送消息
+// Arguments:	
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: bool
+////////////////////////////////////////////////////////////////////////
+bool CLoginKernel::SendMsg( OBJID idAccount, login_kernel::CNetMsg* pMsg )
+{
+	//CHECKF(idAccount && pMsg);
+	//MAP_ACCOUNT_INFO::iterator iter = m_mapAccount.find(idAccount);
+	//if (iter != m_mapAccount.end())
+	//{
+	//	this->SendMsg(pMsg, iter->second.idSocket);
+	//}
+	//else
+	//{
+	//	tolog2("Unkonw idAccount[%u]", idAccount);
+	//}
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
 // Description: 客户端账号登陆
 // Arguments:
 // Author: 陈建军(Chen Jianjun)

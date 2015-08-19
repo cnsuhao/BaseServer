@@ -39,7 +39,8 @@ void CMsgLoginConnect::Process( void* pInfo )
 {
 	// µÇÈëÁ÷³Ì3.1
 	DEBUG_TRY;
-	//pLoginKernel->ProcessCheckPassword(m_idSocket, m_pInfo->szAccountName, m_pInfo->szAccountPassword);
+	pLoginKernel->ProcessAccountLogin(m_idSocket, m_pInfo->szAccountName, m_pInfo->szAccountPassword);
+	pLoginKernel->SendMsg(this);
 	DEBUG_CATCH("CMsgLoginConnect::Process");
 }
 
