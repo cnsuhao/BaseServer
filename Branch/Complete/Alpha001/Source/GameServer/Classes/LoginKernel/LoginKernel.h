@@ -33,10 +33,12 @@ public:
 	virtual bool	ProcessMsg		(OBJID idPacket, void* buf, int nType, int nFrom);
 	virtual bool	OnTimer			(void);
 	virtual bool	OnTimerRollback	(void);
-	virtual void	PrintText(const char* pszText);
+	virtual void	PrintText		(const char* pszText);
 
 public:
-	IDatabase*		GetDatabase(){return m_pDb;}
+	IDatabase*		GetDatabase		(void)	{ return m_pDb; }
+	bool			SendMsg			(login_kernel::CNetMsg* pMsg, SOCKET_ID idSocket = SOCKET_NONE);
+	bool			SendMsg			(OBJID idAccount, login_kernel::CNetMsg* pMsg);
 
 public:
 	void			ProcessAccountLogin (SOCKET_ID idSocket, const char* pszAccountName, const char* pszAccountPassword);
