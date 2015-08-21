@@ -256,6 +256,8 @@ inline VOID Session::ResetKillFlag()
 	InterlockedExchange((LONG*)&m_bSendFlag, FALSE);	// 重新发送投递设置标志
 	m_nTimeoutCount = 0;
 	m_i64RemoveMS = 0;									// 断开计时
+	m_dwMsgIndex = 0;
+	m_dwMsgTailErrorCount = 0;
 }
 
 inline VOID	Session::CloseSocket() 
