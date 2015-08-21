@@ -445,6 +445,8 @@ int CSocketKernel::SetNewSocket(Session* sNew)
 bool CSocketKernel::SendCloseNotify(SOCKET_ID idSocket)
 {
 	LogSaveLoginout("ServerSocket Close! Kick SocketID[%d]", idSocket);
-	//m_pMsgPort->Send(MSGPORT_SHELL, KERNEL_CLOSEKERNEL, VARTYPE_INT, &idSocket);			// readme.txt (1-1)
+
+	// 测试用，直接通知回收资源，清理内存
+	m_pMsgPort->Send(MSGPORT_SOCKET, SOCKETTHREAD_CLOSESOCKET, VARTYPE_INT, &idSocket);			// readme.txt (1-1)
 	return true;
 }
