@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 // Copyright(c) 2011-2014, WuHan ChuangYou, All Rights Reserved
-// Moudle: MsgLoginUserList.h
-// Author: 彭文奇(Peng Wenqi)
+// Moudle:  MsgLoginUserList.h
+// Author:  陈建军(Chen Jianjun)
 // Created: 2014-11-4
 ////////////////////////////////////////////////////////////////////////
 #ifndef _GAMESERVER_MSG_LOGIN_USER_LIST_H_
@@ -13,16 +13,14 @@
 
 #include "./NetMsg.h"
 
-struct USER_LOGIN_SNAP
+struct USER_LOGIN_SNAP			// 玩家登陆快照
 {
 	MSG_NUM_4BIT	nUserID;	// 角色id
 	MSG_STR_32BIT	szName;		// 角色名
 	MSG_NUM_4BIT	nLastLogin;	// 上次登陆日期	YYYYMMDD
 	MSG_NUM_4BIT	nLev;		// 等级
-	MSG_NUM_4BIT	nSex;		// 性别
-	MSG_NUM_4BIT	nLookface;	// 头像
-	MSG_NUM_4BIT	nInitPoker; // 初始化选择卡牌
-	MSG_NUM_4BIT	nSaveParam1;// 保留参数1
+	MSG_NUM_4BIT	nCamp;		// 阵营
+	MSG_NUM_4BIT	nFlagShip;	// 旗舰
 };
 
 class CMsgLoginUserList : public login_kernel::CNetMsg  

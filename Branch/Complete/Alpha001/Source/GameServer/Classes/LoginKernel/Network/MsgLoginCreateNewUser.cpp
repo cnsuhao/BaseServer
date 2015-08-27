@@ -39,8 +39,8 @@ void CMsgLoginCreateNewUser::Process( void* pInfo )
 {
 	// µÇÈëÁ÷³Ì3.5
 	DEBUG_TRY;
-	//m_pInfo->nResult = pLoginKernel->ProcessCreateNewUser(m_idSocket, m_pInfo->szName, m_pInfo->nSex, m_pInfo->nLookface, m_pInfo->nPokerType, m_pInfo->nUserID);
-	//pLoginKernel->SendMsg(this);
+	m_pInfo->nResult = pLoginKernel->ProcessCreateUser(m_idSocket, m_pInfo->szName, m_pInfo->nCamp, m_pInfo->nFlagShip, m_pInfo->nUserID);
+	pLoginKernel->SendMsg(this);
 	DEBUG_CATCH("CMsgLoginCreateNewUser::Process");
 }
 

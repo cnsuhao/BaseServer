@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////
-// Import : 共享文件。消息协议协定文件。
+// Import : 共享文件。线程消息管道协定文件。
 // Moudle : protocol.h
 // Author : 陈建军(Chen Jianjun)
 // Create : 2015-6-19
@@ -157,27 +157,24 @@ struct THREAD_MSG_PACKET
 	char	buf[1];
 };
 
-// 角色ip
-struct ST_USER_IP
+struct ST_ACCOUNT_BASE_INFO			// 账号基本信息
+{
+	SOCKET_ID	idSocket;
+	OBJID		idAccount;
+	int			nAccountType;
+	char		szName[NAME_SIZE];		
+	OBJID		idUser;
+	int			nFromProcess;
+};
+
+struct ST_USER_IP					// 角色ip
 {
 	OBJID idUser;
 	SOCKET_ID idSocket;
 	char szIP[24];
 };
 
-// 基础id组合
-struct ST_BASE_ID
-{
-	SOCKET_ID	idSocket;
-	OBJID		idAccount;
-	OBJID		idUser;
-	int			nFromProcess;
-	char		szName[NAME_SIZE];	
-	int			nAccountType;	
-};
-
-// 充值记录
-struct ST_PAYLOG
+struct ST_PAYLOG					// 充值记录
 {
 	OBJID idUser;
 	OBJID idAccount;

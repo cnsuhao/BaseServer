@@ -25,7 +25,9 @@
 #include "./GlobalFuction.h"
 
 #include "./RelationMsgTransform.h"
-#include "./DatabaseDefine.h"
+#include "./DatabaseDefineAcc.h"
+#include "./DatabaseDefineConst.h"
+#include "./DatabaseDefineGame.h"
 
 #include "./../Common/common.h"
 #include "./../Common/MyPubilcKey/MyPublicKey.h"

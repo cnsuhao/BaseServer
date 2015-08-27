@@ -14,6 +14,5 @@
 #include "./GlobalEnumDef.h"
 #include "./GlobalConstDef.h"
 #include "./GlobalStructDef.h"
-#include "./DatabaseDefine.h"
 
 #endif // end of _GLOBAL_FUCTION_H_

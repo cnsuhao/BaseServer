@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 // Copyright(c) 2011-2014, WuHan ChuangYou, All Rights Reserved
-// Moudle: MsgLoginConnect.h
-// Author: ÅíÎÄÆæ(Peng Wenqi)
+// Moudle:  MsgLoginConnect.h
+// Author:  ³Â½¨¾ü(Chen Jianjun)
 // Created: 2014-11-3
 ////////////////////////////////////////////////////////////////////////
 #ifndef _GAMESERVER_MSG_LOGIN_CONNECT_H_

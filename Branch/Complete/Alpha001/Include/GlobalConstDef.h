@@ -47,6 +47,7 @@ const int	MAX_CROSSSERVER_ACCEPT_SESSION		= 100;									// 跨服最大会话数量
 const int	RELATION_SERVER_SOCKET_BUF			= 512 * 1024;							// 关系服务器套接字参数		缓冲区大小		[发送/接收]相同
 const int	CROSS_SERVER_SOCKET_BUF				= 512 * 1024;							// 跨服服务器套接字参数		缓冲区大小		[发送/接收]相同
 const int	USER_ONLINE_SYNC_COUNT_PER_SECOND	= 500;									// 每秒玩家的在线信息同步的个数
+const int	MAX_ONLINE_USER_COUNT				= 2000;									// 最大在线人数限制
 
 typedef	unsigned long		OBJID;
 typedef	unsigned long		PROCESS_ID;							// 通常与内部消息接口ID相同
