@@ -42,10 +42,13 @@ BOOL g_bLogDatabaseSql				= TRUE;		// 是否记录sql语句日志
 BYTE g_cbEncryptKey					= 0;		// 客户端包加密key
 
 // 全局变量保存服务器名和线路
-int g_nServerStartTime = 0;
-std::string g_strConstDatabaseName = "const_db";
-std::string g_strGameDatabaseName = "game_db";
-std::string g_strAccountDatabaseName = "acc_db";
+char g_szServerName[64]				 = "";
+int  g_nServerGroup					 = 0;
+int  g_nServerLine					 = 0;
+int  g_nServerStartTime				 = 0;
+std::string g_strConstDatabaseName   = "wjsk_const";
+std::string g_strGameDatabaseName    = "wjsk_game";
+std::string g_strAccountDatabaseName = "wjsk_acc";
 
 #ifdef _WIN32
 	#include <io.h>

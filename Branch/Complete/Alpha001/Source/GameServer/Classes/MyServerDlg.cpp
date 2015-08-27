@@ -16,11 +16,6 @@
 #include "LoginThread.h"
 #include "ClientSocket.h"
 
-// 全局变量保存服务器名和线路
-char g_szServerName[64] = "";
-int  g_nServerGroup		= 0;
-int  g_nServerLine		= 0;
-
 ////////////////////////////////////////////////////////////////////////
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 class CAboutDlg : public CDialog
