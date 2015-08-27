@@ -9,9 +9,6 @@
       <UniqueIdentifier>{03a6bf0c-6f06-4100-8c09-b055eb85525d}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
-    <Filter Include="Global">
-      <UniqueIdentifier>{88554da2-dbb3-40b3-b289-47d5e2b689e5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Acceptor.cpp">
@@ -90,27 +87,6 @@
     </ClInclude>
     <ClInclude Include="SSocket.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\DatabaseDefine.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\Global.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\GlobalConstDef.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\GlobalEnumDef.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\GlobalFuction.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\GlobalStructDef.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\RelationMsgTransform.h">
-      <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="..\share\define.h">
       <Filter>Header Files</Filter>

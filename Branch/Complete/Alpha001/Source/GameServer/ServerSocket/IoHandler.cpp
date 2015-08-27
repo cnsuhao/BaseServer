@@ -98,7 +98,6 @@ unsigned __stdcall io_thread( LPVOID param )
 			pSession->GetSendBuffer()->Completion( dwIoSize );
 			pSession->SetSendFlag(FALSE);
 			break;
-
 		case RECV_POSTED:
 			// 对接受到的数据进行解密
 			pSession->ReleaseOverlappedNum();
@@ -111,7 +110,6 @@ unsigned __stdcall io_thread( LPVOID param )
 				pSession->Remove(REMOVE_REASON_PRERECV_ERROR);
 			}
 			break;
-
 		case DISCONNECT_POSTED:
 			pSession->PreAccept( pIoHandler->m_pAcceptor->GetListenSocket() );
 			break;

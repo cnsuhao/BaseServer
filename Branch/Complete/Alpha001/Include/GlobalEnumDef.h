@@ -11,6 +11,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 // 消息type号定义处, 定义协议号时强制将协议号显式填入
 enum _MSG_TYPE_DEFINE_
 {
@@ -183,7 +184,9 @@ enum _MSG_TYPE_DEFINE_
 	_MSG_CROSS_REALY_DATABASE				= 20003,	// 跨服中转数据库
 	_MSG_CROSS_END							= 30000,
 };
+////////////////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 // 关系服Action消息的action
 enum MSG_RS_ACTION
 {
@@ -239,23 +242,15 @@ enum MSG_CS_ERR_CODE
 	MSG_CS_ERR_CODE_LOGIN_KEY_ERROR,	// 登陆key错误
 	MSG_CS_ERR_CODE_LOGIN_TIMEOUT,		// 登陆时间超时
 };
+////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-enum GAME_OBJECT_TYPE
-{
-	GAME_OBJECT_TYPE_NONE	= 0x00000000,	// 空	
-	GAME_OBJECT_TYPE_COMMON = 0x00000001,	// 通用对象
-	GAME_OBJECT_TYPE_USER	= 0x00000002,	// 角色对象
-	GAME_OBJECT_TYPE_ITEM	= 0x00000004,	// 物品对象
-};
-
+////////////////////////////////////////////////////////////////////////////////////////////////
 // 账号类型
 enum ACCOUNT_TYPE
 {
-	ACCOUNT_TYPE_NORMAL		= 0,	// 正常账号
-	ACCOUNT_TYPE_GM_LOW		= 1,	// GM低级别账号
-	ACCOUNT_TYPE_GM_HI		= 2,	// GM高级别账号
+	ACCOUNT_TYPE_NORMAL			= 0,	// 正常
+	ACCOUNT_TYPE_GM				= 1,	// GM
+	ACCOUNT_TYPE_VISTOR			= 2,	// 游客
 };
 
 // 账号状态
@@ -266,13 +261,23 @@ enum ACCOUNT_STATUS
 	ACCOUNT_STATUS_STOP_FOREVER = 2,	// 永久封停
 };
 
-// 性别类型
-enum SEX_TYPE
+// 阵营类型
+enum CAMP_TYPE
 {
-	SEX_TYPE_BEGIN		= 0,
-	SEX_TYPE_GIRL		= 0,	// 女
-	SEX_TYPE_BOY		= 1,	// 男
-	SEX_TYPE_END
+	CAMP_TYPE_BEGIN				= 0,
+	CAMP_TYPE_EARTH				= 1,	// 地球文明
+	CAMP_TYPE_SANTI				= 2,	// 三体文明
+	CAMP_TYPE_GZWM				= 3,	// 歌者文明
+	CAMP_TYPE_END,
+};
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+enum GAME_OBJECT_TYPE
+{
+	GAME_OBJECT_TYPE_NONE	= 0x00000000,	// 空	
+	GAME_OBJECT_TYPE_COMMON = 0x00000001,	// 通用对象
+	GAME_OBJECT_TYPE_USER	= 0x00000002,	// 角色对象
+	GAME_OBJECT_TYPE_ITEM	= 0x00000004,	// 物品对象
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -284,11 +289,5 @@ enum PHP_OPERATION_TYPE
 	PHP_OPERATION_TYPE_PAY,
 	PHP_OPERATION_TYPE_KICK,
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// 数据库枚举
-// 常量表名称枚举
-
-////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif // end of _GLOBAL_ENUMDEF_H_

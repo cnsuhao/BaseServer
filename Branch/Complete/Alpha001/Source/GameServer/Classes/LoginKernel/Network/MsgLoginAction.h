@@ -15,8 +15,10 @@
 
 enum MSG_LOGIN_ACTION_TYPE
 {
-	MSG_LOGIN_ACTION_TYPE_CHOOSE_USER	= 1,	// 选择玩家		C --> S
-	MSG_LOGIN_ACTION_TYPE_DELETE_USER	= 2,	// 删除玩家		C <-> S
+	MSG_LOGIN_ACTION_TYPE_CHOOSE_USER			= 1,	// 选择玩家			C --> S
+	MSG_LOGIN_ACTION_TYPE_DELETE_USER			= 2,	// 删除玩家			C <-> S
+
+	MSG_LOGIN_ACTION_TYPE_LOGIN_DEQUE			= 3,	// 登录排队信息		C <-> S
 };
 
 enum MSG_LOGIN_ACTION_RESULT
@@ -33,14 +35,17 @@ public:
 	virtual BOOL Create(char* pMsgBuf,DWORD dwSize);
 	virtual void Process(void* pInfo);
 
+public:
+	bool	CreateMsg	(MSG_NUM_2BIT sAction, MSG_NUM_2BIT sResult, MSG_NUM_4BIT nParam1, MSG_NUM_4BIT nParam2);
+
 private:
 	typedef struct
 	{
 		MSG_NUM_2BIT	sAction;
 		MSG_NUM_2BIT	sResult;
 
-		MSG_NUM_4BIT	nUserID;
-		MSG_NUM_4BIT	nParam;
+		MSG_NUM_4BIT	nParam1;
+		MSG_NUM_4BIT	nParam2;
 	}MSG_Info;
 
 	MSG_Info* m_pInfo;

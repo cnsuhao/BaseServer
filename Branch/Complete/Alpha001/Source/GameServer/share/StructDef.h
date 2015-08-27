@@ -61,6 +61,23 @@ typedef INT_MAP::const_iterator		INT_MAP_CITER;
 
 ////////////////////////////////////////////////////////////////////////
 // 结构体定义
+// 登陆时账号信息
+struct ACCOUNT_INFO
+{
+	// 读表信息
+	OBJID		idAccount;
+	char		szAccountName[64];
+	int			nAccountType;
+	int			nAccountStatus;
+	int			nAccountStatusParam;
 
+	// 内存信息
+	SOCKET_ID	idSocket;
+	OBJID		idChoosePlayer;
+	int			nKickOtherFlag;
+	int			nLoginState;
+	int			nUserCount;
+	UINT		unStartSecond;
+};
 ////////////////////////////////////////////////////////////////////////
 #endif // end of _SHARE_STRUCT_DEF_H_

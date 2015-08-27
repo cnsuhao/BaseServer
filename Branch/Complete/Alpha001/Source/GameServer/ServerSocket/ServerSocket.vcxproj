@@ -146,13 +146,6 @@
     <ClInclude Include="SessionList.h" />
     <ClInclude Include="SessionPool.h" />
     <ClInclude Include="SSocket.h" />
-    <ClInclude Include="..\..\Include\DatabaseDefine.h" />
-    <ClInclude Include="..\..\Include\Global.h" />
-    <ClInclude Include="..\..\Include\GlobalConstDef.h" />
-    <ClInclude Include="..\..\Include\GlobalEnumDef.h" />
-    <ClInclude Include="..\..\Include\GlobalFuction.h" />
-    <ClInclude Include="..\..\Include\GlobalStructDef.h" />
-    <ClInclude Include="..\..\Include\RelationMsgTransform.h" />
     <ClInclude Include="..\share\define.h" />
     <ClInclude Include="..\share\I_Shell.h" />
     <ClInclude Include="..\share\protocol.h" />

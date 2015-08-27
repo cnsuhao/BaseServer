@@ -168,7 +168,7 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 		break;
 	case	SOCKETTHREAD_BREAKCONNECT:
 		{
-			SOCKET_ID	idSocket = *(SOCKET_ID*)buf;
+			SOCKET_ID idSocket = *(SOCKET_ID*)buf;
 			CHECKF(idSocket>=0 && idSocket < (int)m_setSocket.size());
 			::LogSaveLoginout("ServerSocket Kick Socket: SOCKET_ID[%d], FromProcessID[%d], Because[SOCKETTHREAD_BREAKCONNECT]", idSocket, nFrom);
 			if(m_setSocket[idSocket] && !IsNetBreakFlag(idSocket))
@@ -195,7 +195,7 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 	case SOCKETTHREAD_FORCE_KICK:
 		{
 			// 处理登陆强踢他人, 并发送回执, 登入流程3.3
-			ST_BASE_ID* pLoginForceKick = (ST_BASE_ID*)buf;
+			ST_ACCOUNT_BASE_INFO* pLoginForceKick = (ST_ACCOUNT_BASE_INFO*)buf;
 			CHECKF(pLoginForceKick);
 			CHECKF(pLoginForceKick->idSocket >= 0 && pLoginForceKick->idSocket < (int)m_setSocket.size());
 			::LogSaveLoginout("ServerSocket Foce Kick Socket: SOCKET_ID[%d], Account[%u], FromProcessID[%d], Because[SOCKETTHREAD_FORCE_KICK]", pLoginForceKick->idSocket, pLoginForceKick->idAccount, nFrom);
@@ -204,7 +204,7 @@ bool CSocketKernel::ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)
 				m_setSocket[pLoginForceKick->idSocket]->PreSend();
 				m_setSocket[pLoginForceKick->idSocket]->Remove(REMOVE_REASON_KICK_ANOTHER);
 				pLoginForceKick->nFromProcess = MSGPORT_SOCKET;
-				m_pMsgPort->Send(MSGPORT_LOGIN,  LOGINTHREAD_FORCE_KICK_ACK,	STRUCT_TYPE(ST_BASE_ID), pLoginForceKick);
+				m_pMsgPort->Send(MSGPORT_LOGIN,  LOGINTHREAD_FORCE_KICK_ACK, STRUCT_TYPE(ST_ACCOUNT_BASE_INFO), pLoginForceKick);
 			}
 		}
 		break;

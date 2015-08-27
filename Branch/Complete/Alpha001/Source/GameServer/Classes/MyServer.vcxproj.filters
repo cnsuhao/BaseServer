@@ -129,6 +129,18 @@
     <ClInclude Include="LoginThread.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Include\RelationMsgTransform.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\DatabaseDefineAcc.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\DatabaseDefineGame.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\DatabaseDefineConst.h">
+      <Filter>_Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyServer.cpp">
