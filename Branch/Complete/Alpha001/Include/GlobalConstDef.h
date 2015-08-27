@@ -13,6 +13,7 @@
 
 #include <string>
 
+extern char g_szServerName[64];				// 服务器名
 extern int  g_nServerLine;					// 服务器线路号
 extern int  g_nServerGroup;					// 服务器组号
 extern int	g_nServerStartTime;				// 服务器开启时间精确到天

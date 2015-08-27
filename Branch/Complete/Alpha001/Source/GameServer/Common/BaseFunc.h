@@ -18,16 +18,6 @@
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////
-// 全局变量声明
-extern char g_szServerName[64];				// 服务器名
-extern int  g_nServerLine;					// 服务器线路号
-extern int  g_nServerGroup;					// 服务器组号
-extern int	g_nServerStartTime;				// 服务器开启时间精确到天
-extern std::string g_strConstDatabaseName;	// 常量表数据库名
-extern std::string g_strGameDatabaseName;	// 游戏服数据库名
-extern std::string g_strAccountDatabaseName;// 账号服数据库名
-
-//////////////////////////////////////////////////////////////////////////
 // 时间函数相关
 enum TIME_TYPE	// 时间类型枚举
 {

@@ -51,8 +51,8 @@ const int	LOG_TIMEOUT_AI_PROCESS					= 100;				// AI线程  ontimer日志超时时间
 
 const int	ONTIMER_LOGIN_THREAD_ONLINE_STAT		= 5;				// 登陆线程 性能统计 间隔
 const int	PER_ONTIMER_LOGIN_ENTER_COUNT			= 8;				// 登陆线程 每个心跳间隔8个登陆名额
-const int	ONTIMER_LOGIN_THREAD_KICK_DEAD			= 3600;				// 登陆线程 踢出超时 间隔
-const int	TIMEOUT_LOGIN_THREAD_KICK_DEAD			= 36000;			// 登陆线程 玩家超时秒（10分钟）
+const int	ONTIMER_LOGIN_THREAD_KICK_DEAD			= 60;				// 登陆线程 踢出超时 间隔
+const int	TIMEOUT_LOGIN_THREAD_KICK_DEAD			= 600;				// 登陆线程 玩家超时秒（10分钟）
 
 static const char* SYSTEM_NAME 						= "SYSTEM";			// 广播消息时代表“系统”的名字串
 const int	DBSTR_SIZE								= 256;				// 数据库INI串长度

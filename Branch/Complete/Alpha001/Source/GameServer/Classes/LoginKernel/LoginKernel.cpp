@@ -272,7 +272,7 @@ void CLoginKernel::ProcessAccountLogin(SOCKET_ID idSocket, const char* pszAccoun
 	// ¼ì²âÕËºÅÊÇ·ñ´æÔÚ
 	CMxyString strSql("select * from %s.%s where name = '%s'", g_strAccountDatabaseName.c_str(), ACC_DB_NAME_ACCOUNT, pszAccountName);
 	RecordsetPtr pRes = m_pDb->CreateNewRecordset(strSql.c_str());
-	if (NULL == pRes)
+	if (NULL == pRes || 0 == pRes->RecordCount())
 	{
 		this->KickOutBySocket(idSocket, KICK_REASON_ACCOUNT_ERROR);
 		return;
