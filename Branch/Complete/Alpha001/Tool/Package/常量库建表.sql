@@ -1,0 +1,20 @@
+-- 飞船类型表
+CREATE TABLE `ship_type` (
+	`type` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '类型',
+	`name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '名字',
+	`camp` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '阵营',
+	`init_life` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '初始血量',
+	`init_def` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '初始防御',
+	`init_atk` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '初始伤害',
+	`init_star` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '初始星级',
+	`init_speed` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '初始速度',
+	`equip_count` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '装备孔数量',
+	`skill_auto1` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '自动技能1',
+	`skill_auto2` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '自动技能2',
+	`skill_auto3` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '自动技能3',
+	`skill_sp` INT(4) UNSIGNED NOT NULL DEFAULT '0' COMMENT '特技',
+	PRIMARY KEY (`type`)
+)
+COMMENT='飞船类型表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
