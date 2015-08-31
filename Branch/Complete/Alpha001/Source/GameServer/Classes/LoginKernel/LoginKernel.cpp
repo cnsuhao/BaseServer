@@ -424,7 +424,7 @@ void CLoginKernel::SendUserList(OBJID idAccount)
 
 	CMsgLoginUserList msg;
 	CHECK(msg.CreateBase(idAccount));
-	for( int i = 0; i < pRes->RecordCount(); i++)
+	for( int i = 0; i < pRes->RecordCount(); i++, pRes->MoveNext())
 	{
 		USER_LOGIN_SNAP stSnap = {0};
 		stSnap.nUserID		= pRes->GetInt(USER_DATA_ID);
