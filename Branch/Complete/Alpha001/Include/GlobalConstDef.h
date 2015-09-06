@@ -75,28 +75,28 @@ typedef char	MSG_STR_256BIT[256];
 
 const int MAX_ALLOW_AINPC_REACH_DESTPOINT_DISTANCE = 1;
 
-static const char* LOGIN_SERVER_PASSWORD	= "sXd73E4DwS9!5_6";
+static const char*	LOGIN_SERVER_PASSWORD	= "sXd73E4DwS9!5_6";
 
-const double	DOUBLE_PERCENT_BASE = 10000.0;	// 万分比基数(double类型)
-const int		INT_PERCENT_BASE	= 10000;	// 万分比基数(int类型)
-const I64		I64_PERCENT_BASE	= 10000i64;	// 万分比基数(I64类型)
-const I64		I64_MAX_CEIL		= 9223372036854775807i64;	// I64类型数字上限
-const int		INT_MAX_CEIL		= 2147483647;				// int类型数字上限
-const unsigned int	UINT_MAX_CEIL	= 4294967295;				// uint类型数字上限
+const double		DOUBLE_PERCENT_BASE = 10000.0;					// 万分比基数(double类型)
+const int			INT_PERCENT_BASE	= 10000;					// 万分比基数(int类型)
+const I64			I64_PERCENT_BASE	= 10000i64;					// 万分比基数(I64类型)
+const I64			I64_MAX_CEIL		= 9223372036854775807i64;	// I64类型数字上限
+const int			INT_MAX_CEIL		= 2147483647;				// int类型数字上限
+const unsigned int	UINT_MAX_CEIL		= 4294967295;				// uint类型数字上限
 
-const int	ID_NONE			= 0;
-const int	ID_AI_PROCESS	= 1;
-const int	SOCKET_NONE		= -1;				// 无效的SOCKET索引
-const int	SERVER_LISTEN_PORT_DEFAULT = 19999;
+const int			ID_NONE			= 0;
+const int			ID_AI_PROCESS	= 1;
+const int			SOCKET_NONE		= -1;							// 无效的SOCKET索引
+const int			SERVER_LISTEN_PORT_DEFAULT = 19999;
 
-const int	CROSS_SERVER_GROUP = 9999;		// 跨服服务器组号
+const int			CROSS_SERVER_GROUP = 9999;						// 跨服服务器组号
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 常量表使用的常数定义 start
-const int		ALL_SERVER_LINE_TYPE	= 99999;				//  不区分线路
-const int		ALL_SERVER_GROUP_TYPE	= 99999;				//  不区分服务器组
+const int			ALL_SERVER_LINE_TYPE	= 99999;				//  不区分线路
+const int			ALL_SERVER_GROUP_TYPE	= 99999;				//  不区分服务器组
 
-const int DESIGN_VAS_LIMIT = 5000;	// 策划单笔元宝操作限额
+const int			DESIGN_VAS_LIMIT = 5000;						// 策划单笔元宝操作限额
 
 /////////////////////////////////////////////////////////////////////////////////////////
 #endif // end of _GLOBAL_CONSTDEF_H_

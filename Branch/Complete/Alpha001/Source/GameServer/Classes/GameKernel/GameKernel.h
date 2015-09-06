@@ -5,9 +5,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../../Share/I_Shell.h"
-#include "../../Share/protocol.h"
-#include "../../DataBase/I_mydb.h"
+#include "I_Shell.h"
+#include "protocol.h"
+#include "I_mydb.h"
+#include "Network/NetMsg.h"
 
 #include <time.h>
 #include <winsock2.h>
@@ -32,10 +33,14 @@ public:
 	virtual bool	ProcessMsg		(OBJID idPacket, void* buf, int nType, int nFrom);
 	virtual bool	OnTimer			(void);
 	virtual bool	OnTimerRollback	(void);
-	virtual void	PrintText(const char* pszText);
+	virtual void	PrintText		(const char* pszText);
 	
 public:
-	IDatabase*		GetDatabase(){return m_pDb;}
+	IDatabase*		GetDatabase		(void)	{ return m_pDb; }
+	bool			SendMsg			(game_kernel::CNetMsg* pMsg, SOCKET_ID idSocket = SOCKET_NONE);
+	bool			BroadcastMsg	(game_kernel::CNetMsg* pMsg);
+	void			CloseSocket		(SOCKET_ID idSocket);
+	void			BreakAllUser	(void);
 
 private:
 	PROCESS_ID		m_idProcess;

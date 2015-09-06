@@ -65,7 +65,25 @@ enum KICK_REASON
 	KICK_REASON_LOGIN_TIMEOUT			= 11,	// 登陆过程超时
 	KICK_REASON_ACCOUNT_STOP_BYTIME		= 12,	// 账号临时封停
 	KICK_REASON_ACCOUNT_STOP_FOREVER	= 13,	// 账号永久封停
+};
 
+// user的内存数据枚举
+enum MEMORY_DATA_ATTR_USER
+{
+	mdaUser_BEGIN = 0,
+
+	mdaUser_AccountType,				// 账号类型
+	mdaUser_AccountStatus,				// 账号状态
+	mdaUser_AccountStatusParam,			// 账号状态参数
+
+	mdaUser_OnTimer_EverySecond,
+	mdaUser_OnTimer_MinuteSecond,
+
+	mdaUser_OnlineSecond,
+
+	mdaUser_GmMacPass,
+
+	mdaUser_END,
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #endif // end of _SHARE_ENUM_DEF_H_

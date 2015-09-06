@@ -5,10 +5,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../../Share/I_Shell.h"
-#include "../../Share/protocol.h"
-#include "../../DataBase/I_mydb.h"
-#include "./Network/NetMsg.h"
+#include "I_Shell.h"
+#include "protocol.h"
+#include "I_mydb.h"
+#include "Network/NetMsg.h"
 
 #include <time.h>
 #include <winsock2.h>

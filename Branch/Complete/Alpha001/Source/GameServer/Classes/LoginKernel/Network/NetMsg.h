@@ -7,7 +7,7 @@
 
 #pragma	warning(disable:4786)
 #include "basefunc.h"
-#include "../../share/define.h"
+#include "define.h"
 #include "myheap.h"
 
 
