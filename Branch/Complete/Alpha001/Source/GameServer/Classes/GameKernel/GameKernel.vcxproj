@@ -66,7 +66,7 @@
       <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
       <ObjectFileName>.\Debug/</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>..\Share;..\DataBase;..\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Share;..\..\DataBase;..\..\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,9 +107,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameKernel.h" />
+    <ClInclude Include="Network\AllMsg.h" />
+    <ClInclude Include="Network\MsgGameKickReason.h" />
+    <ClInclude Include="Network\MsgGameLoginQuery.h" />
+    <ClInclude Include="Network\MsgGameSmallAction.h" />
+    <ClInclude Include="Network\MsgGameUpdateOnlineInfo.h" />
+    <ClInclude Include="Network\MsgGameUserAttr.h" />
+    <ClInclude Include="Network\MsgGameUserInfo.h" />
+    <ClInclude Include="Network\MsgGameUserMac.h" />
+    <ClInclude Include="Network\NetMsg.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameKernel.cpp" />
+    <ClCompile Include="Network\MsgGameKickReason.cpp" />
+    <ClCompile Include="Network\MsgGameLoginQuery.cpp" />
+    <ClCompile Include="Network\MsgGameSmallAction.cpp" />
+    <ClCompile Include="Network\MsgGameUpdateOnlineInfo.cpp" />
+    <ClCompile Include="Network\MsgGameUserAttr.cpp" />
+    <ClCompile Include="Network\MsgGameUserInfo.cpp" />
+    <ClCompile Include="Network\MsgGameUserMac.cpp" />
+    <ClCompile Include="Network\NetMsg.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserMgr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

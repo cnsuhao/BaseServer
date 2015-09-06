@@ -32,14 +32,14 @@ enum _MSG_TYPE_DEFINE_
 	_MSG_LOGIN_END						= 2000,
 
 	_MSG_GAME_BEGIN						= 5000,
-	_MSG_GAME_LOGIN_QUERY				= 5001,	// 登陆查询				C <-> S
-	_MSG_GAME_USER_INFO					= 5002,	// UserInfo				C <-- S
-	_MSG_GAME_USER_ATTR					= 5003,	// UserAttr				C <-- S
-	_MSG_GAME_USER_MONEY				= 5004,	// 货币同步				C <-- S
-	_MSG_GAME_KICK_REASON				= 5005,	// 踢出原因				C <-- S
-	_MSG_GAME_MASK						= 5006,	// 掩码同步				C <-- S
-	_MSG_GAME_TMP_DATA					= 5007,	// UserTmpData			C <-> S
-	_MSG_GAME_SMALLACTION				= 5008,	// SmallAction消息		C <-> S
+	_MSG_GAME_KICK_REASON				= 5001,	// 踢出原因				C <-- S
+	_MSG_GAME_LOGIN_QUERY				= 5002,	// 登陆查询				C <-> S
+	_MSG_GAME_SMALLACTION				= 5003,	// SmallAction消息		C <-> S
+	_MSG_GAME_USER_INFO					= 5004,	// UserInfo				C <-- S
+	_MSG_GAME_USER_ATTR					= 5005,	// UserAttr				C <-- S
+	_MSG_GAME_USER_MONEY				= 5006,	// 货币同步				C <-- S
+	_MSG_GAME_MASK						= 5007,	// 掩码同步				C <-- S
+	_MSG_GAME_TMP_DATA					= 5008,	// UserTmpData			C <-> S
 	_MSG_GAME_TALK						= 5009, // 聊天消息				C <-> S
 	_MSG_GAME_NEWCARD					= 5010,	// 新手卡				C <-> S
 	_MSG_GAME_NEWCARD_PRIZE				= 5011,	// 新手卡奖励			C <-- S

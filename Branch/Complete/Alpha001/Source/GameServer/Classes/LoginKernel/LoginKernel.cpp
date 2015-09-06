@@ -1,12 +1,12 @@
-#include "./LoginKernel.h"
-#include "../../Common/inifile.h"
-#include "../../Common/MessagePort/I_MessagePort.h"
+#include "LoginKernel.h"
+#include "inifile.h"
+#include "MessagePort/I_MessagePort.h"
 #include "../LuaScriptMachine.h"
 
-#include "./Network/MsgLoginAction.h"
-#include "./Network/MsgLoginKickReason.h"
-#include "./Network/MsgLoginUserList.h"
-#include "./Network/MsgLoginCreateNewUser.h"
+#include "Network/MsgLoginAction.h"
+#include "Network/MsgLoginKickReason.h"
+#include "Network/MsgLoginUserList.h"
+#include "Network/MsgLoginCreateNewUser.h"
 
 ILoginKernel* ILoginKernel::Instance()		{return (ILoginKernel*)CLoginKernel::GetInstance();}
 void		  ILoginKernel::DelInstance()	{CLoginKernel::DelInstance();}
