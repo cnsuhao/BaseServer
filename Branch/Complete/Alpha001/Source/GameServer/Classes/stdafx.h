@@ -62,6 +62,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
+#define NO_WARN_MBCS_MFC_DEPRECATION
 #endif // _MSC_VER > 1000
 
 #pragma  once
