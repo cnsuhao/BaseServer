@@ -107,30 +107,60 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameKernel.h" />
+    <ClInclude Include="MaskMgr.h" />
     <ClInclude Include="Network\AllMsg.h" />
     <ClInclude Include="Network\MsgGameKickReason.h" />
     <ClInclude Include="Network\MsgGameLoginQuery.h" />
+    <ClInclude Include="Network\MsgGameMask.h" />
     <ClInclude Include="Network\MsgGameSmallAction.h" />
+    <ClInclude Include="Network\MsgGameTalk.h" />
     <ClInclude Include="Network\MsgGameUpdateOnlineInfo.h" />
     <ClInclude Include="Network\MsgGameUserAttr.h" />
     <ClInclude Include="Network\MsgGameUserInfo.h" />
     <ClInclude Include="Network\MsgGameUserMac.h" />
+    <ClInclude Include="Network\MsgGameUserMail.h" />
+    <ClInclude Include="Network\MsgGameUserMailList.h" />
+    <ClInclude Include="Network\MsgGameUserTask.h" />
+    <ClInclude Include="Network\MsgGameUserTmpData.h" />
     <ClInclude Include="Network\NetMsg.h" />
+    <ClInclude Include="TalkMgr.h" />
     <ClInclude Include="User.h" />
+    <ClInclude Include="UserMailMgr.h" />
+    <ClInclude Include="UserMask.h" />
     <ClInclude Include="UserMgr.h" />
+    <ClInclude Include="UserTalkData.h" />
+    <ClInclude Include="UserTask.h" />
+    <ClInclude Include="UserTaskMgr.h" />
+    <ClInclude Include="UserTmpData.h" />
+    <ClInclude Include="UserTmpDataMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameKernel.cpp" />
+    <ClCompile Include="MaskMgr.cpp" />
     <ClCompile Include="Network\MsgGameKickReason.cpp" />
     <ClCompile Include="Network\MsgGameLoginQuery.cpp" />
+    <ClCompile Include="Network\MsgGameMask.cpp" />
     <ClCompile Include="Network\MsgGameSmallAction.cpp" />
+    <ClCompile Include="Network\MsgGameTalk.cpp" />
     <ClCompile Include="Network\MsgGameUpdateOnlineInfo.cpp" />
     <ClCompile Include="Network\MsgGameUserAttr.cpp" />
     <ClCompile Include="Network\MsgGameUserInfo.cpp" />
     <ClCompile Include="Network\MsgGameUserMac.cpp" />
+    <ClCompile Include="Network\MsgGameUserMail.cpp" />
+    <ClCompile Include="Network\MsgGameUserMailList.cpp" />
+    <ClCompile Include="Network\MsgGameUserTask.cpp" />
+    <ClCompile Include="Network\MsgGameUserTmpData.cpp" />
     <ClCompile Include="Network\NetMsg.cpp" />
+    <ClCompile Include="TalkMgr.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserMailMgr.cpp" />
+    <ClCompile Include="UserMask.cpp" />
     <ClCompile Include="UserMgr.cpp" />
+    <ClCompile Include="UserTalkData.cpp" />
+    <ClCompile Include="UserTask.cpp" />
+    <ClCompile Include="UserTaskMgr.cpp" />
+    <ClCompile Include="UserTmpData.cpp" />
+    <ClCompile Include="UserTmpDataMgr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

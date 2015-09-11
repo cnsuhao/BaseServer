@@ -60,35 +60,7 @@ enum USER_DATA
 //	USER_VAS_DATA_MONTH_CARD_END_DATE,		// 最后一天领取日期	uint
 //	USER_VAS_DATA_FISRT_MASK,				// 第一次领取掩码	uint
 //};
-//
-//static const char* GAME_DB_NAME_USER_MASK = "user_mask";	// 人物掩码表
-//enum USER_MASK_DATA
-//{
-//	USER_MASK_DATA_ID = 0,				// id,			int
-//	USER_MASK_DATA_USERID,				// 玩家id,		uint
-//	USER_MASK_DATA_MASKTYPE,			// 掩码类型,	uint
-//	USER_MASK_DATA_MASKID,				// 掩码id,		uint
-//	USER_MASK_DATA_CLEARTIME,			// 结束时间		uint
-//	USER_MASK_DATA_MASKDATA,			// 掩码数据		bigint
-//};
-//
-//static const char* GAME_DB_NAME_GROUP_MASK = "group_mask";	// 组掩码表
-//enum LINE_MASK_DATA
-//{
-//	LINE_MASK_DATA_ID = 0,				// 掩码id,		int
-//	LINE_MASK_DATA_SERVER_GROUP,		// 服务器组,	uint
-//	LINE_MASK_DATA_DATA,				// 数据			uint
-//	LINE_MASK_DATA_ENDTIME,				// 结束时间		uint
-//};
-//
-//static const char* GAME_DB_NAME_WORLD_MASK = "world_mask";	// 世界掩码表
-//enum SERVER_MASK_DATA
-//{
-//	SERVER_MASK_DATA_ID = 0,			// 掩码id,		int
-//	SERVER_MASK_DATA_DATA,				// 数据			uint
-//	SERVER_MASK_DATA_ENDTIME,			// 结束时间		uint
-//};
-//
+
 //static const char* GAME_DB_NAME_ITEM_LOG = "item_log";	// 物品流向表
 //enum LOG_ITEM_FLOW_DATA
 //{
@@ -104,42 +76,107 @@ enum USER_DATA
 //	LOG_ITEM_FLOW_DATA_LINE,		// 线路						uint
 //	LOG_ITEM_FLOW_DATA_COMMENT,		// 说明字段					varchar128
 //};
-//
-//static const char* GAME_DB_NAME_USER_TMP_DATA = "user_tmp_data";	// 角色Tmpdata表
-//enum USERTMPDATA_DATA
-//{
-//	USERTMPDATA_ERROR = -1,
-//	USERTMPDATA_ID = 0,							// id		bigint										
-//	USERTMPDATA_USERID,							// 玩家id	uint
-//	USERTMPDATA_TMP_DATA_ID,					// 数据id	uint
-//
-//	USERTMPDATA_DATA_BEGIN,
-//	USERTMPDATA_DATA0 = USERTMPDATA_DATA_BEGIN,	// 数据0	uint
-//	USERTMPDATA_DATA1,							// 数据1	uint
-//	USERTMPDATA_DATA2,							// 数据2	uint
-//	USERTMPDATA_DATA3,							// 数据3	uint					
-//	USERTMPDATA_DATA4,							// 数据4	uint
-//	USERTMPDATA_DATA5,							// 数据5	uint
-//	USERTMPDATA_DATA6,							// 数据6	uint
-//	USERTMPDATA_DATA7,							// 数据7	uint
-//	USERTMPDATA_DATA_END,
-//};
-//
-//static const char* GAME_DB_NAME_USER_TASK = "user_task";			// 角色任务表
-//enum EUSER_TASK
-//{	
-//	EUSER_TASK_ID			= 0,	// 编号														uint
-//	EUSER_TASK_USER_ID,				// 玩家id													uint
-//	EUSER_TASK_TYPE,				// 任务类型													uint
-//	EUSER_TASK_STEP,				// 步骤														uint
-//	EUSER_TASK_STATUS,				// 任务状态(0:未接受,1:接受, 2:提交, 3:达到完成条件但未提交)uint
-//	EUSER_TASK_COUNT1,				// 计数1													uint
-//	EUSER_TASK_COUNT2,				// 计数2													uint
-//	EUSER_TASK_COUNT3,				// 计数3													uint
-//	EUSER_TASK_BEGIN_TIME,			// 开始时间(单位秒)											uint
-//	EUSER_TASK_OVER_TIME,			// 过期时间(0:无限制, >0:过期时间单位秒)					uint
-//};
-//
+
+static const char* GAME_DB_NAME_USER_MASK = "user_mask";	// 人物掩码表
+enum USER_MASK_DATA
+{
+	USER_MASK_DATA_ID = 0,				// id,			int
+	USER_MASK_DATA_USERID,				// 玩家id,		uint
+	USER_MASK_DATA_MASKTYPE,			// 掩码类型,	uint
+	USER_MASK_DATA_MASKID,				// 掩码id,		uint
+	USER_MASK_DATA_CLEARTIME,			// 结束时间		uint
+	USER_MASK_DATA_MASKDATA,			// 掩码数据		bigint
+};
+
+static const char* GAME_DB_NAME_GROUP_MASK = "group_mask";	// 组掩码表
+enum LINE_MASK_DATA
+{
+	LINE_MASK_DATA_ID = 0,				// 掩码id,		int
+	LINE_MASK_DATA_SERVER_GROUP,		// 服务器组,	uint
+	LINE_MASK_DATA_DATA,				// 数据			uint
+	LINE_MASK_DATA_ENDTIME,				// 结束时间		uint
+};
+
+static const char* GAME_DB_NAME_WORLD_MASK = "world_mask";	// 世界掩码表
+enum SERVER_MASK_DATA
+{
+	SERVER_MASK_DATA_ID = 0,			// 掩码id,		int
+	SERVER_MASK_DATA_DATA,				// 数据			uint
+	SERVER_MASK_DATA_ENDTIME,			// 结束时间		uint
+};
+
+static const char* GAME_DB_NAME_USER_TMP_DATA = "user_tmp_data";	// 角色Tmpdata表
+enum USERTMPDATA_DATA
+{
+	USERTMPDATA_ERROR = -1,
+	USERTMPDATA_ID = 0,							// id		bigint										
+	USERTMPDATA_USERID,							// 玩家id	uint
+	USERTMPDATA_TMP_DATA_ID,					// 数据id	uint
+
+	USERTMPDATA_DATA_BEGIN,
+	USERTMPDATA_DATA0 = USERTMPDATA_DATA_BEGIN,	// 数据0	uint
+	USERTMPDATA_DATA1,							// 数据1	uint
+	USERTMPDATA_DATA2,							// 数据2	uint
+	USERTMPDATA_DATA3,							// 数据3	uint					
+	USERTMPDATA_DATA4,							// 数据4	uint
+	USERTMPDATA_DATA5,							// 数据5	uint
+	USERTMPDATA_DATA6,							// 数据6	uint
+	USERTMPDATA_DATA7,							// 数据7	uint
+	USERTMPDATA_DATA_END,
+};
+
+static const char* GAME_DB_NAME_USER_TASK = "user_task";			// 角色任务表
+enum EUSER_TASK
+{	
+	EUSER_TASK_ID			= 0,	// 编号														uint
+	EUSER_TASK_USER_ID,				// 玩家id													uint
+	EUSER_TASK_TYPE,				// 任务类型													uint
+	EUSER_TASK_STEP,				// 步骤														uint
+	EUSER_TASK_STATUS,				// 任务状态(0:未接受,1:接受, 2:提交, 3:达到完成条件但未提交)uint
+	EUSER_TASK_COUNT1,				// 计数1													uint
+	EUSER_TASK_COUNT2,				// 计数2													uint
+	EUSER_TASK_COUNT3,				// 计数3													uint
+	EUSER_TASK_BEGIN_TIME,			// 开始时间(单位秒)											uint
+	EUSER_TASK_OVER_TIME,			// 过期时间(0:无限制, >0:过期时间单位秒)					uint
+};
+
+static const char* GAME_DB_NAME_USER_MAIL	= "mail";	// 玩家邮件表
+enum EUSER_MAIL
+{
+	EUSER_MAIL_ID		= 0,	// 编号									bigint
+	EUSER_MAIL_USER_ID,			// 玩家ID								uint
+	EUSER_MAIL_STATUS,			// 邮件状态(0:未读, 1:已读, 2:删除)		uint
+	EUSER_MAIL_TITLE,			// 主题									varchar32
+	EUSER_MAIL_SENDER,			// 发件人								varchar32
+	EUSER_MAIL_CONTENT,			// 内容									varchar256
+	EUSER_MAIL_SEND_TIME,		// 发送日期								uint
+	EUSER_MAIL_OVER_TIME,		// 过期时间(必须有时间限制)				uint
+
+	EUSER_MAIL_ITEM_TYPE1,		// 物品类型1							uint
+	EUSER_MAIL_ITEM_NUM1,		// 物品数量1							uint
+	EUSER_MAIL_ITEM_TYPE2,		// 物品类型2							uint
+	EUSER_MAIL_ITEM_NUM2,		// 物品数量2							uint
+	EUSER_MAIL_ITEM_TYPE3,		// 物品类型3							uint
+	EUSER_MAIL_ITEM_NUM3,		// 物品数量3							uint
+	EUSER_MAIL_ITEM_TYPE4,		// 物品类型4							uint
+	EUSER_MAIL_ITEM_NUM4,		// 物品数量4							uint
+	EUSER_MAIL_ITEM_TYPE5,		// 物品类型5							uint
+	EUSER_MAIL_ITEM_NUM5,		// 物品数量5							uint
+	EUSER_MAIL_ITEM_TYPE6,		// 物品类型6							uint
+	EUSER_MAIL_ITEM_NUM6,		// 物品数量6							uint
+
+	EUSER_MAIL_MONEY_TYPE1,		// 货币1								uint
+	EUSER_MAIL_MONEY_NUM1,		// 货币1数量							uint
+	EUSER_MAIL_MONEY_TYPE2,		// 货币2								uint
+	EUSER_MAIL_MONEY_NUM2,		// 货币2数量							uint
+	EUSER_MAIL_MONEY_TYPE3,		// 货币3								uint
+	EUSER_MAIL_MONEY_NUM3,		// 货币3数量							uint
+	EUSER_MAIL_MONEY_TYPE4,		// 货币4								uint
+	EUSER_MAIL_MONEY_NUM4,		// 货币4数量							uint
+	EUSER_MAIL_EXP,				// 经验									uint
+	EUSER_MAIL_SERVER_GROUP,	// 服务器组								uint
+};
+
 //static const char* GAME_DB_NAME_USER_NEWCARD = "user_newcard";		// 角色新手卡使用信息表
 //enum USER_NEWCARD_DATA
 //{
@@ -167,45 +204,7 @@ enum USER_DATA
 //	USER_NEWCARD_DATA_MASKDATA19,
 //	USER_NEWCARD_DATA_MASKDATA20,
 //};
-//
-//static const char* GAME_DB_NAME_USER_MAIL	= "mail";	// 玩家邮件表
-//enum EUSER_MAIL
-//{
-//	EUSER_MAIL_ID		= 0,	// 编号									bigint
-//	EUSER_MAIL_USER_ID,			// 玩家ID								uint
-//	EUSER_MAIL_STATUS,			// 邮件状态(0:未读, 1:已读, 2:删除)		uint
-//	EUSER_MAIL_TITLE,			// 主题									varchar32
-//	EUSER_MAIL_SENDER,			// 发件人								varchar32
-//	EUSER_MAIL_CONTENT,			// 内容									varchar256
-//	EUSER_MAIL_SEND_TIME,		// 发送日期								uint
-//	EUSER_MAIL_OVER_TIME,		// 过期时间(必须有时间限制)				uint
-//
-//	EUSER_MAIL_ITEM_TYPE1,		// 物品类型1							uint
-//	EUSER_MAIL_ITEM_NUM1,		// 物品数量1							uint
-//	EUSER_MAIL_ITEM_TYPE2,		// 物品类型2							uint
-//	EUSER_MAIL_ITEM_NUM2,		// 物品数量2							uint
-//	EUSER_MAIL_ITEM_TYPE3,		// 物品类型3							uint
-//	EUSER_MAIL_ITEM_NUM3,		// 物品数量3							uint
-//	EUSER_MAIL_ITEM_TYPE4,		// 物品类型4							uint
-//	EUSER_MAIL_ITEM_NUM4,		// 物品数量4							uint
-//	EUSER_MAIL_ITEM_TYPE5,		// 物品类型5							uint
-//	EUSER_MAIL_ITEM_NUM5,		// 物品数量5							uint
-//	EUSER_MAIL_ITEM_TYPE6,		// 物品类型6							uint
-//	EUSER_MAIL_ITEM_NUM6,		// 物品数量6							uint
-//
-//	EUSER_MAIL_MONEY_TYPE1,		// 货币1								uint
-//	EUSER_MAIL_MONEY_NUM1,		// 货币1数量							uint
-//	EUSER_MAIL_MONEY_TYPE2,		// 货币2								uint
-//	EUSER_MAIL_MONEY_NUM2,		// 货币2数量							uint
-//	EUSER_MAIL_MONEY_TYPE3,		// 货币3								uint
-//	EUSER_MAIL_MONEY_NUM3,		// 货币3数量							uint
-//	EUSER_MAIL_MONEY_TYPE4,		// 货币4								uint
-//	EUSER_MAIL_MONEY_NUM4,		// 货币4数量							uint
-//	EUSER_MAIL_EXP,				// 经验									uint
-//	EUSER_MAIL_SERVER_GROUP,	// 服务器组								uint
-//};
-//
-//
+
 //static const char* GAME_DB_NAME_POKER = "poker";	// 卡牌表
 //enum POKER_DATA
 //{
