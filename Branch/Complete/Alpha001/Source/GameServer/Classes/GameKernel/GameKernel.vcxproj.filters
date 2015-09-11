@@ -13,6 +13,36 @@
     <Filter Include="User\Msg">
       <UniqueIdentifier>{85c01405-e7aa-4527-ba90-ce51c1c0194a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mask">
+      <UniqueIdentifier>{0ccd9659-cc15-4f8c-922c-e276a6dfd381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TempData">
+      <UniqueIdentifier>{00787eba-2a5d-4d50-b93f-413fc64b738a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task">
+      <UniqueIdentifier>{c501b5c0-a230-40bb-bd9c-469c1aa5e824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Talk">
+      <UniqueIdentifier>{e941c3a3-4ff3-464a-ab6a-13cd9b29416a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mail">
+      <UniqueIdentifier>{0d72c77d-c7ac-48d7-a36c-cc16ee181498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mask\Msg">
+      <UniqueIdentifier>{537236c2-fa57-4172-a324-3d412082c062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mail\Msg">
+      <UniqueIdentifier>{b1ce4057-6823-461a-9a29-f48674920f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Talk\Msg">
+      <UniqueIdentifier>{b601709f-faac-4ea7-bb90-b05b47a05f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task\Msg">
+      <UniqueIdentifier>{2c50bad7-063c-4e90-9933-02b28b4809c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TempData\Msg">
+      <UniqueIdentifier>{d538af64-49bd-4604-a2fa-c480140a1346}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,6 +84,51 @@
     <ClInclude Include="Network\MsgGameSmallAction.h">
       <Filter>_Msg</Filter>
     </ClInclude>
+    <ClInclude Include="MaskMgr.h">
+      <Filter>Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="UserMask.h">
+      <Filter>Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameMask.h">
+      <Filter>Mask\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameUserMail.h">
+      <Filter>Mail\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameUserMailList.h">
+      <Filter>Mail\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameTalk.h">
+      <Filter>Talk\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameUserTask.h">
+      <Filter>Task\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\MsgGameUserTmpData.h">
+      <Filter>TempData\Msg</Filter>
+    </ClInclude>
+    <ClInclude Include="UserMailMgr.h">
+      <Filter>Mail</Filter>
+    </ClInclude>
+    <ClInclude Include="TalkMgr.h">
+      <Filter>Talk</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTalkData.h">
+      <Filter>Talk</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTask.h">
+      <Filter>Task</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTaskMgr.h">
+      <Filter>Task</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTmpData.h">
+      <Filter>TempData</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTmpDataMgr.h">
+      <Filter>TempData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameKernel.cpp">
@@ -88,6 +163,51 @@
     </ClCompile>
     <ClCompile Include="Network\MsgGameSmallAction.cpp">
       <Filter>_Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskMgr.cpp">
+      <Filter>Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="UserMask.cpp">
+      <Filter>Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameMask.cpp">
+      <Filter>Mask\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameUserMail.cpp">
+      <Filter>Mail\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameUserMailList.cpp">
+      <Filter>Mail\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameTalk.cpp">
+      <Filter>Talk\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameUserTask.cpp">
+      <Filter>Task\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\MsgGameUserTmpData.cpp">
+      <Filter>TempData\Msg</Filter>
+    </ClCompile>
+    <ClCompile Include="UserMailMgr.cpp">
+      <Filter>Mail</Filter>
+    </ClCompile>
+    <ClCompile Include="TalkMgr.cpp">
+      <Filter>Talk</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTalkData.cpp">
+      <Filter>Talk</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTask.cpp">
+      <Filter>Task</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTaskMgr.cpp">
+      <Filter>Task</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTmpData.cpp">
+      <Filter>TempData</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTmpDataMgr.cpp">
+      <Filter>TempData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

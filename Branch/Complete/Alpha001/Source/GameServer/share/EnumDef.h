@@ -85,5 +85,92 @@ enum MEMORY_DATA_ATTR_USER
 
 	mdaUser_END,
 };
+
+// 掩码类型
+enum EUSERMASKTYPE
+{
+	EUMT_Begin					= 0,
+	EUMT_TaskMask				= 1,	// 任务掩码
+	EUMT_GiveMask				= 2,	// 奖励掩码
+	EUMT_DayMask				= 3,	// 天掩码
+	EUMT_WeekMask				= 4,	// 周掩码
+	EUMT_MonthMask				= 5,	// 月掩码
+	EUMT_End,
+};
+
+// 玩家掩码ID服务器占用声明枚举				服务端使用:按位掩码ID (0 - 5000) 计数掩码ID(10000 - 20000)
+enum E_USER_MASKID_PROGRAM
+{
+	// 任务掩码ID开始
+	// 任务码ID结束
+
+	// 奖励掩码ID开始
+
+	// 奖励掩码ID结束
+
+	// 天掩码ID开始
+	EUMIP_DAY_BIT_LiveBoxStatus = 1,		// 每日活跃 活跃度宝箱打开标记(目前使用第2到第5二进制位)
+
+	EUMIP_DAY_COUNT_LiveValues = 10001,		// 每日活跃 当前活跃度
+	// 天掩码ID结束
+
+	// 周掩码ID开始
+	// 周掩码ID结束
+
+	// 月掩码ID开始
+	EUMIP_MONTH_BIT_SIGN = 1,				// 每日签到掩码
+	// 月掩码ID结束
+};
+
+// 玩家临时数据表
+enum EUSER_TEMPDATA_PROGRAM
+{
+	// 程序是用的TMP_ID从10000开始
+	EUTDP_BEGIN = 10000,
+
+	// 10000 - 11000留给客户端使用BEG
+	EUTDP_CLIENT_BEGIN = EUTDP_BEGIN,
+	EUTDP_CLIENT_END = 11000,
+	// 10000 - 11000留给客户端使用END
+
+	// 服务端从11001开始
+	EUTDP_SERVER_BEGIN = 11001,
+	EUTDP_SERVER_END,
+	EUTDP_END,
+};
+
+// 邮件状态
+enum EMAIL_STATUS
+{
+	EMAIL_STATUS_Begin	= 0,
+	EMAIL_STATUS_UNREAD = EMAIL_STATUS_Begin,	// 未读
+	EMAIL_STATUS_READ	= 1,					// 已读
+	EMAIL_STATUS_Del	= 2,					// 删除
+	EMAIL_STATUS_End,
+};
+
+// 任务更新类型枚举
+enum EUPDATA_TASK_TYPE
+{
+	EUPDATA_TASK_TYPE_Beg	= 0,
+	EUPDATA_TASK_TYPE_Add	= EUPDATA_TASK_TYPE_Beg,	// 增加任务
+	EUPDATA_TASK_TYPE_Del	= 1,						// 删除任务
+	EUPDATA_TASK_TYPE_Alter = 2,						// 修改任务
+	EUPDATA_TASK_TYPE_End,
+};
+
+// 聊天频道
+enum TALK_TXTATR
+{
+	TALK_TXTATR_BEGIN			= 2000,
+	TALK_TXTATR_PRIVATE			= 2001,	// 私聊
+	TALK_TXTATR_SYNDICATE		= 2002,	// 帮派
+	TALK_TXTATR_WORLDSERVER		= 2003,	// 世界(本区)
+	TALK_TXTATR_GM_CMD			= 2004,	// GM命令
+	TALK_TXTATR_NOTICE			= 2005,	// 公告
+	TALK_TXTATR_HINT			= 2006,	// 提示
+	TALK_TXTATR_GM_OPERATION	= 2007,	// GM操作(工具)
+	TALK_TXTATR_END,
+};
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #endif // end of _SHARE_ENUM_DEF_H_

@@ -61,8 +61,17 @@ const int	DBSTR_SIZE								= 256;				// 数据库INI串长度
 // 核心常量
 const OBJID PLAYER_ID_FIRST							= 10000000;			// Player的第一个ID, 1000W起
 const OBJID MAX_ID_DEFINE							= (OBJID)-1;
-
 const int	LOGIN_USER_LIST_LIMIT					= 5;				// 多角色系统角色个数
+
+// 掩码ID段定义，10000以前表示按位掩码，10000以后表示计数掩码
+const int CONST_BIT_MASKID_INTERVAL					= 5000;				// 按位掩码ID区间	服务器使用段(1 - 5000)		策划使用段(5000 - 10000)
+const int CONST_COMPUTATION_MASKID_BEGIN			= 10000;			// 计数掩码ID开始
+const int CONST_COMPUTATION_MASKID_INTERVAL			= 20000;			// 计数掩码ID区间	服务器使用段(10000 - 20000）策划使用段(20000以后)
+const int CONST_DEFULT_MASK_ENDTIME					= 2000000000;		// 掩码默认结束时间(2033年5月18日 11:33:20)
+
+const int MAX_MAIL_ITEM_COUNT						= 6;				// 邮件中最大物品种类
+const int MAX_MAIL_MONEY_COUNT						= 4;				// 邮件中最大货币种类
+const int MAIL_EXIST_TIME							= 20 * 24 * 60 * 60;// 邮件保存时间	20天
 
 static const char* LUA_FILE_PATH					= "script/";
 static const char* LUA_LIST_FILE					= "lualist.txt";
