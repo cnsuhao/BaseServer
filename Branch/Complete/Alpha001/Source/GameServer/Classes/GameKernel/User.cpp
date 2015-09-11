@@ -39,27 +39,26 @@ bool CUser::Init( OBJID idUser, SOCKET_ID idSocket )
 	m_pRecord = pRes->CreateNewRecord();
 	CHECKF(m_pRecord);
 
-	//OBJID idAccount = this->GetData(USER_DATA_ACCOUNT_ID);
-	//strSql.Format("select * from %s.%s where id=%u limit 1", g_strAccountDatabaseName.c_str(), ACC_DB_NAME_ACCOUNT, idAccount);
-	//RecordsetPtr pResAccount = pGameDatabase->CreateNewRecordset(strSql.c_str());	
-	//CHECKF(pResAccount);
+	OBJID idAccount = this->GetData(USER_DATA_ACCOUNT_ID);
+	strSql.Format("select * from %s.%s where id = %u limit 1", g_strAccountDatabaseName.c_str(), ACC_DB_NAME_ACCOUNT, idAccount);
+	RecordsetPtr pResAccount = pGameDatabase->CreateNewRecordset(strSql.c_str());
+	CHECKF(pResAccount);
 
-	//this->SetMemoryDataAttr(mdaUser_AccountType,		pResAccount->GetInt(ACCOUNT_DATA_ACCOUNT_TYPE));
-	//this->SetMemoryDataAttr(mdaUser_AccountStatus,		pResAccount->GetInt(ACCOUNT_DATA_ACCOUNT_STATUS));
-	//this->SetMemoryDataAttr(mdaUser_AccountStatusParam, pResAccount->GetInt(ACCOUNT_DATA_ACCOUNT_STATUS_PARAM));
-	//m_strAccountName = pResAccount->GetStr(ACCOUNT_DATA_NAME);
-	//m_strAccountPlatform = pResAccount->GetStr(ACCOUNT_DATA_PLATFORM);
-	//m_strAccountChannel = pResAccount->GetStr(ACCOUNT_DATA_CHANNEL);
-	//m_strAccountOS = pResAccount->GetStr(ACCOUNT_DATA_OS);
-	//m_strBindInviteCode = pResAccount->GetStr(ACCOUNT_DATA_BIND_INVITE_CODE);
+	this->SetMemoryDataAttr(mdaUser_AccountType,		pResAccount->GetInt(ACCOUNT_DATA_TYPE));
+	this->SetMemoryDataAttr(mdaUser_AccountStatus,		pResAccount->GetInt(ACCOUNT_DATA_STATUS));
+	this->SetMemoryDataAttr(mdaUser_AccountStatusParam, pResAccount->GetInt(ACCOUNT_DATA_STATUS_PARAM));
+	m_strAccountName	 = pResAccount->GetStr(ACCOUNT_DATA_NAME);
+	m_strAccountPlatform = pResAccount->GetStr(ACCOUNT_DATA_PLATFORM);
+	m_strAccountChannel  = pResAccount->GetStr(ACCOUNT_DATA_CHANNEL);
+	m_strAccountOS		 = pResAccount->GetStr(ACCOUNT_DATA_OS);
 
-	//// 覆盖账号类型到user表
-	//if (this->GetData(USER_DATA_ACCOUNT_TYPE) != pResAccount->GetInt(ACCOUNT_DATA_ACCOUNT_TYPE))
-	//{
-	//	this->SetData(USER_DATA_ACCOUNT_TYPE, pResAccount->GetInt(ACCOUNT_DATA_ACCOUNT_TYPE), true);
-	//}
+	// 更新账号类型到user表
+	if (this->GetData(USER_DATA_ACCOUNT_TYPE) != pResAccount->GetInt(ACCOUNT_DATA_TYPE))
+	{
+		this->SetData(USER_DATA_ACCOUNT_TYPE, pResAccount->GetInt(ACCOUNT_DATA_TYPE), true);
+	}
 
-	//this->SetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond, ::TimeGet(TIME_SECOND));
+	this->SetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond, ::TimeGet(TIME_SECOND));
 	return true;
 	DEBUG_CATCHF2("CUser::Init idUser[%u]!", idUser);
 }
@@ -72,8 +71,8 @@ bool CUser::Init( OBJID idUser, SOCKET_ID idSocket )
 ////////////////////////////////////////////////////////////////////////
 void CUser::BeforeRelease()
 {	
-	//auto nCurSecond  = ::TimeGet(TIME_SECOND);
-	//this->SetData(USER_DATA_EXIT_TIME, nCurSecond);
+	// 记录退出时间
+	this->SetData(USER_DATA_EXIT_TIME, ::TimeGet(TIME_SECOND));
 
 	//auto nAllOnlineSecond = this->GetData(USER_DATA_ALL_ONLINE_TIME) + this->GetMemoryDataAttr(mdaUser_OnlineSecond);
 	//this->SetData(USER_DATA_ALL_ONLINE_TIME, nAllOnlineSecond);
@@ -83,10 +82,11 @@ void CUser::BeforeRelease()
 	//	this->SetData(USER_DATA_YESTERDAY_LOGIN, 1);
 	//}
 
-	//if (m_pRecord)
-	//{
-	//	m_pRecord->UpdateRecord(DBUPDATE_ASYNC);
-	//}
+	// 下线前保存一下记录数据
+	if (m_pRecord)
+	{
+		m_pRecord->UpdateRecord(DBUPDATE_ASYNC);
+	}
 }
 
 
@@ -100,8 +100,7 @@ void CUser::BeforeRelease()
 I64 CUser::GetData( USER_DATA eData ) const
 {
 	CHECKF(m_pRecord);
-	//CHECKF(eData >= USER_DATA_BEGIN && eData < USER_DATA_END);
-	//CHECKF(eData != USER_DATA_NAME && eData != USER_DATA_SIGNATURE && eData != USER_DATA_ADDRESS);
+	CHECKF(eData != USER_DATA_NAME);
 	return m_pRecord->GetInt64(eData);
 }
 
@@ -114,9 +113,7 @@ I64 CUser::GetData( USER_DATA eData ) const
 const char* CUser::GetStr( USER_DATA eData ) const
 {
 	CHECKF(m_pRecord);
-	//CHECKF(eData == USER_DATA_NAME 
-	//	|| eData == USER_DATA_SIGNATURE
-	//	|| eData == USER_DATA_ADDRESS);
+	CHECKF(eData == USER_DATA_NAME);
 	return m_pRecord->GetStr(eData);
 }
 
@@ -129,10 +126,9 @@ const char* CUser::GetStr( USER_DATA eData ) const
 bool CUser::SetData( USER_DATA eData, I64 i64Data, bool bUpdate /*= false*/ )
 {
 	CHECKF(m_pRecord);
-	//CHECKF(eData >= USER_DATA_BEGIN && eData < USER_DATA_END);
-	//CHECKF(eData != USER_DATA_NAME && eData != USER_DATA_SIGNATURE && eData != USER_DATA_ADDRESS);
-	//m_pRecord->SetInt64(eData, i64Data);
-	//m_pRecord->UpdateRecord(bUpdate);
+	CHECKF(eData != USER_DATA_NAME);
+	m_pRecord->SetInt64(eData, i64Data);
+	m_pRecord->UpdateRecord(bUpdate);
 	return true;
 }
 
@@ -145,12 +141,10 @@ bool CUser::SetData( USER_DATA eData, I64 i64Data, bool bUpdate /*= false*/ )
 bool CUser::SetStr( USER_DATA eData, const char* pszStr, bool bUpdate /*= false*/ )
 {
 	CHECKF(m_pRecord);
-	//CHECKF(eData == USER_DATA_NAME 
-	//	|| eData == USER_DATA_SIGNATURE
-	//	|| eData == USER_DATA_ADDRESS);
-	//CHECKF(pszStr);
-	//m_pRecord->SetStr(eData, pszStr, strlen(pszStr) + 1);
-	//m_pRecord->UpdateRecord(bUpdate);
+	CHECKF(eData == USER_DATA_NAME);
+	CHECKF(pszStr);
+	m_pRecord->SetStr(eData, pszStr, strlen(pszStr) + 1);
+	m_pRecord->UpdateRecord(bUpdate);
 	return true;
 }
 
@@ -164,7 +158,7 @@ void CUser::OnTimer()
 {
 	DEBUG_TRY;
 
-	//auto nNowSecond = ::TimeGet(TIME_SECOND);
+	auto nNowSecond = ::TimeGet(TIME_SECOND);
 	//auto nSaveEverySecond = this->GetMemoryDataAttr(mdaUser_OnTimer_EverySecond);
 	//if (nNowSecond > nSaveEverySecond)
 	//{
@@ -172,12 +166,13 @@ void CUser::OnTimer()
 	//	this->OnTimerSecond();
 	//}
 
-	//auto nSaveMinuteSecond = this->GetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond);
-	//if (nNowSecond >= (nSaveMinuteSecond + 60))
-	//{
-	//	this->SetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond, nNowSecond);
-	//	this->OnTimerMinute();
-	//}
+	// 每分钟心跳
+	auto nSaveMinuteSecond = this->GetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond);
+	if (nNowSecond >= (nSaveMinuteSecond + 60))
+	{
+		this->SetMemoryDataAttr(mdaUser_OnTimer_MinuteSecond, nNowSecond);
+		this->OnTimerMinute();
+	}
 
 	DEBUG_CATCH("CUser::OnTimer");
 }
@@ -217,7 +212,7 @@ void CUser::OnTimerSecond()
 void CUser::OnTimerMinute()
 {
 	DEBUG_TRY;
-	//this->AddMemoryDataAttr(mdaUser_OnlineSecond, 60);
+	this->AddMemoryDataAttr(mdaUser_OnlineSecond, 60);
 	//pItemMgr->OnTimer(m_id);
 	//pSystemSettingsMgr->OnTimer(m_id);
 	//pMarksInfoMgr->OnTimerUser(m_id);

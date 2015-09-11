@@ -53,13 +53,11 @@ public:
 	const char* GetAccountPlatform() const			{ return m_strAccountPlatform.c_str(); }
 	const char* GetAccountChannel() const			{ return m_strAccountChannel.c_str(); }
 	const char* GetAccountOS() const				{ return m_strAccountOS.c_str(); }
-	const char* GetAccountBindInviteCode() const	{ return m_strBindInviteCode.c_str(); }
 protected:
 	CMxyString m_strAccountName;
 	CMxyString m_strAccountPlatform;
 	CMxyString m_strAccountChannel;
 	CMxyString m_strAccountOS;
-	CMxyString m_strBindInviteCode;
 
 	// ÏûÏ¢·¢ËÍ
 public:

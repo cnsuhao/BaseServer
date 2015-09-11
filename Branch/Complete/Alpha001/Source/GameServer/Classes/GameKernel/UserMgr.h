@@ -43,7 +43,7 @@ public:
 	bool		LogoutUser			(OBJID idUser);
 	bool		KickUserByID		(OBJID idUser, KICK_REASON eReason = KICK_REASON_DEFAULT, int nParam = 0);
 	bool		KickUserBySocket	(SOCKET_ID idSocket, KICK_REASON eReason = KICK_REASON_DEFAULT, int nParam = 0);
-// 	void		KickAllUser();
+ 	void		KickAllUser			(void);
 //	void		RecvUserIP(OBJID idUser, SOCKET_ID idSocket, const char* pszIP);
 // 	void		LogoutAllUser(); 该类Release已有相同功能, 暂时注释
 

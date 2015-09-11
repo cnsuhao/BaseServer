@@ -76,10 +76,10 @@ enum MEMORY_DATA_ATTR_USER
 	mdaUser_AccountStatus,				// 账号状态
 	mdaUser_AccountStatusParam,			// 账号状态参数
 
-	mdaUser_OnTimer_EverySecond,
-	mdaUser_OnTimer_MinuteSecond,
+	mdaUser_OnlineSecond,				// 在线时间
 
-	mdaUser_OnlineSecond,
+	mdaUser_OnTimer_EverySecond,		// 每秒心跳
+	mdaUser_OnTimer_MinuteSecond,		// 每分钟心跳
 
 	mdaUser_GmMacPass,
 
