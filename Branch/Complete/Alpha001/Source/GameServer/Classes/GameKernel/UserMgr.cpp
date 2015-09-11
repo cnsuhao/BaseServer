@@ -241,6 +241,28 @@ bool CUserMgr::KickUserBySocket( SOCKET_ID idSocket, KICK_REASON eReason /*= KIC
 }
 
 ////////////////////////////////////////////////////////////////////////
+// Description: 正常流程登出
+// Arguments:
+// Author: 彭文奇(Peng Wenqi)
+// Return Value: 
+////////////////////////////////////////////////////////////////////////
+void CUserMgr::KickAllUser()
+{
+	// 通知所有玩家被踢
+	CMsgGameKickReason msg;
+	IF_OK(msg.CreateInfo(KICK_REASON_SYSTEM))
+	{
+		for (auto iterSocket : m_mapSocket)
+		{
+			pGameKernel->SendMsg(&msg, iterSocket.first);
+		}
+	}
+	
+	// 断开所有连接
+	pGameKernel->BreakAllUser();
+}
+
+////////////////////////////////////////////////////////////////////////
 // Description: 角色初始化
 // Arguments:	不会操作本类容器
 // Author: 彭文奇(Peng Wenqi)
@@ -439,28 +461,6 @@ OBJID CUserMgr::GetUserIDByName( const char* pszUserName ) const
 	return ID_NONE;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//// Description: 正常流程登出
-//// Arguments:
-//// Author: 彭文奇(Peng Wenqi)
-//// Return Value: 
-//////////////////////////////////////////////////////////////////////////
-//void CUserMgr::KickAllUser()
-//{
-//	// 通知所有玩家被踢
-//	//CMsgGameKickReason msg;
-//	//IF_OK(msg.CreateInfo(KICK_REASON_SYSTEM))
-//	//{
-//	//	for (auto iterSocket : m_mapSocket)
-//	//	{
-//	//		this->SendMsgBySocket(iterSocket.first, &msg);
-//	//	}
-//	//}
-//	
-//	// 断开所有连接
-//	pGameKernel->BreakAllUser();
-//}
-//
 //////////////////////////////////////////////////////////////////////////
 //// Description: 强制析构所有玩家
 //// Arguments:

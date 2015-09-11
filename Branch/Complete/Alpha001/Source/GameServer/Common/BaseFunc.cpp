@@ -1777,9 +1777,9 @@ LONG WINAPI MyUnhandledExceptionFilter(struct _EXCEPTION_POINTERS* ExceptionInfo
 	ExInfo.ExceptionPointers = ExceptionInfo;
 	ExInfo.ClientPointers = TRUE;
 
-	COleDateTime dt=COleDateTime::GetCurrentTime();
+	COleDateTime dt =COleDateTime::GetCurrentTime();
 	CString strDumpFileName;
-	CString temp=dt.Format("%Y年%m月%d日%H时%M分%S秒");
+	CString temp = dt.Format("%Y年%m月%d日%H时%M分%S秒");
 	strDumpFileName.Format("./dump/%s_%lu.dmp", temp, ::GetTickCount());
 
 	::CreateDirectory("dump", NULL);

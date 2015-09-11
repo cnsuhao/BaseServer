@@ -54,6 +54,8 @@ bool CGameKernel::Create( IMessagePort* pPort )
 	CHECKF(pLuaScriptMachine->Init());
 
 	// 各单例管理器初始化
+	CHECKF(pUserMgr->Init());
+
 	// 启动时, 需要清理无效的服务器掩码
 	//pMaskMgr->ClearInvalidGroupServerMask();
 	//pMaskMgr->ClearInvalidWorldServerMask();
@@ -64,7 +66,13 @@ bool CGameKernel::Create( IMessagePort* pPort )
 bool CGameKernel::Release( void )
 {
 	SAFE_RELEASE (m_pDb);
+	// 各单列管理器释放
+	pUserMgr->Release();
 
+
+
+	// 各单列管理器删除
+	CUserMgr::DelInstance();
 	CLuaScriptMachine::DelInstance();
 	return true;
 }
@@ -151,6 +159,11 @@ bool CGameKernel::ProcessMsg( OBJID idPacket, void* buf, int nType, int nFrom )
 
 			// 通知下层
 			m_pMsgPort->Send(MSGPORT_LOGIN, LOGINTHREAD_CLOSE_SOCKET, VARTYPE_INT, &idSocket);
+		}
+		break;
+	case GAMETHREAD_KICK_ALLUSER:
+		{
+			pUserMgr->KickAllUser();
 		}
 		break;
 	default:
